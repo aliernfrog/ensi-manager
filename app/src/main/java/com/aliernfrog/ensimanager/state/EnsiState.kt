@@ -46,9 +46,10 @@ class EnsiState(_config: SharedPreferences) {
 
     private suspend fun fetchWords() {
         if (getWordsRoute == null) return
+        if (!getWordsRoute!!.url.contains("://")) return
         withContext(Dispatchers.IO) {
             val response = WebUtil.sendRequest(getWordsRoute!!.url, getWordsRoute!!.method, authorization)
-            if (response.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
+            if (response?.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
                 words.value = GeneralUtil.jsonArrayToList(JSONArray(response.responseBody))
             }
         }
@@ -56,9 +57,10 @@ class EnsiState(_config: SharedPreferences) {
 
     private suspend fun fetchVerbs() {
         if (getVerbsRoute == null) return
+        if (!getWordsRoute!!.url.contains("://")) return
         withContext(Dispatchers.IO) {
             val response = WebUtil.sendRequest(getVerbsRoute!!.url, getVerbsRoute!!.method, authorization)
-            if (response.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
+            if (response?.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
                 verbs.value = GeneralUtil.jsonArrayToList(JSONArray(response.responseBody))
             }
         }

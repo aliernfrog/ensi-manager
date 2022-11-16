@@ -9,24 +9,32 @@ import java.net.URL
 
 class WebUtil {
     companion object {
-        fun sendRequest(toUrl: String, method: String, authorization: String? = null): ApiResponse {
-            val url = URL(toUrl)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = method
-            if (authorization != null) connection.setRequestProperty("Authorization", authorization)
-            val response = getResponseFromConnection(connection)
-            Log.d("TAG", "sendRequest: ${connection.responseCode} $response")
-            return ApiResponse(connection.responseCode, response)
+        fun sendRequest(toUrl: String, method: String, authorization: String? = null): ApiResponse? {
+            return try {
+                val url = URL(toUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = method
+                if (authorization != null) connection.setRequestProperty("Authorization", authorization)
+                val response = getResponseFromConnection(connection)
+                Log.d("TAG", "sendRequest: ${connection.responseCode} $response")
+                ApiResponse(connection.responseCode, response)
+            } catch (_: Exception) {
+                null
+            }
         }
 
         private fun getResponseFromConnection(connection: HttpURLConnection): String {
-            var response = ""
-            val bufferedReader = BufferedReader(InputStreamReader(connection.inputStream, "utf-8"))
-            bufferedReader.lines().forEach {
-                response += "\n$it"
+            return try {
+                var response = ""
+                val bufferedReader = BufferedReader(InputStreamReader(connection.inputStream, "utf-8"))
+                bufferedReader.lines().forEach {
+                    response += "\n$it"
+                }
+                bufferedReader.close()
+                response.removePrefix("\n")
+            } catch (_: Exception) {
+                ""
             }
-            bufferedReader.close()
-            return response.removePrefix("\n")
         }
     }
 }
