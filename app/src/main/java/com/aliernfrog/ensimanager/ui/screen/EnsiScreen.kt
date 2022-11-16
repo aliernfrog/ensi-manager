@@ -11,6 +11,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.EnsiState
 import com.aliernfrog.ensimanager.ui.composable.ManagerSegmentedButtons
 import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
+import com.aliernfrog.ensimanager.ui.composable.ManagerWord
 
 @Composable
 fun EnsiScreen(ensiState: EnsiState) {
@@ -43,6 +44,6 @@ private fun ListControls(ensiState: EnsiState) {
 @Composable
 private fun WordsList(ensiState: EnsiState) {
     ensiState.words.value.forEach { word ->
-        Text(word)
+        ManagerWord(word)
     }
 }
