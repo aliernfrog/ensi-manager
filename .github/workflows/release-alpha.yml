@@ -1,7 +1,7 @@
 name: Release in Releases
 
 on:
-  push: [ "main" ]
+  push:
 
 jobs:
   build:
