@@ -2,7 +2,6 @@ package com.aliernfrog.ensimanager.state
 
 import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.EnsiScreenType
 import com.aliernfrog.ensimanager.data.ApiRoute
@@ -18,8 +17,8 @@ class EnsiState(_config: SharedPreferences) {
     val type = mutableStateOf(EnsiScreenType.WORDS)
     val filter = mutableStateOf("")
 
-    var words = mutableStateOf(listOf<String>())
-    var verbs = mutableStateOf(listOf<String>())
+    private var words = mutableStateOf(listOf<String>())
+    private var verbs = mutableStateOf(listOf<String>())
 
     private var authorization: String? = null
     private var getWordsRoute: ApiRoute? = null
@@ -31,12 +30,36 @@ class EnsiState(_config: SharedPreferences) {
         getVerbsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_VERBS_GET, " ## ")!!)
     }
 
-    suspend fun getWords() {
+    fun getCurrentList(): List<String> {
+        return when(type.value) {
+            EnsiScreenType.VERBS -> verbs.value
+            else -> words.value
+        }
+    }
+
+    suspend fun fetchCurrentList() {
+        when(type.value) {
+            EnsiScreenType.WORDS -> fetchWords()
+            EnsiScreenType.VERBS -> fetchVerbs()
+        }
+    }
+
+    private suspend fun fetchWords() {
         if (getWordsRoute == null) return
         withContext(Dispatchers.IO) {
             val response = WebUtil.sendRequest(getWordsRoute!!.url, getWordsRoute!!.method, authorization)
             if (response.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
                 words.value = GeneralUtil.jsonArrayToList(JSONArray(response.responseBody))
+            }
+        }
+    }
+
+    private suspend fun fetchVerbs() {
+        if (getVerbsRoute == null) return
+        withContext(Dispatchers.IO) {
+            val response = WebUtil.sendRequest(getVerbsRoute!!.url, getVerbsRoute!!.method, authorization)
+            if (response.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
+                verbs.value = GeneralUtil.jsonArrayToList(JSONArray(response.responseBody))
             }
         }
     }
