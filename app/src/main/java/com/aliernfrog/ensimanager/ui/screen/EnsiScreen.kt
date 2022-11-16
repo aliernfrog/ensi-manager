@@ -51,8 +51,8 @@ private fun ListControls(ensiState: EnsiState) {
 @Composable
 private fun WordsList(ensiState: EnsiState) {
     AnimatedContent(ensiState.getCurrentList()) {
-        it.forEach { word ->
-            ManagerWord(word)
+        Column {
+            it.forEach { ManagerWord(it) }
         }
     }
 }
