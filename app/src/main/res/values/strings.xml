@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Ensi Manager</string>
+    <string name="action_back">Back</string>
+    <string name="screen_ensi">Ensi</string>
+    <string name="screen_options">Options</string>
+    <string name="ensi_words">Words</string>
+    <string name="ensi_verbs">Verbs</string>
+    <string name="ensi_filter">Filter</string>
+    <string name="options_theme">Theme</string>
+    <string name="options_theme_system">Follow system</string>
+    <string name="options_theme_light">Light</string>
+    <string name="options_theme_dark">Dark</string>
+    <string name="options_theme_materialYou">Material You</string>
+    <string name="options_theme_materialYou_description">Theme based on colors of your device</string>
+    <string name="options_api">API</string>
+</resources>
