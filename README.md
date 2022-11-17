@@ -4,7 +4,7 @@ An app for interacting with Ensi bot
 ## ℹ️ Information
 - This app can do HTTP requests to specific APIs and display responses in a readable way
 - Mostly designed for Ensi bot
-- This app is does not include any default API configuration
+- This app does not include any default API configuration
 
 ## 🔗 API configuration
 - API configuration can be done in app settings
