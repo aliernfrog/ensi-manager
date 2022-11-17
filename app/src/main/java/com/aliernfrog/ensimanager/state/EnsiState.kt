@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ConfigKey
+import com.aliernfrog.ensimanager.EnsiFetchingState
 import com.aliernfrog.ensimanager.EnsiScreenType
 import com.aliernfrog.ensimanager.data.ApiRoute
 import com.aliernfrog.ensimanager.util.GeneralUtil
@@ -18,6 +19,7 @@ class EnsiState(_config: SharedPreferences, _lazyListState: LazyListState) {
 
     val type = mutableStateOf(EnsiScreenType.WORDS)
     val filter = mutableStateOf("")
+    val fetchingState = mutableStateOf(EnsiFetchingState.FETCHING)
 
     private var words = mutableStateOf(listOf<String>())
     private var verbs = mutableStateOf(listOf<String>())
@@ -40,10 +42,12 @@ class EnsiState(_config: SharedPreferences, _lazyListState: LazyListState) {
     }
 
     suspend fun fetchCurrentList() {
+        fetchingState.value = EnsiFetchingState.FETCHING
         when(type.value) {
             EnsiScreenType.WORDS -> fetchWords()
             EnsiScreenType.VERBS -> fetchVerbs()
         }
+        fetchingState.value = EnsiFetchingState.DONE
     }
 
     private suspend fun fetchWords() {

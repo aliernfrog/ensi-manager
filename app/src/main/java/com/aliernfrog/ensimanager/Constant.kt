@@ -52,3 +52,8 @@ object EnsiScreenType {
     const val WORDS = 0
     const val VERBS = 1
 }
+
+object EnsiFetchingState {
+    const val FETCHING = 0
+    const val DONE = 1
+}
