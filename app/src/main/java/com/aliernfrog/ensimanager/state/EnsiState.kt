@@ -36,7 +36,7 @@ class EnsiState(_config: SharedPreferences, _lazyListState: LazyListState) {
         return when(type.value) {
             EnsiScreenType.VERBS -> verbs.value
             else -> words.value
-        }
+        }.filter { it.lowercase().contains(filter.value.lowercase()) }
     }
 
     suspend fun fetchCurrentList() {
