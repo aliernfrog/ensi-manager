@@ -25,10 +25,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EnsiScreen(ensiState: EnsiState) {
+    val context = LocalContext.current
     WordsList(ensiState)
     LaunchedEffect(Unit) {
         ensiState.updateApiProperties()
-        ensiState.fetchCurrentList()
+        ensiState.fetchCurrentList(context)
     }
 }
 
@@ -58,7 +59,7 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
         initialIndex = ensiState.type.value,
     ) {
         ensiState.type.value = it
-        scope.launch { ensiState.fetchCurrentList() }
+        scope.launch { ensiState.fetchCurrentList(context) }
     }
     ManagerTextField(
         value = ensiState.filter.value,

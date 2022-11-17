@@ -9,6 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -21,10 +22,13 @@ import com.aliernfrog.ensimanager.ui.composable.ManagerBaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.EnsiScreen
 import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
+import com.aliernfrog.toptoast.TopToastBase
+import com.aliernfrog.toptoast.TopToastManager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
+    private lateinit var topToastManager: TopToastManager
     private lateinit var optionsState: OptionsState
     private lateinit var ensiState: EnsiState
 
@@ -32,12 +36,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
+        topToastManager = TopToastManager()
         optionsState = OptionsState(config, ScrollState(0))
-        ensiState = EnsiState(config, LazyListState())
+        ensiState = EnsiState(config, topToastManager, LazyListState())
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
-                BaseScaffold()
+                TopToastBase(backgroundColor = MaterialTheme.colors.background, topToastManager) {
+                    BaseScaffold()
+                }
                 SystemBars(darkTheme)
             }
         }
