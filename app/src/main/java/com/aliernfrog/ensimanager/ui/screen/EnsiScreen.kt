@@ -1,18 +1,21 @@
 package com.aliernfrog.ensimanager.ui.screen
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +24,7 @@ import com.aliernfrog.ensimanager.EnsiFetchingState
 import com.aliernfrog.ensimanager.EnsiScreenType
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.EnsiState
+import com.aliernfrog.ensimanager.ui.composable.ManagerFAB
 import com.aliernfrog.ensimanager.ui.composable.ManagerSegmentedButtons
 import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
 import com.aliernfrog.ensimanager.ui.composable.ManagerWord
@@ -37,6 +41,7 @@ fun EnsiScreen(ensiState: EnsiState) {
     })
     Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
         WordsList(ensiState)
+        JumpButtons(ensiState, Modifier.align(Alignment.TopEnd), Modifier.align(Alignment.BottomEnd))
         PullRefreshIndicator(
             refreshing = refreshing,
             state = pullRefreshState,
@@ -90,4 +95,25 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
         }).replace("%", wordsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@SuppressLint("ModifierParameter")
+@Composable
+private fun JumpButtons(ensiState: EnsiState, topButtonModifier: Modifier, bottomButtonModifier: Modifier) {
+    val scope = rememberCoroutineScope()
+    val firstVisibleItemIndex = remember { derivedStateOf { ensiState.lazyListState.firstVisibleItemIndex } }
+    AnimatedVisibility(
+        visible = firstVisibleItemIndex.value > 0,
+        modifier = topButtonModifier,
+        enter = scaleIn() + fadeIn(),
+        exit = scaleOut() + fadeOut()
+    ) {
+        ManagerFAB(icon = Icons.Outlined.KeyboardArrowUp) {
+            scope.launch { ensiState.lazyListState.animateScrollToItem(0) }
+        }
+    }
+    ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown, modifier = bottomButtonModifier) {
+        scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
+    }
 }
