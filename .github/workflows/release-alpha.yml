@@ -2,6 +2,7 @@ name: Release as alpha
 
 on:
   push:
+    branches: [ "main" ]
 
 jobs:
   build:
