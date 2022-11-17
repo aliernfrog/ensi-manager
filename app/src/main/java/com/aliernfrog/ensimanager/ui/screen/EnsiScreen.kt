@@ -1,7 +1,6 @@
 package com.aliernfrog.ensimanager.ui.screen
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,20 +26,18 @@ fun EnsiScreen(ensiState: EnsiState) {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WordsList(ensiState: EnsiState) {
-    AnimatedContent(ensiState.getCurrentList()) { list ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = ensiState.lazyListState
-        ) {
-            item {
-                ListControls(ensiState)
-            }
-            items(list) {
-                ManagerWord(it)
-            }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = ensiState.lazyListState
+    ) {
+        item {
+            ListControls(ensiState)
+        }
+        items(ensiState.getCurrentList()) {
+            ManagerWord(it, Modifier.animateItemPlacement())
         }
     }
 }

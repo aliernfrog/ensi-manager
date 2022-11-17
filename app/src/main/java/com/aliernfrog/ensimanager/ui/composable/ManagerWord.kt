@@ -21,10 +21,10 @@ import com.aliernfrog.ensimanager.ManagerComposableShape
 import com.aliernfrog.ensimanager.R
 
 @Composable
-fun ManagerWord(word: String) {
+fun ManagerWord(word: String, modifier: Modifier) {
     val context = LocalContext.current
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .padding(8.dp)
             .clip(ManagerComposableShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
