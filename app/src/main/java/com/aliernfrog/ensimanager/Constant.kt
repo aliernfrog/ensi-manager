@@ -14,8 +14,8 @@ val ManagerComposableShape = RoundedCornerShape(ManagerRoundessSize)
 object ApiRoutes {
     val routes = listOf(
         ApiRouteOption("Authorization", "Will be used in headers.authorization", ConfigKey.KEY_API_AUTHORIZATION),
-        ApiRouteOption("Get words", "Should return an array of strings with status code 200", ConfigKey.KEY_API_WORDS_GET),
-        ApiRouteOption("Get verbs", "Should return an array of strings with status code 200", ConfigKey.KEY_API_VERBS_GET)
+        ApiRouteOption("Get words", "Should return an array of strings", ConfigKey.KEY_API_WORDS_GET),
+        ApiRouteOption("Get verbs", "Should return an array of strings", ConfigKey.KEY_API_VERBS_GET)
     )
 }
 
