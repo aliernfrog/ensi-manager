@@ -1,11 +1,14 @@
 package com.aliernfrog.ensimanager.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,10 +26,24 @@ import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
 import com.aliernfrog.ensimanager.ui.composable.ManagerWord
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EnsiScreen(ensiState: EnsiState) {
     val context = LocalContext.current
-    WordsList(ensiState)
+    val scope = rememberCoroutineScope()
+    val refreshing = ensiState.fetchingState.value == EnsiFetchingState.FETCHING
+    val pullRefreshState = rememberPullRefreshState(refreshing, {
+        scope.launch { ensiState.fetchCurrentList(context) }
+    })
+    Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
+        WordsList(ensiState)
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = pullRefreshState,
+            backgroundColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    }
     LaunchedEffect(Unit) {
         ensiState.updateApiProperties()
         ensiState.fetchCurrentList(context)
@@ -73,9 +90,4 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
         }).replace("%", wordsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
-    AnimatedVisibility(ensiState.fetchingState.value == EnsiFetchingState.FETCHING, Modifier.fillMaxWidth()) {
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator()
-        }
-    }
 }
