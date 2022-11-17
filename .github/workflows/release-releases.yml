@@ -10,17 +10,16 @@ on:
       tag:
         description: 'Tag name'
         required: true
-        default: 'alpha'
         type: string
       draft:
         description: 'Draft release'
         required: true
-        default: 'false'
+        default: false
         type: boolean
       prerelease:
         description: 'Pre-release'
         required: true
-        default: 'true'
+        default: false
         type: boolean
 
 jobs:
@@ -52,8 +51,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          draft: ${{ github.event.inputs.draft }}
-          prerelease: ${{ github.event.inputs.prerelease }}
-          automatic_release_tag: ${{ github.event.inputs.tag }}
+          draft: ${{ github.event.inputs.draft || false }}
+          prerelease: ${{ github.event.inputs.prerelease || true }}
+          automatic_release_tag: ${{ github.event.inputs.tag || 'alpha' }}
           files: |
             ensi-manager.apk
