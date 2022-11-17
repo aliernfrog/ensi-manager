@@ -3,6 +3,7 @@ package com.aliernfrog.ensimanager.ui.screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,7 +24,7 @@ import com.aliernfrog.ensimanager.ui.theme.supportsMaterialYou
 
 @Composable
 fun OptionsScreen(optionsState: OptionsState) {
-    Column {
+    Column(Modifier.verticalScroll(optionsState.scrollState)) {
         ThemeOptions(optionsState)
         ApiOptions(optionsState)
     }

@@ -4,11 +4,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -32,8 +32,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        optionsState = OptionsState(config)
-        ensiState = EnsiState(config)
+        optionsState = OptionsState(config, ScrollState(0))
+        ensiState = EnsiState(config, LazyListState())
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
@@ -46,12 +46,11 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun BaseScaffold() {
         val navController = rememberNavController()
-        val scrollState = rememberScrollState()
-        ManagerBaseScaffold(navController, scrollState) {
+        ManagerBaseScaffold(navController) {
             NavHost(
                 navController = navController,
                 startDestination = NavRoutes.ENSI,
-                modifier = Modifier.fillMaxSize().padding(it).verticalScroll(scrollState)
+                modifier = Modifier.fillMaxSize().padding(it)
             ) {
                 composable(route = NavRoutes.ENSI) {
                     EnsiScreen(ensiState)

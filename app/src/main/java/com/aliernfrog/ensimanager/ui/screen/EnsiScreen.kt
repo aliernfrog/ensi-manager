@@ -2,8 +2,9 @@ package com.aliernfrog.ensimanager.ui.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,13 +20,28 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EnsiScreen(ensiState: EnsiState) {
-    Column(Modifier.fillMaxHeight()) {
-        ListControls(ensiState)
-        WordsList(ensiState)
-    }
+    WordsList(ensiState)
     LaunchedEffect(Unit) {
         ensiState.updateApiProperties()
         ensiState.fetchCurrentList()
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun WordsList(ensiState: EnsiState) {
+    AnimatedContent(ensiState.getCurrentList()) { list ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = ensiState.lazyListState
+        ) {
+            item {
+                ListControls(ensiState)
+            }
+            items(list) {
+                ManagerWord(it)
+            }
+        }
     }
 }
 
@@ -45,14 +61,4 @@ private fun ListControls(ensiState: EnsiState) {
         onValueChange = { ensiState.filter.value = it },
         label = { Text(context.getString(R.string.ensi_filter)) }
     )
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun WordsList(ensiState: EnsiState) {
-    AnimatedContent(ensiState.getCurrentList()) {
-        Column {
-            it.forEach { ManagerWord(it) }
-        }
-    }
 }

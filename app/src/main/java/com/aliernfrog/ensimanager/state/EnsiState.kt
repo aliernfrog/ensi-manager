@@ -1,6 +1,7 @@
 package com.aliernfrog.ensimanager.state
 
 import android.content.SharedPreferences
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.EnsiScreenType
@@ -11,8 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
-class EnsiState(_config: SharedPreferences) {
+class EnsiState(_config: SharedPreferences, _lazyListState: LazyListState) {
     private val config = _config
+    val lazyListState = _lazyListState
 
     val type = mutableStateOf(EnsiScreenType.WORDS)
     val filter = mutableStateOf("")
