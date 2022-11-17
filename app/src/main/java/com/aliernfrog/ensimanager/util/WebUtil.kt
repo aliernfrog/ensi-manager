@@ -1,8 +1,6 @@
 package com.aliernfrog.ensimanager.util
 
 import com.aliernfrog.ensimanager.data.ApiResponse
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -23,13 +21,9 @@ class WebUtil {
 
         private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {
-                var response = ""
-                val bufferedReader = BufferedReader(InputStreamReader(connection.inputStream, "utf-8"))
-                bufferedReader.lines().forEach {
-                    response += "\n$it"
+                connection.inputStream.bufferedReader().readText().ifBlank {
+                    connection.errorStream.bufferedReader().readText()
                 }
-                bufferedReader.close()
-                response.removePrefix("\n")
             } catch (_: Exception) {
                 ""
             }
