@@ -9,7 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
-                TopToastBase(backgroundColor = MaterialTheme.colors.background, topToastManager) {
+                TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, topToastManager) {
                     BaseScaffold()
                 }
                 SystemBars(darkTheme)
