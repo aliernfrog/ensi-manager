@@ -1,6 +1,10 @@
 name: Release in Releases
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
       tag:
