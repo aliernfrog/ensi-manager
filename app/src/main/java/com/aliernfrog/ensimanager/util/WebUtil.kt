@@ -1,6 +1,5 @@
 package com.aliernfrog.ensimanager.util
 
-import android.util.Log
 import com.aliernfrog.ensimanager.data.ApiResponse
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -16,7 +15,6 @@ class WebUtil {
                 connection.requestMethod = method
                 if (authorization != null) connection.setRequestProperty("Authorization", authorization)
                 val response = getResponseFromConnection(connection)
-                Log.d("TAG", "sendRequest: ${connection.responseCode} $response")
                 ApiResponse(connection.responseCode, response)
             } catch (_: Exception) {
                 null
