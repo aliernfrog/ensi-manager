@@ -10,6 +10,7 @@ on:
       tag:
         description: 'Tag name'
         required: true
+        default: 'alpha'
         type: string
       draft:
         description: 'Draft release'
@@ -19,7 +20,7 @@ on:
       prerelease:
         description: 'Pre-release'
         required: true
-        default: false
+        default: true
         type: boolean
 
 jobs:
