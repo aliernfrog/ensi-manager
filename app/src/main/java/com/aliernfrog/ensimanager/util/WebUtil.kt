@@ -21,10 +21,12 @@ class WebUtil {
 
         private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {
-                connection.inputStream.bufferedReader().readText().ifBlank {
+                try {
+                    connection.inputStream.bufferedReader().readText()
+                } catch (_: Exception) {
                     connection.errorStream.bufferedReader().readText()
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 ""
             }
         }
