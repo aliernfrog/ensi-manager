@@ -8,6 +8,7 @@ import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.EnsiFetchingState
 import com.aliernfrog.ensimanager.EnsiScreenType
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.data.ApiResponse
 import com.aliernfrog.ensimanager.data.ApiRoute
 import com.aliernfrog.ensimanager.util.GeneralUtil
 import com.aliernfrog.ensimanager.util.WebUtil
@@ -59,9 +60,8 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
         if (getWordsRoute == null) return toastInvalidRoute(context)
         if (!getWordsRoute!!.url.contains("://")) return toastInvalidRoute(context)
         withContext(Dispatchers.IO) {
-            val response = WebUtil.sendRequest(getWordsRoute!!.url, getWordsRoute!!.method, authorization)
-            if (response?.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
-                words.value = GeneralUtil.jsonArrayToList(JSONArray(response.responseBody))
+            handleJsonResponse(WebUtil.sendRequest(getWordsRoute!!.url, getWordsRoute!!.method, authorization), context) {
+                words.value = it
             }
         }
     }
@@ -70,14 +70,27 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
         if (getVerbsRoute == null) return toastInvalidRoute(context)
         if (!getVerbsRoute!!.url.contains("://")) return toastInvalidRoute(context)
         withContext(Dispatchers.IO) {
-            val response = WebUtil.sendRequest(getVerbsRoute!!.url, getVerbsRoute!!.method, authorization)
-            if (response?.responseBody != null && GeneralUtil.isJsonArray(response.responseBody)) {
-                verbs.value = GeneralUtil.jsonArrayToList(JSONArray(response.responseBody))
+            handleJsonResponse(WebUtil.sendRequest(getVerbsRoute!!.url, getVerbsRoute!!.method, authorization), context) {
+                verbs.value = it
             }
         }
     }
 
+    private fun handleJsonResponse(response: ApiResponse?, context: Context, onSuccess: (List<String>) -> Unit) {
+        if (response?.responseBody.isNullOrBlank()) toastNoBody(context, response?.statusCode)
+        else if (!GeneralUtil.isJsonArray(response!!.responseBody!!)) toastError("[${response.statusCode}] ${response.responseBody}")
+        else onSuccess(GeneralUtil.jsonArrayToList(JSONArray(response.responseBody)))
+    }
+
     private fun toastInvalidRoute(context: Context) {
-        topToastManager.showToast(context.getString(R.string.ensi_fetch_invalidRoute), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
+        toastError(context.getString(R.string.ensi_fetch_invalidRoute))
+    }
+
+    private fun toastNoBody(context: Context, statusCode: Int?) {
+        toastError(context.getString(R.string.ensi_fetch_noBody).replace("%STATUS%", statusCode.toString()))
+    }
+
+    private fun toastError(text: String) {
+        topToastManager.showToast(text, iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
     }
 }
