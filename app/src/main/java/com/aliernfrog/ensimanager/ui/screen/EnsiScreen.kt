@@ -5,6 +5,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -103,6 +104,7 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
 private fun JumpButtons(ensiState: EnsiState, topButtonModifier: Modifier, bottomButtonModifier: Modifier) {
     val scope = rememberCoroutineScope()
     val firstVisibleItemIndex = remember { derivedStateOf { ensiState.lazyListState.firstVisibleItemIndex } }
+    val layoutInfo = remember { derivedStateOf { ensiState.lazyListState.layoutInfo } }
     AnimatedVisibility(
         visible = firstVisibleItemIndex.value > 0,
         modifier = topButtonModifier,
@@ -113,7 +115,19 @@ private fun JumpButtons(ensiState: EnsiState, topButtonModifier: Modifier, botto
             scope.launch { ensiState.lazyListState.animateScrollToItem(0) }
         }
     }
-    ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown, modifier = bottomButtonModifier) {
-        scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
+    AnimatedVisibility(
+        visible = isAtBottom(layoutInfo.value),
+        modifier = bottomButtonModifier,
+        enter = scaleIn() + fadeIn(),
+        exit = scaleOut() + fadeOut()
+    ) {
+        ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown) {
+            scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
+        }
     }
+}
+
+private fun isAtBottom(layoutInfo: LazyListLayoutInfo): Boolean {
+    val lastItem = layoutInfo.visibleItemsInfo.lastOrNull() ?: return true
+    return lastItem.index < layoutInfo.totalItemsCount-1
 }
