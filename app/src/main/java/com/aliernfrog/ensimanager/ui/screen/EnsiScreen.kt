@@ -143,7 +143,7 @@ private fun FloatingButtons(
                 scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
             }
         }
-        ManagerFAB(icon = Icons.Outlined.Add, modifier = addWordButtonModifier) {
+        ManagerFAB(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
             scope.launch { ensiState.addWordSheetState.show() }
         }
     }
