@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -42,7 +43,13 @@ fun EnsiScreen(ensiState: EnsiState) {
     })
     Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
         WordsList(ensiState)
-        JumpButtons(ensiState, Modifier.align(Alignment.TopEnd), Modifier.align(Alignment.BottomEnd))
+        FloatingButtons(
+            ensiState = ensiState,
+            scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
+            bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
+            scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
+            addWordButtonModifier = Modifier.align(Alignment.BottomEnd)
+        )
         PullRefreshIndicator(
             refreshing = refreshing,
             state = pullRefreshState,
@@ -60,6 +67,7 @@ fun EnsiScreen(ensiState: EnsiState) {
 @Composable
 private fun WordsList(ensiState: EnsiState) {
     val list = ensiState.getCurrentList()
+    val scope = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = ensiState.lazyListState
@@ -68,7 +76,10 @@ private fun WordsList(ensiState: EnsiState) {
             ListControls(ensiState, list.size)
         }
         items(list) {
-            ManagerWord(it, Modifier.animateItemPlacement())
+            ManagerWord(it, Modifier.animateItemPlacement()) { scope.launch { ensiState.showWordSheet(it) } }
+        }
+        item {
+            Spacer(Modifier.height(70.dp))
         }
     }
 }
@@ -98,16 +109,22 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @SuppressLint("ModifierParameter")
 @Composable
-private fun JumpButtons(ensiState: EnsiState, topButtonModifier: Modifier, bottomButtonModifier: Modifier) {
+private fun FloatingButtons(
+    ensiState: EnsiState,
+    scrollTopButtonModifier: Modifier,
+    bottomButtonsColumnModifier: Modifier,
+    scrollBottomButtonModifier: Modifier,
+    addWordButtonModifier: Modifier
+) {
     val scope = rememberCoroutineScope()
     val firstVisibleItemIndex = remember { derivedStateOf { ensiState.lazyListState.firstVisibleItemIndex } }
     val layoutInfo = remember { derivedStateOf { ensiState.lazyListState.layoutInfo } }
     AnimatedVisibility(
         visible = firstVisibleItemIndex.value > 0,
-        modifier = topButtonModifier,
+        modifier = scrollTopButtonModifier,
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
@@ -115,14 +132,19 @@ private fun JumpButtons(ensiState: EnsiState, topButtonModifier: Modifier, botto
             scope.launch { ensiState.lazyListState.animateScrollToItem(0) }
         }
     }
-    AnimatedVisibility(
-        visible = isAtBottom(layoutInfo.value),
-        modifier = bottomButtonModifier,
-        enter = scaleIn() + fadeIn(),
-        exit = scaleOut() + fadeOut()
-    ) {
-        ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown) {
-            scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
+    Column(bottomButtonsColumnModifier) {
+        AnimatedVisibility(
+            visible = isAtBottom(layoutInfo.value),
+            modifier = scrollBottomButtonModifier,
+            enter = scaleIn() + fadeIn(),
+            exit = scaleOut() + fadeOut()
+        ) {
+            ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown) {
+                scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
+            }
+        }
+        ManagerFAB(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
+            scope.launch { ensiState.addWordSheetState.show() }
         }
     }
 }
