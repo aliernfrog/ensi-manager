@@ -5,7 +5,8 @@ import org.json.JSONArray
 
 class GeneralUtil {
     companion object {
-        fun getApiRouteFromString(string: String): ApiRoute? {
+        fun getApiRouteFromString(string: String?): ApiRoute? {
+            if (string == null) return null
             return try {
                 val split = string.split(" ## ")
                 ApiRoute(split[0].uppercase(), split[1])
