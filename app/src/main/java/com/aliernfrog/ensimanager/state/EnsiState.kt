@@ -3,6 +3,9 @@ package com.aliernfrog.ensimanager.state
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.EnsiFetchingState
@@ -18,14 +21,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
+@OptIn(ExperimentalMaterialApi::class)
 class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
     private val config = _config
     private val topToastManager = _topToastManager
+    val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val lazyListState = _lazyListState
 
     val type = mutableStateOf(EnsiScreenType.WORDS)
     val filter = mutableStateOf("")
     val fetchingState = mutableStateOf(EnsiFetchingState.FETCHING)
+    val lastChosenWord = mutableStateOf("")
 
     private var words = mutableStateOf(listOf<String>())
     private var verbs = mutableStateOf(listOf<String>())
@@ -54,6 +60,11 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
             EnsiScreenType.VERBS -> fetchVerbs(context)
         }
         fetchingState.value = EnsiFetchingState.DONE
+    }
+
+    suspend fun showWordSheet(word: String) {
+        lastChosenWord.value = word
+        wordSheetState.show()
     }
 
     private suspend fun fetchWords(context: Context) {

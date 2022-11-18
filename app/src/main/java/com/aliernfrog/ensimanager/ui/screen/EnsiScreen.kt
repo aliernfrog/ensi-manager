@@ -60,6 +60,7 @@ fun EnsiScreen(ensiState: EnsiState) {
 @Composable
 private fun WordsList(ensiState: EnsiState) {
     val list = ensiState.getCurrentList()
+    val scope = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = ensiState.lazyListState
@@ -68,7 +69,7 @@ private fun WordsList(ensiState: EnsiState) {
             ListControls(ensiState, list.size)
         }
         items(list) {
-            ManagerWord(it, Modifier.animateItemPlacement())
+            ManagerWord(it, Modifier.animateItemPlacement()) { scope.launch { ensiState.showWordSheet(it) } }
         }
     }
 }

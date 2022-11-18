@@ -1,10 +1,20 @@
 package com.aliernfrog.ensimanager.util
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import com.aliernfrog.ensimanager.data.ApiRoute
 import org.json.JSONArray
 
 class GeneralUtil {
     companion object {
+        @Composable
+        fun getNavigationBarHeight(): Dp {
+            return WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        }
+
         fun getApiRouteFromString(string: String): ApiRoute? {
             return try {
                 val split = string.split(" ## ")
