@@ -26,11 +26,13 @@ import org.json.JSONObject
 class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
     private val config = _config
     private val topToastManager = _topToastManager
+    val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
     val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val lazyListState = _lazyListState
 
     val type = mutableStateOf(EnsiScreenType.WORDS)
     val filter = mutableStateOf("")
+    val addWordInput = mutableStateOf("")
     val fetchingState = mutableStateOf(EnsiFetchingState.FETCHING)
 
     val chosenWord = mutableStateOf("")
@@ -41,15 +43,19 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
 
     private var authorization: String? = null
     private var getWordsRoute: ApiRoute? = null
+    private var addWordsRoute: ApiRoute? = null
     private var deleteWordsRoute: ApiRoute? = null
     private var getVerbsRoute: ApiRoute? = null
+    private var addVerbsRoute: ApiRoute? = null
     private var deleteVerbsRoute: ApiRoute? = null
 
     fun updateApiProperties() {
         authorization = config.getString(ConfigKey.KEY_API_AUTHORIZATION, null)
         getWordsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_WORDS_GET, " ## ")!!)
+        addWordsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_WORDS_ADD, " ## ")!!)
         deleteWordsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_WORDS_DELETE, " ## ")!!)
         getVerbsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_VERBS_GET, " ## ")!!)
+        addVerbsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_VERBS_ADD, " ## ")!!)
         deleteVerbsRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_VERBS_DELETE, " ## ")!!)
     }
 
@@ -77,6 +83,14 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
         fetchCurrentList(context)
     }
 
+    suspend fun addWordFromInput(context: Context) {
+        when(type.value) {
+            EnsiScreenType.WORDS -> addWord(addWordInput.value, context)
+            EnsiScreenType.VERBS -> addVerb(addWordInput.value, context)
+        }
+        fetchCurrentList(context)
+    }
+
     suspend fun showWordSheet(word: String) {
         chosenWord.value = word
         chosenWordType.value = type.value
@@ -89,6 +103,14 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
             handleJsonResponse(WebUtil.sendRequest(getWordsRoute!!.url, getWordsRoute!!.method, authorization), context) {
                 words.value = it
             }
+        }
+    }
+
+    private suspend fun addWord(word: String, context: Context) {
+        if (routeInvalid(addWordsRoute)) return toastInvalidRoute(context)
+        val json = JSONObject().put("word", word)
+        withContext(Dispatchers.IO) {
+            handleSuccessResponse(WebUtil.sendRequest(addWordsRoute!!.url, addWordsRoute!!.method, authorization, json), context)
         }
     }
 
@@ -106,6 +128,14 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
             handleJsonResponse(WebUtil.sendRequest(getVerbsRoute!!.url, getVerbsRoute!!.method, authorization), context) {
                 verbs.value = it
             }
+        }
+    }
+
+    private suspend fun addVerb(verb: String, context: Context) {
+        if (routeInvalid(addVerbsRoute)) return toastInvalidRoute(context)
+        val json = JSONObject().put("verb", verb)
+        withContext(Dispatchers.IO) {
+            handleSuccessResponse(WebUtil.sendRequest(addVerbsRoute!!.url, addVerbsRoute!!.method, authorization, json), context)
         }
     }
 

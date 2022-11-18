@@ -5,6 +5,8 @@
     <string name="screen_options">Options</string>
     <string name="ensi_words">Words</string>
     <string name="ensi_verbs">Verbs</string>
+    <string name="ensi_words_add">Add word</string>
+    <string name="ensi_verbs_add">Add verb</string>
     <string name="ensi_filter">Filter</string>
     <string name="ensi_words_count">% words shown</string>
     <string name="ensi_verbs_count">% verbs shown</string>

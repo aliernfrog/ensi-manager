@@ -22,6 +22,7 @@ import com.aliernfrog.ensimanager.state.OptionsState
 import com.aliernfrog.ensimanager.ui.composable.ManagerBaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.EnsiScreen
 import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
+import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.toptoast.TopToastBase
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
                 TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, topToastManager) {
                     BaseScaffold()
+                    AddWordSheet(ensiState, state = ensiState.addWordSheetState)
                     WordSheet(ensiState, state = ensiState.wordSheetState)
                 }
                 SystemBars(darkTheme)
