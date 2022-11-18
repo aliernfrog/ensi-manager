@@ -15,7 +15,9 @@ object ApiRoutes {
     val routes = listOf(
         ApiRouteOption("Authorization", "Will be used in headers.authorization", ConfigKey.KEY_API_AUTHORIZATION),
         ApiRouteOption("Get words", "Should return an array of strings", ConfigKey.KEY_API_WORDS_GET),
-        ApiRouteOption("Get verbs", "Should return an array of strings", ConfigKey.KEY_API_VERBS_GET)
+        ApiRouteOption("Delete words", "Should delete the word specified in body.word", ConfigKey.KEY_API_WORDS_DELETE),
+        ApiRouteOption("Get verbs", "Should return an array of strings", ConfigKey.KEY_API_VERBS_GET),
+        ApiRouteOption("Delete verbs", "Should delete the word specified in body.verb", ConfigKey.KEY_API_VERBS_DELETE)
     )
 }
 
@@ -25,7 +27,9 @@ object ConfigKey {
     const val KEY_APP_MATERIAL_YOU = "materialYou"
     const val KEY_API_AUTHORIZATION = "apiAuthorization"
     const val KEY_API_WORDS_GET = "apiWordsGet"
+    const val KEY_API_WORDS_DELETE = "apiWordsDelete"
     const val KEY_API_VERBS_GET = "apiVerbsGet"
+    const val KEY_API_VERBS_DELETE = "apiVerbsDelete"
 }
 
 object NavRoutes {
