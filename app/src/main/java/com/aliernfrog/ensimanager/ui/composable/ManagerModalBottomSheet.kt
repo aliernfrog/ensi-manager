@@ -39,7 +39,7 @@ fun ManagerModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetS
                     .align(Alignment.CenterHorizontally)
                 )
                 Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = ManagerRoundessSize, topEnd = ManagerRoundessSize)).verticalScroll(sheetScrollState)) {
-                    if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally))
+                    if (title != null) Text(text = title, color = MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
                 }
             }
