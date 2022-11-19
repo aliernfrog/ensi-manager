@@ -57,7 +57,7 @@ private fun ApiOptions(optionsState: OptionsState) {
     OptionsColumn(title = context.getString(R.string.options_api), bottomDivider = false) {
         ApiRoutes.routes.forEach { route ->
             val urlEdit = remember { mutableStateOf(optionsState.config.getString(route.prefKey, "")!!) }
-            ManagerRouteOption(route, urlEdit.value) {
+            ManagerRouteOption(route, urlEdit.value, Modifier.padding(horizontal = 8.dp)) {
                 urlEdit.value = it
                 optionsState.config.edit().putString(route.prefKey, it).apply()
             }
