@@ -8,8 +8,8 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ConfigKey
-import com.aliernfrog.ensimanager.EnsiFetchingState
-import com.aliernfrog.ensimanager.EnsiScreenType
+import com.aliernfrog.ensimanager.FetchingState
+import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.ApiResponse
 import com.aliernfrog.ensimanager.data.ApiRoute
@@ -23,17 +23,17 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterialApi::class)
-class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
+class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
     private val config = _config
     private val topToastManager = _topToastManager
     val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
     val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val lazyListState = _lazyListState
 
-    val type = mutableStateOf(EnsiScreenType.WORDS)
+    val type = mutableStateOf(ChatScreenType.WORDS)
     val filter = mutableStateOf("")
     val addWordInput = mutableStateOf("")
-    val fetchingState = mutableStateOf(EnsiFetchingState.FETCHING)
+    val fetchingState = mutableStateOf(FetchingState.FETCHING)
 
     val chosenWord = mutableStateOf("")
     val chosenWordType = mutableStateOf(0)
@@ -61,32 +61,32 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
 
     fun getCurrentList(): List<String> {
         return when(type.value) {
-            EnsiScreenType.VERBS -> verbs.value
+            ChatScreenType.VERBS -> verbs.value
             else -> words.value
         }.filter { it.lowercase().contains(filter.value.lowercase()) }
     }
 
     suspend fun fetchCurrentList(context: Context) {
-        fetchingState.value = EnsiFetchingState.FETCHING
+        fetchingState.value = FetchingState.FETCHING
         when(type.value) {
-            EnsiScreenType.WORDS -> fetchWords(context)
-            EnsiScreenType.VERBS -> fetchVerbs(context)
+            ChatScreenType.WORDS -> fetchWords(context)
+            ChatScreenType.VERBS -> fetchVerbs(context)
         }
-        fetchingState.value = EnsiFetchingState.DONE
+        fetchingState.value = FetchingState.DONE
     }
 
     suspend fun deleteChosenWord(context: Context) {
         when(chosenWordType.value) {
-            EnsiScreenType.WORDS -> deleteWord(chosenWord.value, context)
-            EnsiScreenType.VERBS -> deleteVerb(chosenWord.value, context)
+            ChatScreenType.WORDS -> deleteWord(chosenWord.value, context)
+            ChatScreenType.VERBS -> deleteVerb(chosenWord.value, context)
         }
         fetchCurrentList(context)
     }
 
     suspend fun addWordFromInput(context: Context) {
         when(type.value) {
-            EnsiScreenType.WORDS -> addWord(addWordInput.value, context)
-            EnsiScreenType.VERBS -> addVerb(addWordInput.value, context)
+            ChatScreenType.WORDS -> addWord(addWordInput.value, context)
+            ChatScreenType.VERBS -> addVerb(addWordInput.value, context)
         }
         fetchCurrentList(context)
     }
@@ -169,11 +169,11 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
     }
 
     private fun toastInvalidRoute(context: Context) {
-        toastError(context.getString(R.string.ensi_fetch_invalidRoute))
+        toastError(context.getString(R.string.error_invalidRoute))
     }
 
     private fun toastNoBody(context: Context, statusCode: Int?) {
-        toastError(context.getString(R.string.ensi_fetch_noBody).replace("%STATUS%", statusCode.toString()))
+        toastError(context.getString(R.string.error_noBody).replace("%STATUS%", statusCode.toString()))
     }
 
     private fun toastError(text: String) {
