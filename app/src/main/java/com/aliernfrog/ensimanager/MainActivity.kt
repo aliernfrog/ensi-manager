@@ -17,10 +17,10 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aliernfrog.ensimanager.state.EnsiState
+import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.OptionsState
 import com.aliernfrog.ensimanager.ui.composable.ManagerBaseScaffold
-import com.aliernfrog.ensimanager.ui.screen.EnsiScreen
+import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
     private lateinit var topToastManager: TopToastManager
     private lateinit var optionsState: OptionsState
-    private lateinit var ensiState: EnsiState
+    private lateinit var chatState: ChatState
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,14 +42,14 @@ class MainActivity : ComponentActivity() {
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastManager = TopToastManager()
         optionsState = OptionsState(config, ScrollState(0))
-        ensiState = EnsiState(config, topToastManager, LazyListState())
+        chatState = ChatState(config, topToastManager, LazyListState())
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
                 TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, topToastManager) {
                     BaseScaffold()
-                    AddWordSheet(ensiState, state = ensiState.addWordSheetState)
-                    WordSheet(ensiState, state = ensiState.wordSheetState)
+                    AddWordSheet(chatState, state = chatState.addWordSheetState)
+                    WordSheet(chatState, state = chatState.wordSheetState)
                 }
                 SystemBars(darkTheme)
             }
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize().padding(it)
             ) {
                 composable(route = NavRoutes.CHAT) {
-                    EnsiScreen(ensiState)
+                    ChatScreen(chatState)
                 }
                 composable(route = NavRoutes.OPTIONS) {
                     OptionsScreen(optionsState)

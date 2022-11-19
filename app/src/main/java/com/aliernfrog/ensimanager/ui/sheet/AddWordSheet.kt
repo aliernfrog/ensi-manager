@@ -15,17 +15,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.EnsiScreenType
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.state.EnsiState
+import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerModalBottomSheet
 import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddWordSheet(ensiState: EnsiState, state: ModalBottomSheetState) {
+fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val action = context.getString(when (ensiState.type.value) {
+    val action = context.getString(when (chatState.type.value) {
         EnsiScreenType.VERBS -> R.string.chat_verbs_add
         else -> R.string.chat_words_add
     })
@@ -34,11 +34,11 @@ fun AddWordSheet(ensiState: EnsiState, state: ModalBottomSheetState) {
         sheetState = state
     ) {
         ManagerTextField(
-            value = ensiState.addWordInput.value,
-            onValueChange = { ensiState.addWordInput.value = it }
+            value = chatState.addWordInput.value,
+            onValueChange = { chatState.addWordInput.value = it }
         )
         Button(
-            onClick = { scope.launch { ensiState.addWordFromInput(context); state.hide() } },
+            onClick = { scope.launch { chatState.addWordFromInput(context); state.hide() } },
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {

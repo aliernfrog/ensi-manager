@@ -23,7 +23,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterialApi::class)
-class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
+class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
     private val config = _config
     private val topToastManager = _topToastManager
     val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)

@@ -17,16 +17,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.EnsiScreenType
-import com.aliernfrog.ensimanager.state.EnsiState
+import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerModalBottomSheet
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WordSheet(ensiState: EnsiState, state: ModalBottomSheetState) {
+fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val type = when(ensiState.chosenWordType.value) {
+    val type = when(chatState.chosenWordType.value) {
         EnsiScreenType.VERBS -> "verb"
         else -> "word"
     }
@@ -35,13 +35,13 @@ fun WordSheet(ensiState: EnsiState, state: ModalBottomSheetState) {
         Text(typeUppercase, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp))
         SelectionContainer(Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = ensiState.chosenWord.value,
+                text = chatState.chosenWord.value,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
         Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
         Button(
-            onClick = { scope.launch { ensiState.deleteChosenWord(context); state.hide() } },
+            onClick = { scope.launch { chatState.deleteChosenWord(context); state.hide() } },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {

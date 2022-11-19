@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.EnsiFetchingState
 import com.aliernfrog.ensimanager.EnsiScreenType
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.state.EnsiState
+import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerFAB
 import com.aliernfrog.ensimanager.ui.composable.ManagerSegmentedButtons
 import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
@@ -34,17 +34,17 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EnsiScreen(ensiState: EnsiState) {
+fun ChatScreen(chatState: ChatState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val refreshing = ensiState.fetchingState.value == EnsiFetchingState.FETCHING
+    val refreshing = chatState.fetchingState.value == EnsiFetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
-        scope.launch { ensiState.fetchCurrentList(context) }
+        scope.launch { chatState.fetchCurrentList(context) }
     })
     Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
-        WordsList(ensiState)
+        WordsList(chatState)
         FloatingButtons(
-            ensiState = ensiState,
+            chatState = chatState,
             scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
             bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
             scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
@@ -58,25 +58,25 @@ fun EnsiScreen(ensiState: EnsiState) {
         )
     }
     LaunchedEffect(Unit) {
-        ensiState.updateApiProperties()
-        ensiState.fetchCurrentList(context)
+        chatState.updateApiProperties()
+        chatState.fetchCurrentList(context)
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun WordsList(ensiState: EnsiState) {
-    val list = ensiState.getCurrentList()
+private fun WordsList(chatState: ChatState) {
+    val list = chatState.getCurrentList()
     val scope = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = ensiState.lazyListState
+        state = chatState.lazyListState
     ) {
         item {
-            ListControls(ensiState, list.size)
+            ListControls(chatState, list.size)
         }
         items(list) {
-            ManagerWord(it, Modifier.animateItemPlacement()) { scope.launch { ensiState.showWordSheet(it) } }
+            ManagerWord(it, Modifier.animateItemPlacement()) { scope.launch { chatState.showWordSheet(it) } }
         }
         item {
             Spacer(Modifier.height(70.dp))
@@ -85,23 +85,23 @@ private fun WordsList(ensiState: EnsiState) {
 }
 
 @Composable
-private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
+private fun ListControls(chatState: ChatState, wordsShown: Int) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     ManagerSegmentedButtons(
         options = listOf(context.getString(R.string.chat_words), context.getString(R.string.chat_verbs)),
-        initialIndex = ensiState.type.value,
+        initialIndex = chatState.type.value,
     ) {
-        ensiState.type.value = it
-        scope.launch { ensiState.fetchCurrentList(context) }
+        chatState.type.value = it
+        scope.launch { chatState.fetchCurrentList(context) }
     }
     ManagerTextField(
-        value = ensiState.filter.value,
-        onValueChange = { ensiState.filter.value = it },
+        value = chatState.filter.value,
+        onValueChange = { chatState.filter.value = it },
         label = { Text(context.getString(R.string.chat_filter)) }
     )
     Text(
-        text = context.getString(when (ensiState.type.value) {
+        text = context.getString(when (chatState.type.value) {
             EnsiScreenType.VERBS -> R.string.chat_verbs_count
             else -> R.string.chat_words_count
         }).replace("%", wordsShown.toString()),
@@ -113,15 +113,15 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    ensiState: EnsiState,
+    chatState: ChatState,
     scrollTopButtonModifier: Modifier,
     bottomButtonsColumnModifier: Modifier,
     scrollBottomButtonModifier: Modifier,
     addWordButtonModifier: Modifier
 ) {
     val scope = rememberCoroutineScope()
-    val firstVisibleItemIndex = remember { derivedStateOf { ensiState.lazyListState.firstVisibleItemIndex } }
-    val layoutInfo = remember { derivedStateOf { ensiState.lazyListState.layoutInfo } }
+    val firstVisibleItemIndex = remember { derivedStateOf { chatState.lazyListState.firstVisibleItemIndex } }
+    val layoutInfo = remember { derivedStateOf { chatState.lazyListState.layoutInfo } }
     AnimatedVisibility(
         visible = firstVisibleItemIndex.value > 0,
         modifier = scrollTopButtonModifier,
@@ -129,7 +129,7 @@ private fun FloatingButtons(
         exit = scaleOut() + fadeOut()
     ) {
         ManagerFAB(icon = Icons.Outlined.KeyboardArrowUp) {
-            scope.launch { ensiState.lazyListState.animateScrollToItem(0) }
+            scope.launch { chatState.lazyListState.animateScrollToItem(0) }
         }
     }
     Column(bottomButtonsColumnModifier) {
@@ -140,11 +140,11 @@ private fun FloatingButtons(
             exit = scaleOut() + fadeOut()
         ) {
             ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown) {
-                scope.launch { ensiState.lazyListState.animateScrollToItem(ensiState.lazyListState.layoutInfo.totalItemsCount + 1) }
+                scope.launch { chatState.lazyListState.animateScrollToItem(chatState.lazyListState.layoutInfo.totalItemsCount + 1) }
             }
         }
         ManagerFAB(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
-            scope.launch { ensiState.addWordSheetState.show() }
+            scope.launch { chatState.addWordSheetState.show() }
         }
     }
 }
