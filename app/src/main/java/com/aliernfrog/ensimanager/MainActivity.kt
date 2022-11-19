@@ -18,9 +18,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.state.ChatState
+import com.aliernfrog.ensimanager.state.DashboardState
 import com.aliernfrog.ensimanager.state.OptionsState
 import com.aliernfrog.ensimanager.ui.composable.ManagerBaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
+import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
 import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var topToastManager: TopToastManager
     private lateinit var optionsState: OptionsState
     private lateinit var chatState: ChatState
+    private lateinit var dashboardState: DashboardState
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +46,7 @@ class MainActivity : ComponentActivity() {
         topToastManager = TopToastManager()
         optionsState = OptionsState(config, ScrollState(0))
         chatState = ChatState(config, topToastManager, LazyListState())
+        dashboardState = DashboardState(config, topToastManager)
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
@@ -62,11 +66,14 @@ class MainActivity : ComponentActivity() {
         ManagerBaseScaffold(navController) {
             NavHost(
                 navController = navController,
-                startDestination = NavRoutes.CHAT,
+                startDestination = NavRoutes.DASHBOARD,
                 modifier = Modifier.fillMaxSize().padding(it)
             ) {
                 composable(route = NavRoutes.CHAT) {
                     ChatScreen(chatState)
+                }
+                composable(route = NavRoutes.DASHBOARD) {
+                    DashboardScreen(dashboardState)
                 }
                 composable(route = NavRoutes.OPTIONS) {
                     OptionsScreen(optionsState)

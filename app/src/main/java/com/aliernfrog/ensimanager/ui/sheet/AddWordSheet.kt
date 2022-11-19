@@ -13,7 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.EnsiScreenType
+import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerModalBottomSheet
@@ -26,7 +26,7 @@ fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val action = context.getString(when (chatState.type.value) {
-        EnsiScreenType.VERBS -> R.string.chat_verbs_add
+        ChatScreenType.VERBS -> R.string.chat_verbs_add
         else -> R.string.chat_words_add
     })
     ManagerModalBottomSheet(

@@ -22,8 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.EnsiFetchingState
-import com.aliernfrog.ensimanager.EnsiScreenType
+import com.aliernfrog.ensimanager.FetchingState
+import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerFAB
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 fun ChatScreen(chatState: ChatState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val refreshing = chatState.fetchingState.value == EnsiFetchingState.FETCHING
+    val refreshing = chatState.fetchingState.value == FetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { chatState.fetchCurrentList(context) }
     })
@@ -102,7 +102,7 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     )
     Text(
         text = context.getString(when (chatState.type.value) {
-            EnsiScreenType.VERBS -> R.string.chat_verbs_count
+            ChatScreenType.VERBS -> R.string.chat_verbs_count
             else -> R.string.chat_words_count
         }).replace("%", wordsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)

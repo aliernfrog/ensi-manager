@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.EnsiScreenType
+import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerModalBottomSheet
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val type = when(chatState.chosenWordType.value) {
-        EnsiScreenType.VERBS -> "verb"
+        ChatScreenType.VERBS -> "verb"
         else -> "word"
     }
     val typeUppercase = type.replaceFirstChar { it.uppercase() }
