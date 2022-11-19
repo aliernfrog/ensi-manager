@@ -89,7 +89,7 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     ManagerSegmentedButtons(
-        options = listOf(context.getString(R.string.ensi_words), context.getString(R.string.ensi_verbs)),
+        options = listOf(context.getString(R.string.chat_words), context.getString(R.string.chat_verbs)),
         initialIndex = ensiState.type.value,
     ) {
         ensiState.type.value = it
@@ -98,12 +98,12 @@ private fun ListControls(ensiState: EnsiState, wordsShown: Int) {
     ManagerTextField(
         value = ensiState.filter.value,
         onValueChange = { ensiState.filter.value = it },
-        label = { Text(context.getString(R.string.ensi_filter)) }
+        label = { Text(context.getString(R.string.chat_filter)) }
     )
     Text(
         text = context.getString(when (ensiState.type.value) {
-            EnsiScreenType.VERBS -> R.string.ensi_verbs_count
-            else -> R.string.ensi_words_count
+            EnsiScreenType.VERBS -> R.string.chat_verbs_count
+            else -> R.string.chat_words_count
         }).replace("%", wordsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)
     )

@@ -48,7 +48,7 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
         scrollBehavior = scrollBehavior,
         title = {
             Crossfade(targetState = currentScreen?.name) {
-                Text(text = it ?: context.getString(R.string.screen_ensi), fontWeight = FontWeight.SemiBold)
+                Text(text = it ?: context.getString(R.string.screen_chat), fontWeight = FontWeight.SemiBold)
             }
         },
         navigationIcon = {

@@ -26,8 +26,8 @@ fun AddWordSheet(ensiState: EnsiState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val action = context.getString(when (ensiState.type.value) {
-        EnsiScreenType.VERBS -> R.string.ensi_verbs_add
-        else -> R.string.ensi_words_add
+        EnsiScreenType.VERBS -> R.string.chat_verbs_add
+        else -> R.string.chat_words_add
     })
     ManagerModalBottomSheet(
         title = action,

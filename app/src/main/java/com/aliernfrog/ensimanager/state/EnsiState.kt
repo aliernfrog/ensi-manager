@@ -169,11 +169,11 @@ class EnsiState(_config: SharedPreferences, _topToastManager: TopToastManager, _
     }
 
     private fun toastInvalidRoute(context: Context) {
-        toastError(context.getString(R.string.ensi_fetch_invalidRoute))
+        toastError(context.getString(R.string.error_invalidRoute))
     }
 
     private fun toastNoBody(context: Context, statusCode: Int?) {
-        toastError(context.getString(R.string.ensi_fetch_noBody).replace("%STATUS%", statusCode.toString()))
+        toastError(context.getString(R.string.error_noBody).replace("%STATUS%", statusCode.toString()))
     }
 
     private fun toastError(text: String) {

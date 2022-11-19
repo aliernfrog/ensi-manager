@@ -62,10 +62,10 @@ class MainActivity : ComponentActivity() {
         ManagerBaseScaffold(navController) {
             NavHost(
                 navController = navController,
-                startDestination = NavRoutes.ENSI,
+                startDestination = NavRoutes.CHAT,
                 modifier = Modifier.fillMaxSize().padding(it)
             ) {
-                composable(route = NavRoutes.ENSI) {
+                composable(route = NavRoutes.CHAT) {
                     EnsiScreen(ensiState)
                 }
                 composable(route = NavRoutes.OPTIONS) {

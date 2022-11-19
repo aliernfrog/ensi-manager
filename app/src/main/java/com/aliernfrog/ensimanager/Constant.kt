@@ -37,7 +37,7 @@ object ConfigKey {
 }
 
 object NavRoutes {
-    const val ENSI = "ensi"
+    const val CHAT = "chat"
     const val OPTIONS = "options"
 }
 
@@ -45,7 +45,7 @@ object NavRoutes {
 fun getScreens(): List<Screen> {
     val context = LocalContext.current
     return listOf(
-        Screen(NavRoutes.ENSI, context.getString(R.string.screen_ensi), painterResource(R.drawable.speech), true),
+        Screen(NavRoutes.CHAT, context.getString(R.string.screen_chat), painterResource(R.drawable.speech), true),
         Screen(NavRoutes.OPTIONS, context.getString(R.string.screen_options), painterResource(R.drawable.options), true)
     )
 }
