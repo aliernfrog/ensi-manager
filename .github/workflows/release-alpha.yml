@@ -1,11 +1,16 @@
-name: Release in Artifacts
+name: Release alpha in Releases
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v3
 
@@ -21,12 +26,16 @@ jobs:
           alias: ${{ secrets.KEYSTORE_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-
+          
       - name: Rename signed APK
         run: mv ${{steps.sign_apk.outputs.signedReleaseFile}} ensi-manager.apk
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        
+      - name: Create release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
-          name: ensi-manager
-          path: ensi-manager.apk
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: true
+          automatic_release_tag: 'alpha'
+          files: |
+            ensi-manager.apk
