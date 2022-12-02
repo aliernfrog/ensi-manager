@@ -1,9 +1,16 @@
 package com.aliernfrog.ensimanager
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Chat
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.data.ApiRouteOption
 import com.aliernfrog.ensimanager.data.Screen
@@ -50,9 +57,9 @@ object NavRoutes {
 fun getScreens(): List<Screen> {
     val context = LocalContext.current
     return listOf(
-        Screen(NavRoutes.CHAT, context.getString(R.string.screen_chat), painterResource(R.drawable.speech), true),
-        Screen(NavRoutes.DASHBOARD, context.getString(R.string.screen_dashboard), painterResource(R.drawable.dashboard), true),
-        Screen(NavRoutes.OPTIONS, context.getString(R.string.screen_options), painterResource(R.drawable.options), true)
+        Screen(NavRoutes.CHAT, context.getString(R.string.screen_chat), rememberVectorPainter(Icons.Default.Chat), rememberVectorPainter(Icons.Outlined.Chat), true),
+        Screen(NavRoutes.DASHBOARD, context.getString(R.string.screen_dashboard), rememberVectorPainter(Icons.Default.Dashboard), rememberVectorPainter(Icons.Outlined.Dashboard), true),
+        Screen(NavRoutes.OPTIONS, context.getString(R.string.screen_options), rememberVectorPainter(Icons.Default.Settings), rememberVectorPainter(Icons.Outlined.Settings), true)
     )
 }
 

@@ -76,9 +76,17 @@ private fun BottomBar(navController: NavController, screens: List<Screen>, curre
     ) {
         BottomAppBar {
             screens.filter { it.showInNavigationBar }.forEach {
+                val selected = it.route == currentScreen?.route
                 NavigationBarItem(
-                    selected = it.route == currentScreen?.route,
-                    icon = { Image(it.icon, it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
+                    selected = selected,
+                    icon = {
+                        Image(
+                            painter = if (selected) it.iconFilled else it.iconOutlined,
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                            modifier = Modifier.size(28.dp)
+                        )
+                    },
                     label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) },
                     onClick = {
                         if (it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
