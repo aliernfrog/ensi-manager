@@ -2,18 +2,12 @@ package com.aliernfrog.ensimanager.ui.composable
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -52,15 +46,13 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
         },
         navigationIcon = {
             AnimatedVisibility(visible = navController.previousBackStackEntry != null) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = context.getString(R.string.action_back),
-                    modifier = Modifier.padding(horizontal = 8.dp).clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = false),
-                        onClick = { navController.navigateUp() }
+                IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = context.getString(R.string.action_back),
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
-                )
+                }
             }
         }
     )
@@ -80,10 +72,10 @@ private fun BottomBar(navController: NavController, screens: List<Screen>, curre
                 NavigationBarItem(
                     selected = selected,
                     icon = {
-                        Image(
+                        Icon(
                             painter = if (selected) it.iconFilled else it.iconOutlined,
                             contentDescription = null,
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                            tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(28.dp)
                         )
                     },
