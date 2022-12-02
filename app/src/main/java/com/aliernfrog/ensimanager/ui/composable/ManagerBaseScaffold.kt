@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -48,7 +47,7 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
         scrollBehavior = scrollBehavior,
         title = {
             Crossfade(targetState = currentScreen?.name) {
-                Text(text = it ?: context.getString(R.string.screen_dashboard), fontWeight = FontWeight.SemiBold)
+                Text(text = it ?: context.getString(R.string.screen_dashboard))
             }
         },
         navigationIcon = {
