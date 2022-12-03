@@ -3,6 +3,9 @@ package com.aliernfrog.ensimanager.state
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.foundation.ScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.FetchingState
@@ -57,7 +60,7 @@ class DashboardState(_config: SharedPreferences, _topToastManager: TopToastManag
         if (response?.statusCode == null) toastNoBody(context, null)
         else if (!WebUtil.statusCodeIsSuccess(response.statusCode)) toastError("[${response.statusCode}] ${response.responseBody}")
         else {
-            topToastManager.showToast("[${response.statusCode}] ${response.responseBody}", iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastManager.showToast("[${response.statusCode}] ${response.responseBody}", iconImageVector = Icons.Rounded.Done, iconTintColorType = TopToastColorType.PRIMARY)
             if (onSuccess != null) onSuccess()
         }
     }
@@ -77,6 +80,6 @@ class DashboardState(_config: SharedPreferences, _topToastManager: TopToastManag
     }
 
     private fun toastError(text: String) {
-        topToastManager.showToast(text, iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
+        topToastManager.showToast(text, iconImageVector = Icons.Rounded.PriorityHigh, iconTintColorType = TopToastColorType.ERROR)
     }
 }

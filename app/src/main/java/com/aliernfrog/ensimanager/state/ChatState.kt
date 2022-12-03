@@ -6,6 +6,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.ConfigKey
@@ -157,7 +160,7 @@ class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _
         if (response?.statusCode == null) toastNoBody(context, null)
         else if (!WebUtil.statusCodeIsSuccess(response.statusCode)) toastError("[${response.statusCode}] ${response.responseBody}")
         else {
-            topToastManager.showToast("[${response.statusCode}] ${response.responseBody}", iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastManager.showToast("[${response.statusCode}] ${response.responseBody}", iconImageVector = Icons.Rounded.Done, iconTintColorType = TopToastColorType.PRIMARY)
             if (onSuccess != null) onSuccess()
         }
     }
@@ -177,6 +180,6 @@ class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _
     }
 
     private fun toastError(text: String) {
-        topToastManager.showToast(text, iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
+        topToastManager.showToast(text, iconImageVector = Icons.Rounded.PriorityHigh, iconTintColorType = TopToastColorType.ERROR)
     }
 }
