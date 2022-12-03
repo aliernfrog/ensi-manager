@@ -7,9 +7,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.mutableStateOf
+import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.FetchingState
-import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.ApiResponse
 import com.aliernfrog.ensimanager.data.ApiRoute

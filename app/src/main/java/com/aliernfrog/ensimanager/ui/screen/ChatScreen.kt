@@ -22,8 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.ChatScreenType
+import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.composable.ManagerFAB
