@@ -6,8 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +59,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
         val navController = rememberNavController()
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
             NavHost(
                 navController = navController,
                 startDestination = NavRoutes.DASHBOARD,
-                modifier = Modifier.fillMaxSize().padding(it)
+                modifier = Modifier.fillMaxSize().padding(it).consumedWindowInsets(it).systemBarsPadding()
             ) {
                 composable(route = NavRoutes.CHAT) {
                     ChatScreen(chatState)
