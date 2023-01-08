@@ -29,11 +29,13 @@ class DashboardState(_config: SharedPreferences, _topToastState: TopToastState) 
 
     private var authorization: String? = null
     private var getStatusRoute: ApiRoute? = null
+    private var postAddonRoute: ApiRoute? = null
     private var destroyProcessRoute: ApiRoute? = null
 
     fun updateApiProperties() {
         authorization = config.getString(ConfigKey.KEY_API_AUTHORIZATION, null)
         getStatusRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_STATUS_GET, ""))
+        postAddonRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_POST_ADDON, ""))
         destroyProcessRoute = GeneralUtil.getApiRouteFromString(config.getString(ConfigKey.KEY_API_PROCESS_DESTROY, ""))
     }
 
@@ -43,6 +45,15 @@ class DashboardState(_config: SharedPreferences, _topToastState: TopToastState) 
         withContext(Dispatchers.IO) {
             val response = WebUtil.sendRequest(getStatusRoute!!.url, getStatusRoute!!.method, authorization)
             status.value = "[${response?.statusCode}] ${response?.responseBody}"
+            fetchingState.value = FetchingState.DONE
+        }
+    }
+
+    suspend fun postAddon(context: Context) {
+        if (routeInvalid(postAddonRoute)) return toastInvalidRoute(context)
+        fetchingState.value = FetchingState.FETCHING
+        withContext(Dispatchers.IO) {
+            handleSuccessResponse(WebUtil.sendRequest(postAddonRoute!!.url, postAddonRoute!!.method, authorization), context)
             fetchingState.value = FetchingState.DONE
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.FetchingState
@@ -38,7 +39,7 @@ fun DashboardScreen(dashboardState: DashboardState) {
     Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
         Column(Modifier.fillMaxSize().verticalScroll(dashboardState.scrollState)) {
             Status(dashboardState)
-            DestroyStatus(dashboardState)
+            Actions(dashboardState)
         }
         PullRefreshIndicator(
             refreshing = refreshing,
@@ -64,17 +65,23 @@ private fun Status(dashboardState: DashboardState) {
 }
 
 @Composable
-private fun DestroyStatus(dashboardState: DashboardState) {
+private fun Actions(dashboardState: DashboardState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    Button(
+        onClick = { scope.launch { dashboardState.postAddon(context) } },
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
+        Text(stringResource(R.string.dashboard_post_addon))
+    }
     Button(
         onClick = { scope.launch { dashboardState.destroyProcess(context) } },
         modifier = Modifier.fillMaxWidth().padding(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
     ) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-            Text(context.getString(R.string.dashboard_destroy_process))
-            Text(context.getString(R.string.dashboard_destroy_process_description), modifier = Modifier.alpha(0.5f), fontSize = 10.sp)
+            Text(stringResource(R.string.dashboard_destroy_process))
+            Text(stringResource(R.string.dashboard_destroy_process_description), modifier = Modifier.alpha(0.5f), fontSize = 10.sp)
         }
     }
 }

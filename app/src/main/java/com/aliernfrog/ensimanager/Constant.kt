@@ -28,7 +28,8 @@ object ApiRoutes {
         ApiRouteOption("Delete words", "Should delete the word specified in body.word", ConfigKey.KEY_API_WORDS_DELETE),
         ApiRouteOption("Get verbs", "Should return an array of strings", ConfigKey.KEY_API_VERBS_GET),
         ApiRouteOption("Add verbs", "Should add the verb specificed in body.verb", ConfigKey.KEY_API_VERBS_ADD),
-        ApiRouteOption("Delete verbs", "Should delete the word specified in body.verb", ConfigKey.KEY_API_VERBS_DELETE)
+        ApiRouteOption("Delete verbs", "Should delete the word specified in body.verb", ConfigKey.KEY_API_VERBS_DELETE),
+        ApiRouteOption("Post Ensicord add-on", "Should generate and post Ensicord add-on", ConfigKey.KEY_API_POST_ADDON)
     )
 }
 
@@ -45,6 +46,7 @@ object ConfigKey {
     const val KEY_API_VERBS_GET = "apiVerbsGet"
     const val KEY_API_VERBS_ADD = "apiVerbsAdd"
     const val KEY_API_VERBS_DELETE = "apiVerbsDelete"
+    const val KEY_API_POST_ADDON = "apiPostAddon"
 }
 
 object NavRoutes {

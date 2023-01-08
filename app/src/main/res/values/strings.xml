@@ -14,6 +14,7 @@
     <string name="chat_words_count">% words shown</string>
     <string name="chat_verbs_count">% verbs shown</string>
     <string name="dashboard_status">Status</string>
+    <string name="dashboard_post_addon">Post Ensicord add-on</string>
     <string name="dashboard_destroy_process">Destroy process</string>
     <string name="dashboard_destroy_process_description">Do this when bot doesn\'t work correctly</string>
     <string name="options_theme">Theme</string>
