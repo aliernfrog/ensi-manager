@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.FetchingState
@@ -71,7 +72,7 @@ private fun Actions(dashboardState: DashboardState) {
         onClick = { scope.launch { dashboardState.postAddon(context) } },
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
-        Text(stringResource(R.string.dashboard_post_addon))
+        Text(stringResource(R.string.dashboard_post_addon), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
     }
     Button(
         onClick = { scope.launch { dashboardState.destroyProcess(context) } },
