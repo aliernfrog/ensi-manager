@@ -56,8 +56,7 @@ fun DashboardScreen(dashboardState: DashboardState) {
 
 @Composable
 private fun Status(dashboardState: DashboardState) {
-    val context = LocalContext.current
-    ManagerColumn(title = context.getString(R.string.dashboard_status)) {
+    ManagerColumn(title = stringResource(R.string.dashboard_status)) {
         SelectionContainer(Modifier.padding(horizontal = 8.dp)) {
             Text(text = dashboardState.status.value, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val action = context.getString(when (chatState.type.value) {
+    val action = stringResource(when (chatState.type.value) {
         ChatScreenType.VERBS -> R.string.chat_verbs_add
         else -> R.string.chat_words_add
     })

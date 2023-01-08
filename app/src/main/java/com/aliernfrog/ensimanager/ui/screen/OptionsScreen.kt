@@ -13,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ApiRoutes
 import com.aliernfrog.ensimanager.R
@@ -33,16 +33,19 @@ fun OptionsScreen(optionsState: OptionsState) {
 
 @Composable
 private fun ThemeOptions(optionsState: OptionsState) {
-    val context = LocalContext.current
-    val themeOptions = listOf(context.getString(R.string.options_theme_system),context.getString(R.string.options_theme_light),context.getString(R.string.options_theme_dark))
-    OptionsColumn(title = context.getString(R.string.options_theme)) {
+    val themeOptions = listOf(
+        stringResource(R.string.options_theme_system),
+        stringResource(R.string.options_theme_light),
+        stringResource(R.string.options_theme_dark)
+    )
+    OptionsColumn(title = stringResource(R.string.options_theme)) {
         ManagerRadioButtons(options = themeOptions, initialIndex = optionsState.theme.value) {
             optionsState.setTheme(it)
         }
         if (supportsMaterialYou) {
             ManagerSwitch(
-                title = context.getString(R.string.options_theme_materialYou),
-                description = context.getString(R.string.options_theme_materialYou_description),
+                title = stringResource(R.string.options_theme_materialYou),
+                description = stringResource(R.string.options_theme_materialYou_description),
                 checked = optionsState.materialYou.value
             ) {
                 optionsState.setMaterialYou(it)
@@ -53,8 +56,7 @@ private fun ThemeOptions(optionsState: OptionsState) {
 
 @Composable
 private fun ApiOptions(optionsState: OptionsState) {
-    val context = LocalContext.current
-    OptionsColumn(title = context.getString(R.string.options_api), bottomDivider = false) {
+    OptionsColumn(title = stringResource(R.string.options_api), bottomDivider = false) {
         ApiRoutes.options.forEach { route ->
             val urlEdit = remember { mutableStateOf(optionsState.config.getString(route.prefKey, "")!!) }
             ManagerRouteOption(route, urlEdit.value, Modifier.padding(horizontal = 8.dp)) {

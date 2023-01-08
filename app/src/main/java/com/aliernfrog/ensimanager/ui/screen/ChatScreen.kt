@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.FetchingState
@@ -89,7 +90,7 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     ManagerSegmentedButtons(
-        options = listOf(context.getString(R.string.chat_words), context.getString(R.string.chat_verbs)),
+        options = listOf(stringResource(R.string.chat_words), stringResource(R.string.chat_verbs)),
         initialIndex = chatState.type.value,
     ) {
         chatState.type.value = it
@@ -98,10 +99,10 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     ManagerTextField(
         value = chatState.filter.value,
         onValueChange = { chatState.filter.value = it },
-        label = { Text(context.getString(R.string.chat_filter)) }
+        label = { Text(stringResource(R.string.chat_filter)) }
     )
     Text(
-        text = context.getString(when (chatState.type.value) {
+        text = stringResource(when (chatState.type.value) {
             ChatScreenType.VERBS -> R.string.chat_verbs_count
             else -> R.string.chat_words_count
         }).replace("%", wordsShown.toString()),
