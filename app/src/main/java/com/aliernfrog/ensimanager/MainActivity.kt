@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
@@ -26,13 +27,13 @@ import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
-import com.aliernfrog.toptoast.TopToastBase
-import com.aliernfrog.toptoast.TopToastManager
+import com.aliernfrog.toptoast.component.TopToastHost
+import com.aliernfrog.toptoast.state.TopToastState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
-    private lateinit var topToastManager: TopToastManager
+    private lateinit var topToastState: TopToastState
     private lateinit var optionsState: OptionsState
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
@@ -42,14 +43,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        topToastManager = TopToastManager()
+        topToastState = TopToastState()
         optionsState = OptionsState(config, ScrollState(0))
-        chatState = ChatState(config, topToastManager, LazyListState())
-        dashboardState = DashboardState(config, topToastManager)
+        chatState = ChatState(config, topToastState, LazyListState())
+        dashboardState = DashboardState(config, topToastState)
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
-                TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, topToastManager) {
+                TopToastHost(
+                    state = topToastState,
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+                ) {
                     BaseScaffold()
                     AddWordSheet(chatState, state = chatState.addWordSheetState)
                     WordSheet(chatState, state = chatState.wordSheetState)
@@ -67,7 +71,7 @@ class MainActivity : ComponentActivity() {
             NavHost(
                 navController = navController,
                 startDestination = NavRoutes.DASHBOARD,
-                modifier = Modifier.fillMaxSize().padding(it).consumedWindowInsets(it).systemBarsPadding()
+                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding()
             ) {
                 composable(route = NavRoutes.CHAT) {
                     ChatScreen(chatState)

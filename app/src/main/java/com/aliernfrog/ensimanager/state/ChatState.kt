@@ -18,17 +18,17 @@ import com.aliernfrog.ensimanager.data.ApiResponse
 import com.aliernfrog.ensimanager.data.ApiRoute
 import com.aliernfrog.ensimanager.util.GeneralUtil
 import com.aliernfrog.ensimanager.util.WebUtil
-import com.aliernfrog.toptoast.TopToastColorType
-import com.aliernfrog.toptoast.TopToastManager
+import com.aliernfrog.toptoast.enum.TopToastColor
+import com.aliernfrog.toptoast.state.TopToastState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterialApi::class)
-class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _lazyListState: LazyListState) {
+class ChatState(_config: SharedPreferences, _topToastState: TopToastState, _lazyListState: LazyListState) {
     private val config = _config
-    private val topToastManager = _topToastManager
+    private val topToastState = _topToastState
     val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
     val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val lazyListState = _lazyListState
@@ -160,7 +160,7 @@ class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _
         if (response?.statusCode == null) toastNoBody(context, null)
         else if (!WebUtil.statusCodeIsSuccess(response.statusCode)) toastError("[${response.statusCode}] ${response.responseBody}")
         else {
-            topToastManager.showToast("[${response.statusCode}] ${response.responseBody}", iconImageVector = Icons.Rounded.Done, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastState.showToast("[${response.statusCode}] ${response.responseBody}", icon = Icons.Rounded.Done, iconTintColor = TopToastColor.PRIMARY)
             if (onSuccess != null) onSuccess()
         }
     }
@@ -180,6 +180,6 @@ class ChatState(_config: SharedPreferences, _topToastManager: TopToastManager, _
     }
 
     private fun toastError(text: String) {
-        topToastManager.showToast(text, iconImageVector = Icons.Rounded.PriorityHigh, iconTintColorType = TopToastColorType.ERROR)
+        topToastState.showToast(text, icon = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
     }
 }

@@ -62,5 +62,5 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.0-alpha03")
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
-    implementation("com.github.aliernfrog:top-toast-compose:0.0.15")
+    implementation("com.github.aliernfrog:top-toast-compose:1.0.0")
 }
