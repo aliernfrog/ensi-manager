@@ -1,4 +1,4 @@
-name: Release in Artifacts
+name: Release Alpha
 
 on:
   push:
@@ -35,7 +35,9 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: alpha
           draft: false
           prerelease: true
+          title: "Alpha"
           files: |
             ensi-manager.apk
