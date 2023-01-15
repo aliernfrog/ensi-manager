@@ -5,12 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -38,7 +36,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
 
-    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -50,20 +47,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
-                TopToastHost(
-                    state = topToastState,
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-                ) {
-                    BaseScaffold()
-                    AddWordSheet(chatState, state = chatState.addWordSheetState)
-                    WordSheet(chatState, state = chatState.wordSheetState)
-                }
+                BaseScaffold()
+                TopToastHost(topToastState)
                 SystemBars(darkTheme)
             }
         }
     }
 
-    @OptIn(ExperimentalLayoutApi::class)
+    @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
     @Composable
     private fun BaseScaffold() {
         val navController = rememberNavController()
@@ -84,6 +75,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        AddWordSheet(chatState, state = chatState.addWordSheetState)
+        WordSheet(chatState, state = chatState.wordSheetState)
     }
 
     @Composable
