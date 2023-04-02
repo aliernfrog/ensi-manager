@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        topToastState = TopToastState()
+        topToastState = TopToastState(window.decorView)
         optionsState = OptionsState(config, ScrollState(0))
         chatState = ChatState(config, topToastState, LazyListState())
         dashboardState = DashboardState(config, topToastState)

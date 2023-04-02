@@ -26,13 +26,15 @@ fun ManagerTextField(
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     rounded: Boolean = true,
     colors: TextFieldColors = TextFieldDefaults.textFieldColors(
-        textColor = contentColor,
+        focusedTextColor = contentColor,
+        unfocusedTextColor = containerColor,
         containerColor = containerColor,
         cursorColor = contentColor,
         selectionColors = TextSelectionColors(handleColor = contentColor, backgroundColor = contentColor.copy(0.5f)),
         focusedLabelColor = contentColor,
         unfocusedLabelColor = contentColor.copy(0.7f),
-        placeholderColor = contentColor.copy(0.7f)
+        focusedPlaceholderColor = contentColor.copy(0.7f),
+        unfocusedPlaceholderColor = contentColor.copy(0.7f)
     )
 ) {
     TextField(
