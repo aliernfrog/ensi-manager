@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -12,9 +14,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
 import com.aliernfrog.ensimanager.state.OptionsState
@@ -25,8 +24,14 @@ import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
+import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.NavigationConstant
+import com.aliernfrog.ensimanager.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.state.TopToastState
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
@@ -54,25 +59,39 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
-        val navController = rememberNavController()
-        ManagerBaseScaffold(navController) {
-            NavHost(
+        val navController = rememberAnimatedNavController()
+        val screens = getScreens()
+        ManagerBaseScaffold(screens, navController) {
+            AnimatedNavHost(
                 navController = navController,
-                startDestination = NavRoutes.DASHBOARD,
-                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding()
+                startDestination = NavigationConstant.INITIAL_DESTINATION,
+                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
+                enterTransition = { scaleIn(
+                    animationSpec = tween(delayMillis = 100),
+                    initialScale = 0.95f
+                ) + fadeIn(
+                    animationSpec = tween(delayMillis = 100)
+                ) },
+                exitTransition = { fadeOut(tween(100)) },
+                popEnterTransition = { scaleIn(
+                    animationSpec = tween(delayMillis = 100),
+                    initialScale = 1.05f
+                ) + fadeIn(
+                    animationSpec = tween(delayMillis = 100)
+                ) },
+                popExitTransition = { scaleOut(
+                    animationSpec = tween(100),
+                    targetScale = 0.95f
+                ) + fadeOut(
+                    animationSpec = tween(100)
+                ) }
             ) {
-                composable(route = NavRoutes.CHAT) {
-                    ChatScreen(chatState)
-                }
-                composable(route = NavRoutes.DASHBOARD) {
-                    DashboardScreen(dashboardState)
-                }
-                composable(route = NavRoutes.OPTIONS) {
-                    OptionsScreen(optionsState)
-                }
+                composable(Destination.CHAT.route) { ChatScreen(chatState) }
+                composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
+                composable(Destination.SETTINGS.route) { OptionsScreen(optionsState) }
             }
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)

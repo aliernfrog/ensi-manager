@@ -9,6 +9,8 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.ConfigKey
@@ -16,8 +18,8 @@ import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.ApiResponse
 import com.aliernfrog.ensimanager.data.ApiRoute
-import com.aliernfrog.ensimanager.util.GeneralUtil
-import com.aliernfrog.ensimanager.util.WebUtil
+import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
+import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import kotlinx.coroutines.Dispatchers
@@ -25,13 +27,15 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
-@OptIn(ExperimentalMaterialApi::class)
-class ChatState(_config: SharedPreferences, _topToastState: TopToastState, _lazyListState: LazyListState) {
-    private val config = _config
-    private val topToastState = _topToastState
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+class ChatState(
+    private val config: SharedPreferences,
+    private val topToastState: TopToastState,
+    val lazyListState: LazyListState
+) {
+    val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
     val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val lazyListState = _lazyListState
 
     val type = mutableStateOf(ChatScreenType.WORDS)
     val filter = mutableStateOf("")

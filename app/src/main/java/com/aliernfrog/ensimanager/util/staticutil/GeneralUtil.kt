@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.util
+package com.aliernfrog.ensimanager.util.staticutil
 
 import com.aliernfrog.ensimanager.data.ApiRoute
 import org.json.JSONArray

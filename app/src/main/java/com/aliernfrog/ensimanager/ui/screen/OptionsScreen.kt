@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,14 +21,21 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.OptionsState
 import com.aliernfrog.ensimanager.ui.composable.ManagerRadioButtons
 import com.aliernfrog.ensimanager.ui.composable.ManagerRouteOption
+import com.aliernfrog.ensimanager.ui.composable.ManagerScaffold
 import com.aliernfrog.ensimanager.ui.composable.ManagerSwitch
 import com.aliernfrog.ensimanager.ui.theme.supportsMaterialYou
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsScreen(optionsState: OptionsState) {
-    Column(Modifier.fillMaxSize().verticalScroll(optionsState.scrollState)) {
-        ThemeOptions(optionsState)
-        ApiOptions(optionsState)
+    ManagerScaffold(
+        title = stringResource(R.string.screen_options),
+        topAppBarState = optionsState.topAppBarState
+    ) {
+        Column(Modifier.fillMaxSize().verticalScroll(optionsState.scrollState)) {
+            ThemeOptions(optionsState)
+            ApiOptions(optionsState)
+        }
     }
 }
 

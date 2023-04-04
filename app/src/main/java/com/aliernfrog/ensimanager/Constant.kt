@@ -1,19 +1,8 @@
 package com.aliernfrog.ensimanager
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.material.icons.outlined.Dashboard
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.data.ApiRouteOption
-import com.aliernfrog.ensimanager.data.Screen
 
 val ManagerRoundessSize = 30.dp
 val ManagerComposableShape = RoundedCornerShape(ManagerRoundessSize)
@@ -47,22 +36,6 @@ object ConfigKey {
     const val KEY_API_VERBS_ADD = "apiVerbsAdd"
     const val KEY_API_VERBS_DELETE = "apiVerbsDelete"
     const val KEY_API_POST_ADDON = "apiPostAddon"
-}
-
-object NavRoutes {
-    const val CHAT = "chat"
-    const val DASHBOARD = "dashboard"
-    const val OPTIONS = "options"
-}
-
-@Composable
-fun getScreens(): List<Screen> {
-    val context = LocalContext.current
-    return listOf(
-        Screen(NavRoutes.CHAT, context.getString(R.string.screen_chat), rememberVectorPainter(Icons.Default.Chat), rememberVectorPainter(Icons.Outlined.Chat), true),
-        Screen(NavRoutes.DASHBOARD, context.getString(R.string.screen_dashboard), rememberVectorPainter(Icons.Default.Dashboard), rememberVectorPainter(Icons.Outlined.Dashboard), true),
-        Screen(NavRoutes.OPTIONS, context.getString(R.string.screen_options), rememberVectorPainter(Icons.Default.Settings), rememberVectorPainter(Icons.Outlined.Settings), true)
-    )
 }
 
 object Theme {

@@ -6,22 +6,27 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.ApiResponse
 import com.aliernfrog.ensimanager.data.ApiRoute
-import com.aliernfrog.ensimanager.util.GeneralUtil
-import com.aliernfrog.ensimanager.util.WebUtil
+import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
+import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class DashboardState(_config: SharedPreferences, _topToastState: TopToastState) {
-    private val config = _config
-    private val topToastState = _topToastState
+@OptIn(ExperimentalMaterial3Api::class)
+class DashboardState(
+    private val config: SharedPreferences,
+    private val topToastState: TopToastState
+) {
+    val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
     val status = mutableStateOf("Fetching...")

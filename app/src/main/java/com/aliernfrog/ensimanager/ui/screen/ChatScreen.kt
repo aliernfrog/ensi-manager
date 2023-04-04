@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -27,13 +28,10 @@ import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
-import com.aliernfrog.ensimanager.ui.composable.ManagerFAB
-import com.aliernfrog.ensimanager.ui.composable.ManagerSegmentedButtons
-import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
-import com.aliernfrog.ensimanager.ui.composable.ManagerWord
+import com.aliernfrog.ensimanager.ui.composable.*
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(chatState: ChatState) {
     val context = LocalContext.current
@@ -42,21 +40,26 @@ fun ChatScreen(chatState: ChatState) {
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { chatState.fetchCurrentList(context) }
     })
-    Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
-        WordsList(chatState)
-        FloatingButtons(
-            chatState = chatState,
-            scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
-            bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
-            scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
-            addWordButtonModifier = Modifier.align(Alignment.BottomEnd)
-        )
-        PullRefreshIndicator(
-            refreshing = refreshing,
-            state = pullRefreshState,
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+    ManagerScaffold(
+        title = stringResource(R.string.screen_options),
+        topAppBarState = chatState.topAppBarState
+    ) {
+        Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
+            WordsList(chatState)
+            FloatingButtons(
+                chatState = chatState,
+                scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
+                bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
+                scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
+                addWordButtonModifier = Modifier.align(Alignment.BottomEnd)
+            )
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = pullRefreshState,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
     LaunchedEffect(Unit) {
         chatState.updateApiProperties()
