@@ -12,15 +12,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,7 +41,7 @@ fun ChatScreen(chatState: ChatState) {
         scope.launch { chatState.fetchCurrentList(context) }
     })
     AppScaffold(
-        title = stringResource(R.string.screen_options),
+        title = stringResource(R.string.screen_chat),
         topAppBarState = chatState.topAppBarState
     ) {
         Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
@@ -102,7 +102,10 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     TextField(
         value = chatState.filter.value,
         onValueChange = { chatState.filter.value = it },
-        label = { Text(stringResource(R.string.chat_filter)) }
+        placeholder = { Text(stringResource(R.string.chat_search)) },
+        leadingIcon = rememberVectorPainter(Icons.Rounded.Search),
+        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+        contentColor = MaterialTheme.colorScheme.onSurface
     )
     Text(
         text = stringResource(when (chatState.type.value) {

@@ -11,7 +11,7 @@
     <string name="chat_verbs">Verbs</string>
     <string name="chat_words_add">Add word</string>
     <string name="chat_verbs_add">Add verb</string>
-    <string name="chat_filter">Filter</string>
+    <string name="chat_search">Search..</string>
     <string name="chat_words_count">% words shown</string>
     <string name="chat_verbs_count">% verbs shown</string>
     <string name="dashboard_status">Status</string>

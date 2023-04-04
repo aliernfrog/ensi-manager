@@ -54,7 +54,11 @@ fun TextField(
         focusedLabelColor = contentColor,
         unfocusedLabelColor = contentColor.copy(0.7f),
         focusedPlaceholderColor = contentColor.copy(0.7f),
-        unfocusedPlaceholderColor = contentColor.copy(0.7f)
+        unfocusedPlaceholderColor = contentColor.copy(0.7f),
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent
     )
 ) {
     Box(
@@ -72,7 +76,7 @@ fun TextField(
             modifier = Modifier.fillMaxWidth(),
             label = label,
             placeholder = placeholder,
-            leadingIcon = leadingIcon?.let { { Icon(it, null) } },
+            leadingIcon = leadingIcon?.let { { Icon(it, null, tint = contentColor) } },
             supportingText = supportingText,
             isError = isError,
             keyboardOptions = keyboardOptions,
