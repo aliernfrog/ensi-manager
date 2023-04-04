@@ -19,16 +19,16 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ApiRoutes
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.OptionsState
-import com.aliernfrog.ensimanager.ui.composable.ManagerRadioButtons
-import com.aliernfrog.ensimanager.ui.composable.ManagerRouteOption
-import com.aliernfrog.ensimanager.ui.composable.ManagerScaffold
-import com.aliernfrog.ensimanager.ui.composable.ManagerSwitch
+import com.aliernfrog.ensimanager.ui.component.RadioButtons
+import com.aliernfrog.ensimanager.ui.component.RouteOption
+import com.aliernfrog.ensimanager.ui.component.AppScaffold
+import com.aliernfrog.ensimanager.ui.component.Switch
 import com.aliernfrog.ensimanager.ui.theme.supportsMaterialYou
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsScreen(optionsState: OptionsState) {
-    ManagerScaffold(
+    AppScaffold(
         title = stringResource(R.string.screen_options),
         topAppBarState = optionsState.topAppBarState
     ) {
@@ -47,11 +47,11 @@ private fun ThemeOptions(optionsState: OptionsState) {
         stringResource(R.string.options_theme_dark)
     )
     OptionsColumn(title = stringResource(R.string.options_theme)) {
-        ManagerRadioButtons(options = themeOptions, initialIndex = optionsState.theme.value) {
+        RadioButtons(options = themeOptions, initialIndex = optionsState.theme.value) {
             optionsState.setTheme(it)
         }
         if (supportsMaterialYou) {
-            ManagerSwitch(
+            Switch(
                 title = stringResource(R.string.options_theme_materialYou),
                 description = stringResource(R.string.options_theme_materialYou_description),
                 checked = optionsState.materialYou.value
@@ -67,7 +67,7 @@ private fun ApiOptions(optionsState: OptionsState) {
     OptionsColumn(title = stringResource(R.string.options_api), bottomDivider = false) {
         ApiRoutes.options.forEach { route ->
             val urlEdit = remember { mutableStateOf(optionsState.config.getString(route.prefKey, "")!!) }
-            ManagerRouteOption(route, urlEdit.value, Modifier.padding(horizontal = 8.dp)) {
+            RouteOption(route, urlEdit.value, Modifier.padding(horizontal = 8.dp)) {
                 urlEdit.value = it
                 optionsState.config.edit().putString(route.prefKey, it).apply()
             }

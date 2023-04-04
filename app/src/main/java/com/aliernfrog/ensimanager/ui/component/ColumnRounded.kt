@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.composable
+package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -13,22 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ManagerComposableShape
+import com.aliernfrog.ensimanager.AppComponentShape
 
 @Composable
-fun ManagerColumn(
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surfaceVariant,
-    title: String? = null,
-    titleColor: Color = MaterialTheme.colorScheme.primary,
-    onClick: (() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    var columnModifier = modifier.fillMaxWidth().padding(8.dp).clip(ManagerComposableShape)
+fun ColumnRounded(modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.surfaceVariant, title: String? = null, titleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
+    var columnModifier = modifier.fillMaxWidth().padding(8.dp).clip(AppComponentShape)
     if (onClick != null) columnModifier = columnModifier.clickable { onClick() }
     Column(columnModifier.background(color).animateContentSize().padding(8.dp)) {
-        if (title != null) Text(text = title, color = titleColor, modifier = Modifier.padding(horizontal = 8.dp))
+        if (title != null) Text(text = title, fontWeight = FontWeight.Bold, color = titleColor, modifier = Modifier.padding(horizontal = 8.dp))
         content()
     }
 }

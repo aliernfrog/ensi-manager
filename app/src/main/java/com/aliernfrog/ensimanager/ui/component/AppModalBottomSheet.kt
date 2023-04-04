@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.composable
+package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -18,12 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.ensimanager.ManagerComposableShape
-import com.aliernfrog.ensimanager.ManagerRoundessSize
+import com.aliernfrog.ensimanager.AppComponentShape
+import com.aliernfrog.ensimanager.AppRoundnessSize
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ManagerModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetScrollState: ScrollState = rememberScrollState(), sheetContent: @Composable ColumnScope.() -> Unit) {
+fun AppModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetScrollState: ScrollState = rememberScrollState(), sheetContent: @Composable ColumnScope.() -> Unit) {
     ModalBottomSheetLayout(
         sheetBackgroundColor = Color.Transparent,
         sheetContentColor = MaterialTheme.colorScheme.onBackground,
@@ -31,14 +31,14 @@ fun ManagerModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetS
         sheetElevation = 0.dp,
         content = {},
         sheetContent = {
-            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth().clip(RoundedCornerShape(topStart = ManagerRoundessSize, topEnd = ManagerRoundessSize)).background(MaterialTheme.colorScheme.background).navigationBarsPadding().imePadding(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth().clip(RoundedCornerShape(topStart = AppRoundnessSize, topEnd = AppRoundnessSize)).background(MaterialTheme.colorScheme.background).navigationBarsPadding().imePadding(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(modifier = Modifier
                     .padding(vertical = 8.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, shape = ManagerComposableShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, shape = AppComponentShape)
                     .size(30.dp, 5.dp)
                     .align(Alignment.CenterHorizontally)
                 )
-                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = ManagerRoundessSize, topEnd = ManagerRoundessSize)).verticalScroll(sheetScrollState)) {
+                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = AppRoundnessSize, topEnd = AppRoundnessSize)).verticalScroll(sheetScrollState)) {
                     if (title != null) Text(text = title, color = MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
                 }

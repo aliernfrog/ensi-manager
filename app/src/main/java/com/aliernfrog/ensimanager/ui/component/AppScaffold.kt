@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.composable
+package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,7 +15,7 @@ import com.aliernfrog.ensimanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManagerScaffold(
+fun AppScaffold(
     title: String,
     topAppBarState: TopAppBarState = TopAppBarState(0F,0F,0F),
     floatingActionButton: @Composable () -> Unit = {},

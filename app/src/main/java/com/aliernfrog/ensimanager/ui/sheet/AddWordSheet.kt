@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
-import com.aliernfrog.ensimanager.ui.composable.ManagerModalBottomSheet
-import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
+import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
+import com.aliernfrog.ensimanager.ui.component.TextField
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -30,11 +30,11 @@ fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
         ChatScreenType.VERBS -> R.string.chat_verbs_add
         else -> R.string.chat_words_add
     })
-    ManagerModalBottomSheet(
+    AppModalBottomSheet(
         title = action,
         sheetState = state
     ) {
-        ManagerTextField(
+        TextField(
             value = chatState.addWordInput.value,
             onValueChange = { chatState.addWordInput.value = it }
         )

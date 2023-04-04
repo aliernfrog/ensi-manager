@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.composable
+package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -17,7 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.ensimanager.data.Screen
 
 @Composable
-fun ManagerBaseScaffold(screens: List<Screen>, navController: NavController, content: @Composable (PaddingValues) -> Unit) {
+fun BaseScaffold(screens: List<Screen>, navController: NavController, content: @Composable (PaddingValues) -> Unit) {
     val layoutDirection = LocalLayoutDirection.current
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentScreen = screens.find { it.route == currentRoute }

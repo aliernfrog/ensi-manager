@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.DashboardState
-import com.aliernfrog.ensimanager.ui.composable.ManagerColumn
-import com.aliernfrog.ensimanager.ui.composable.ManagerScaffold
+import com.aliernfrog.ensimanager.ui.component.ColumnRounded
+import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -35,7 +35,7 @@ fun DashboardScreen(dashboardState: DashboardState) {
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { dashboardState.fetchStatus(context) }
     })
-    ManagerScaffold(
+    AppScaffold(
         title = stringResource(R.string.screen_dashboard),
         topAppBarState = dashboardState.topAppBarState
     ) {
@@ -60,7 +60,7 @@ fun DashboardScreen(dashboardState: DashboardState) {
 
 @Composable
 private fun Status(dashboardState: DashboardState) {
-    ManagerColumn(title = stringResource(R.string.dashboard_status)) {
+    ColumnRounded(title = stringResource(R.string.dashboard_status)) {
         SelectionContainer(Modifier.padding(horizontal = 8.dp)) {
             Text(text = dashboardState.status.value, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }

@@ -28,7 +28,7 @@ import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
-import com.aliernfrog.ensimanager.ui.composable.*
+import com.aliernfrog.ensimanager.ui.component.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -40,7 +40,7 @@ fun ChatScreen(chatState: ChatState) {
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { chatState.fetchCurrentList(context) }
     })
-    ManagerScaffold(
+    AppScaffold(
         title = stringResource(R.string.screen_options),
         topAppBarState = chatState.topAppBarState
     ) {
@@ -80,7 +80,7 @@ private fun WordsList(chatState: ChatState) {
             ListControls(chatState, list.size)
         }
         items(list) {
-            ManagerWord(it, Modifier.animateItemPlacement()) { scope.launch { chatState.showWordSheet(it) } }
+            Word(it, Modifier.animateItemPlacement()) { scope.launch { chatState.showWordSheet(it) } }
         }
         item {
             Spacer(Modifier.height(70.dp))
@@ -92,14 +92,14 @@ private fun WordsList(chatState: ChatState) {
 private fun ListControls(chatState: ChatState, wordsShown: Int) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    ManagerSegmentedButtons(
+    SegmentedButtons(
         options = listOf(stringResource(R.string.chat_words), stringResource(R.string.chat_verbs)),
         initialIndex = chatState.type.value,
     ) {
         chatState.type.value = it
         scope.launch { chatState.fetchCurrentList(context) }
     }
-    ManagerTextField(
+    TextField(
         value = chatState.filter.value,
         onValueChange = { chatState.filter.value = it },
         label = { Text(stringResource(R.string.chat_filter)) }
@@ -132,7 +132,7 @@ private fun FloatingButtons(
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
-        ManagerFAB(icon = Icons.Outlined.KeyboardArrowUp) {
+        FloatingActionButton(icon = Icons.Outlined.KeyboardArrowUp) {
             scope.launch { chatState.lazyListState.animateScrollToItem(0) }
         }
     }
@@ -143,11 +143,11 @@ private fun FloatingButtons(
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut()
         ) {
-            ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown) {
+            FloatingActionButton(icon = Icons.Outlined.KeyboardArrowDown) {
                 scope.launch { chatState.lazyListState.animateScrollToItem(chatState.lazyListState.layoutInfo.totalItemsCount + 1) }
             }
         }
-        ManagerFAB(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
+        FloatingActionButton(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
             scope.launch { chatState.addWordSheetState.show() }
         }
     }

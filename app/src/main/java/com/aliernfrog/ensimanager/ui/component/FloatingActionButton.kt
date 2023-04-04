@@ -1,6 +1,6 @@
-package com.aliernfrog.ensimanager.ui.composable
+package com.aliernfrog.ensimanager.ui.component
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ManagerFAB(
+fun FloatingActionButton(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.secondary,
@@ -22,7 +22,7 @@ fun ManagerFAB(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.systemBarsPadding(),
         shape = RoundedCornerShape(20.dp),
         containerColor = containerColor,
         contentColor = contentColor

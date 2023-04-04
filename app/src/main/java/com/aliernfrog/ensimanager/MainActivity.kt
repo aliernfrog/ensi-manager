@@ -17,7 +17,7 @@ import androidx.core.view.WindowCompat
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
 import com.aliernfrog.ensimanager.state.OptionsState
-import com.aliernfrog.ensimanager.ui.composable.ManagerBaseScaffold
+import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
 import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
     private fun BaseScaffold() {
         val navController = rememberAnimatedNavController()
         val screens = getScreens()
-        ManagerBaseScaffold(screens, navController) {
+        BaseScaffold(screens, navController) {
             AnimatedNavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
