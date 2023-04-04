@@ -132,7 +132,10 @@ private fun FloatingButtons(
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
-        FloatingActionButton(icon = Icons.Outlined.KeyboardArrowUp) {
+        FloatingActionButton(
+            modifier = Modifier.padding(16.dp),
+            icon = Icons.Outlined.KeyboardArrowUp
+        ) {
             scope.launch { chatState.lazyListState.animateScrollToItem(0) }
         }
     }
@@ -143,11 +146,18 @@ private fun FloatingButtons(
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut()
         ) {
-            FloatingActionButton(icon = Icons.Outlined.KeyboardArrowDown) {
+            FloatingActionButton(
+                modifier = Modifier.padding(16.dp),
+                icon = Icons.Outlined.KeyboardArrowDown
+            ) {
                 scope.launch { chatState.lazyListState.animateScrollToItem(chatState.lazyListState.layoutInfo.totalItemsCount + 1) }
             }
         }
-        FloatingActionButton(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
+        FloatingActionButton(
+            icon = Icons.Outlined.Add,
+            modifier = addWordButtonModifier.padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
             scope.launch { chatState.addWordSheetState.show() }
         }
     }
