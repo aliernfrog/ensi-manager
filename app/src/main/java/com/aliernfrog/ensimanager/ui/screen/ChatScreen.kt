@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -104,6 +105,20 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
         onValueChange = { chatState.filter.value = it },
         placeholder = { Text(stringResource(R.string.chat_search)) },
         leadingIcon = rememberVectorPainter(Icons.Rounded.Search),
+        trailingIcon = {
+            AnimatedVisibility(
+                visible = chatState.filter.value.isNotEmpty(),
+                enter = fadeIn() + expandHorizontally(),
+                exit = fadeOut() + shrinkHorizontally()
+            ) {
+                IconButton(onClick = { chatState.filter.value = "" }) {
+                    Icon(
+                        painter = rememberVectorPainter(Icons.Rounded.Clear),
+                        contentDescription = null
+                    )
+                }
+            }
+        },
         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
         contentColor = MaterialTheme.colorScheme.onSurface
     )

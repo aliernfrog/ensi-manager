@@ -1,7 +1,6 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -46,7 +45,11 @@ fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
             onValueChange = { chatState.addWordInput.value = it },
             placeholder = { Text(placeholder) },
             trailingIcon = {
-                AnimatedVisibility(chatState.addWordInput.value.isNotEmpty()) {
+                AnimatedVisibility(
+                    visible = chatState.addWordInput.value.isNotEmpty(),
+                    enter = fadeIn() + expandHorizontally(),
+                    exit = fadeOut() + shrinkHorizontally()
+                ) {
                     IconButton(onClick = { chatState.addWordInput.value = "" }) {
                         Icon(
                             painter = rememberVectorPainter(Icons.Rounded.Clear),
