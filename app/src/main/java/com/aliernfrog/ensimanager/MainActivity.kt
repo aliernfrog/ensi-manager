@@ -15,11 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
-import com.aliernfrog.ensimanager.state.OptionsState
+import com.aliernfrog.ensimanager.state.SettingsState
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
-import com.aliernfrog.ensimanager.ui.screen.OptionsScreen
+import com.aliernfrog.ensimanager.ui.screen.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
@@ -35,7 +35,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
     private lateinit var topToastState: TopToastState
-    private lateinit var optionsState: OptionsState
+    private lateinit var settingsState: SettingsState
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
 
@@ -43,12 +43,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState(window.decorView)
-        optionsState = OptionsState(config, ScrollState(0))
+        settingsState = SettingsState(config, ScrollState(0))
         chatState = ChatState(config, topToastState, LazyListState())
         dashboardState = DashboardState(config, topToastState)
         setContent {
             val darkTheme = getDarkThemePreference()
-            EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
+            EnsiManagerTheme(darkTheme, settingsState.materialYou) {
                 BaseScaffold()
                 TopToastHost(topToastState)
             }
@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
-                composable(Destination.SETTINGS.route) { OptionsScreen(optionsState) }
+                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState) }
             }
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun getDarkThemePreference(): Boolean {
-        return when(optionsState.theme.value) {
+        return when(settingsState.theme) {
             Theme.LIGHT -> false
             Theme.DARK -> true
             else -> isSystemInDarkTheme()
