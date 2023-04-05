@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowCompat
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
 import com.aliernfrog.ensimanager.state.OptionsState
@@ -32,7 +31,6 @@ import com.aliernfrog.toptoast.state.TopToastState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
@@ -43,7 +41,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState(window.decorView)
         optionsState = OptionsState(config, ScrollState(0))
@@ -54,7 +51,6 @@ class MainActivity : ComponentActivity() {
             EnsiManagerTheme(darkTheme, optionsState.materialYou.value) {
                 BaseScaffold()
                 TopToastHost(topToastState)
-                SystemBars(darkTheme)
             }
         }
     }
@@ -96,13 +92,6 @@ class MainActivity : ComponentActivity() {
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
         WordSheet(chatState, state = chatState.wordSheetState)
-    }
-
-    @Composable
-    private fun SystemBars(darkTheme: Boolean) {
-        val controller = rememberSystemUiController()
-        controller.systemBarsDarkContentEnabled = !darkTheme
-        controller.isNavigationBarContrastEnforced = false
     }
 
     @Composable
