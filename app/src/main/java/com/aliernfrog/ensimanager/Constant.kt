@@ -1,11 +1,6 @@
 package com.aliernfrog.ensimanager
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.data.ApiRouteOption
-
-val AppRoundnessSize = 30.dp
-val AppComponentShape = RoundedCornerShape(AppRoundnessSize)
 
 object ApiRoutes {
     val options = listOf(

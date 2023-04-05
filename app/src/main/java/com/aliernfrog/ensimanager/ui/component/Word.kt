@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.AppComponentShape
+import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 
 @Composable
 fun Word(word: String, modifier: Modifier = Modifier, onClick: () -> Unit) {

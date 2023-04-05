@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.AppComponentShape
+import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)

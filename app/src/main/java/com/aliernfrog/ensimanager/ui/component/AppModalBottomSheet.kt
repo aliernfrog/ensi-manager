@@ -4,7 +4,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -18,8 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.ensimanager.AppComponentShape
-import com.aliernfrog.ensimanager.AppRoundnessSize
+import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
+import com.aliernfrog.ensimanager.ui.theme.AppBottomSheetShape
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -31,14 +30,14 @@ fun AppModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState
         sheetElevation = 0.dp,
         content = {},
         sheetContent = {
-            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth().clip(RoundedCornerShape(topStart = AppRoundnessSize, topEnd = AppRoundnessSize)).background(MaterialTheme.colorScheme.background).navigationBarsPadding().imePadding(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth().clip(AppBottomSheetShape).background(MaterialTheme.colorScheme.background).navigationBarsPadding().imePadding(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(modifier = Modifier
                     .padding(vertical = 8.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, shape = AppComponentShape)
                     .size(30.dp, 5.dp)
                     .align(Alignment.CenterHorizontally)
                 )
-                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = AppRoundnessSize, topEnd = AppRoundnessSize)).verticalScroll(sheetScrollState)) {
+                Column(Modifier.fillMaxWidth().clip(AppBottomSheetShape).verticalScroll(sheetScrollState)) {
                     if (title != null) Text(text = title, color = MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
                 }

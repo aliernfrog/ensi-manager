@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.AppComponentShape
+import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 
 @Composable
 fun SegmentedButtons(
