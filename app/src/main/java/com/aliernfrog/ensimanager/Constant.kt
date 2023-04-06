@@ -21,6 +21,7 @@ object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
     const val KEY_APP_THEME = "appTheme"
     const val KEY_APP_MATERIAL_YOU = "materialYou"
+    const val KEY_API_ENDPOINTS_URL = "apiEndpointsUrl"
     const val KEY_API_AUTHORIZATION = "apiAuthorization"
     const val KEY_API_STATUS_GET = "apiStatusGet"
     const val KEY_API_PROCESS_DESTROY = "apiProcessDestroy"

@@ -11,12 +11,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
+import com.aliernfrog.ensimanager.state.EnsiAPIState
 import com.aliernfrog.ensimanager.state.SettingsState
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
+import com.aliernfrog.ensimanager.ui.screen.APISetupScreen
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
 import com.aliernfrog.ensimanager.ui.screen.SettingsScreen
@@ -36,14 +38,18 @@ class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
     private lateinit var topToastState: TopToastState
     private lateinit var settingsState: SettingsState
+    private lateinit var apiState: EnsiAPIState
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
+
+    private var showSetupScreen by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState(window.decorView)
         settingsState = SettingsState(config, ScrollState(0))
+        apiState = EnsiAPIState(config) { showSetupScreen = true }
         chatState = ChatState(config, topToastState, LazyListState())
         dashboardState = DashboardState(config, topToastState)
         setContent {
@@ -85,6 +91,11 @@ class MainActivity : ComponentActivity() {
                     animationSpec = tween(100)
                 ) }
             ) {
+                composable(Destination.SETUP.route) {
+                    APISetupScreen(apiState) {
+                        navController.navigate(Destination.SETTINGS.route)
+                    }
+                }
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
                 composable(Destination.SETTINGS.route) { SettingsScreen(settingsState) }
@@ -92,6 +103,12 @@ class MainActivity : ComponentActivity() {
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
         WordSheet(chatState, state = chatState.wordSheetState)
+
+        LaunchedEffect(showSetupScreen) {
+            navController.navigate(
+                if (showSetupScreen) Destination.SETUP.route else Destination.DASHBOARD.route
+            ) { popUpTo(0) }
+        }
     }
 
     @Composable

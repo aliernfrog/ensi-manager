@@ -4,6 +4,9 @@
     <string name="action_done">Done</string>
     <string name="error_invalidRoute">Invalid route provided</string>
     <string name="error_noBody">Body is blank, response code: %STATUS%</string>
+    <string name="setup">API setup</string>
+    <string name="setup_endpoints_url">Endpoints URL</string>
+    <string name="setup_endpoints_url_info">A GET request will be done to fetch endpoints</string>
     <string name="screen_chat">Chat</string>
     <string name="screen_dashboard">Dashboard</string>
     <string name="chat_words">Words</string>

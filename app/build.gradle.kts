@@ -63,4 +63,5 @@ dependencies {
     implementation("com.google.accompanist:accompanist-navigation-animation:0.29.0-alpha")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
     implementation("com.github.aliernfrog:top-toast-compose:1.2.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
