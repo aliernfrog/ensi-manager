@@ -25,10 +25,11 @@ enum class Destination(
     val vectorSelected: ImageVector? = null,
     val isSubScreen: Boolean = false
 ) {
-    SETUP("setup", R.string.setup, Icons.Default.Settings, Icons.Outlined.Settings, isSubScreen = true),
+    SETUP("setup", R.string.setup, null, null, isSubScreen = true),
     CHAT("chat", R.string.screen_chat, Icons.Default.Chat, Icons.Outlined.Chat),
     DASHBOARD("dashboard", R.string.screen_dashboard, Icons.Default.Dashboard, Icons.Outlined.Dashboard),
-    SETTINGS("settings", R.string.settings, Icons.Default.Settings, Icons.Outlined.Settings)
+    SETTINGS("settings", R.string.settings, Icons.Default.Settings, Icons.Outlined.Settings),
+    SETTINGS_SUBSCREEN("settingsSubscreen", R.string.settings, null, null, isSubScreen = true)
 }
 
 @Composable

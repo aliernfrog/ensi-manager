@@ -93,12 +93,17 @@ class MainActivity : ComponentActivity() {
             ) {
                 composable(Destination.SETUP.route) {
                     APISetupScreen(apiState) {
-                        navController.navigate(Destination.SETTINGS.route)
+                        navController.navigate(Destination.SETTINGS_SUBSCREEN.route)
                     }
                 }
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
                 composable(Destination.SETTINGS.route) { SettingsScreen(settingsState) }
+                composable(Destination.SETTINGS_SUBSCREEN.route) {
+                    SettingsScreen(settingsState) {
+                        navController.popBackStack()
+                    }
+                }
             }
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)

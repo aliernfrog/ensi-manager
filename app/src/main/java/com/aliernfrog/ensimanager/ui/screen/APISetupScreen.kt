@@ -25,7 +25,6 @@ import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 @Composable
 fun APISetupScreen(
     apiState: EnsiAPIState,
-    //TODO treat settings as subscreen when opened from this
     onNavigateSettings: () -> Unit
 ) {
     AppScaffold(

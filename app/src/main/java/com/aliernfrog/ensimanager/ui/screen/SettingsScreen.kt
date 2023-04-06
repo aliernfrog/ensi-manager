@@ -1,9 +1,7 @@
 package com.aliernfrog.ensimanager.ui.screen
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -21,14 +19,16 @@ import com.aliernfrog.lactool.ui.component.ColumnDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(settingsState: SettingsState) {
+fun SettingsScreen(settingsState: SettingsState, onBackClick: (() -> Unit)? = null) {
     AppScaffold(
         title = stringResource(R.string.settings),
-        topAppBarState = settingsState.topAppBarState
+        topAppBarState = settingsState.topAppBarState,
+        onBackClick = onBackClick
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
             AppearanceOptions(settingsState)
             ApiOptions(settingsState)
+            Spacer(Modifier.navigationBarsPadding())
         }
     }
 }
