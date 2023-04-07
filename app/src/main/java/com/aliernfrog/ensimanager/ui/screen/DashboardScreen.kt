@@ -29,11 +29,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(dashboardState: DashboardState) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val refreshing = dashboardState.fetchingState.value == FetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
-        scope.launch { dashboardState.fetchStatus(context) }
+        scope.launch { dashboardState.fetchStatus() }
     })
     AppScaffold(
         title = stringResource(R.string.screen_dashboard),
@@ -53,8 +52,7 @@ fun DashboardScreen(dashboardState: DashboardState) {
         }
     }
     LaunchedEffect(Unit) {
-        dashboardState.updateApiProperties()
-        dashboardState.fetchStatus(context)
+        dashboardState.fetchStatus()
     }
 }
 

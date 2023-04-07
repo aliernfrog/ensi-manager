@@ -10,13 +10,17 @@ import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.EnsiAPIData
+import com.aliernfrog.ensimanager.data.EnsiAPIEndpoint
+import com.aliernfrog.ensimanager.data.HTTPResponse
 import com.aliernfrog.ensimanager.util.NavigationConstant
+import com.aliernfrog.ensimanager.util.extension.doRequest
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.net.URL
 
 class EnsiAPIState(
@@ -69,5 +73,15 @@ class EnsiAPIState(
         configEdit.putString(ConfigKey.KEY_API_ENDPOINTS_URL, setupEndpointsUrl)
         configEdit.putString(ConfigKey.KEY_API_AUTHORIZATION, setupAuth)
         configEdit.apply()
+    }
+
+    fun doRequest(
+        endpoint: EnsiAPIEndpoint?,
+        json: JSONObject? = null
+    ): HTTPResponse? {
+        return endpoint?.doRequest(
+            json = json,
+            authorization = setupAuth
+        )
     }
 }

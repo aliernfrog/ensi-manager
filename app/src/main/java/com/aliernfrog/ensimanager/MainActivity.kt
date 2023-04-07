@@ -51,8 +51,8 @@ class MainActivity : ComponentActivity() {
         topToastState = TopToastState(window.decorView)
         settingsState = SettingsState(config, ScrollState(0))
         apiState = EnsiAPIState(config, topToastState) { navController }
-        chatState = ChatState(config, topToastState, LazyListState())
-        dashboardState = DashboardState(config, topToastState)
+        chatState = ChatState(topToastState, apiState, LazyListState())
+        dashboardState = DashboardState(topToastState, apiState)
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, settingsState.materialYou) {
@@ -95,9 +95,9 @@ class MainActivity : ComponentActivity() {
                 composable(Destination.SETUP.route) { APISetupScreen(apiState, navController) }
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
-                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState) }
+                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState, navController) }
                 composable(Destination.SETTINGS_SUBSCREEN.route) {
-                    SettingsScreen(settingsState) {
+                    SettingsScreen(settingsState, navController, showApiOptions = false) {
                         navController.popBackStack()
                     }
                 }

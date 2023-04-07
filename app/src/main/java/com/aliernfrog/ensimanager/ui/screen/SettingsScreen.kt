@@ -5,21 +5,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ApiRoutes
+import androidx.navigation.NavController
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.SettingsState
 import com.aliernfrog.ensimanager.ui.component.*
 import com.aliernfrog.ensimanager.ui.theme.supportsMaterialYou
+import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.lactool.ui.component.ColumnDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(settingsState: SettingsState, onBackClick: (() -> Unit)? = null) {
+fun SettingsScreen(
+    settingsState: SettingsState,
+    navController: NavController,
+    showApiOptions: Boolean = true,
+    onBackClick: (() -> Unit)? = null
+) {
     AppScaffold(
         title = stringResource(R.string.settings),
         topAppBarState = settingsState.topAppBarState,
@@ -27,7 +31,7 @@ fun SettingsScreen(settingsState: SettingsState, onBackClick: (() -> Unit)? = nu
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
             AppearanceOptions(settingsState)
-            ApiOptions(settingsState)
+            if (showApiOptions) ApiOptions(navController)
             Spacer(Modifier.navigationBarsPadding())
         }
     }
@@ -74,14 +78,15 @@ private fun AppearanceOptions(settingsState: SettingsState) {
 }
 
 @Composable
-private fun ApiOptions(settingsState: SettingsState) {
+private fun ApiOptions(navController: NavController) {
     ColumnDivider(title = stringResource(R.string.settings_api), bottomDivider = false) {
-        ApiRoutes.options.forEach { route ->
-            val urlEdit = remember { mutableStateOf(settingsState.config.getString(route.prefKey, "")!!) }
-            RouteOption(route, urlEdit.value, Modifier.padding(horizontal = 8.dp)) {
-                urlEdit.value = it
-                settingsState.config.edit().putString(route.prefKey, it).apply()
-            }
+        ButtonShapeless(
+            title = stringResource(R.string.settings_api_config),
+            description = stringResource(R.string.settings_api_config_description),
+            expanded = false,
+            arrowRotation = 90f
+        ) {
+            navController.navigate(Destination.SETUP.route)
         }
     }
 }
