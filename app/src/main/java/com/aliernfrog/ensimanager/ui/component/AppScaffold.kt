@@ -22,6 +22,7 @@ fun AppScaffold(
     topAppBarState: TopAppBarState = TopAppBarState(0F,0F,0F),
     topBarStyle: TopBarStyle = TopBarStyle.LARGE,
     topBarActions: @Composable RowScope.() -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     onBackClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
@@ -41,6 +42,7 @@ fun AppScaffold(
                 actions = topBarActions
             )
         },
+        bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,
         contentWindowInsets = WindowInsets(0,0,0,0),
         content = {

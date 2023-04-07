@@ -15,7 +15,8 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.Screen
 
 object NavigationConstant {
-    val INITIAL_DESTINATION = Destination.DASHBOARD.route
+    val INITIAL_DESTINATION = Destination.SETUP.route
+    val POST_SETUP_DESTINATION = Destination.DASHBOARD.route
 }
 
 enum class Destination(
@@ -40,7 +41,7 @@ fun getScreens(): List<Screen> {
             name = stringResource(destination.labelId),
             iconFilled = destination.vector?.let { rememberVectorPainter(it) },
             iconOutlined = destination.vectorSelected?.let { rememberVectorPainter(it) },
-            isSubScreen = destination.isSubScreen
+            hideBottomBar = destination.isSubScreen
         )
     }
 }

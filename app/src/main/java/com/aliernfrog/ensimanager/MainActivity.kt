@@ -42,14 +42,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
 
-    private var showSetupScreen by mutableStateOf(false)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState(window.decorView)
         settingsState = SettingsState(config, ScrollState(0))
-        apiState = EnsiAPIState(config) { showSetupScreen = true }
+        apiState = EnsiAPIState(config, topToastState)
         chatState = ChatState(config, topToastState, LazyListState())
         dashboardState = DashboardState(config, topToastState)
         setContent {
@@ -91,11 +89,7 @@ class MainActivity : ComponentActivity() {
                     animationSpec = tween(100)
                 ) }
             ) {
-                composable(Destination.SETUP.route) {
-                    APISetupScreen(apiState) {
-                        navController.navigate(Destination.SETTINGS_SUBSCREEN.route)
-                    }
-                }
+                composable(Destination.SETUP.route) { APISetupScreen(apiState, navController) }
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
                 composable(Destination.SETTINGS.route) { SettingsScreen(settingsState) }
@@ -108,12 +102,6 @@ class MainActivity : ComponentActivity() {
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
         WordSheet(chatState, state = chatState.wordSheetState)
-
-        LaunchedEffect(showSetupScreen) {
-            navController.navigate(
-                if (showSetupScreen) Destination.SETUP.route else Destination.DASHBOARD.route
-            ) { popUpTo(0) }
-        }
     }
 
     @Composable
