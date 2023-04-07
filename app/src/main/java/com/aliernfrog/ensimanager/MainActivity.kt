@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
 import com.aliernfrog.ensimanager.state.EnsiAPIState
@@ -36,6 +37,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
+    private lateinit var navController: NavHostController
     private lateinit var topToastState: TopToastState
     private lateinit var settingsState: SettingsState
     private lateinit var apiState: EnsiAPIState
@@ -45,9 +47,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
+        navController = NavHostController(applicationContext)
         topToastState = TopToastState(window.decorView)
         settingsState = SettingsState(config, ScrollState(0))
-        apiState = EnsiAPIState(config, topToastState)
+        apiState = EnsiAPIState(config, topToastState) { navController }
         chatState = ChatState(config, topToastState, LazyListState())
         dashboardState = DashboardState(config, topToastState)
         setContent {
@@ -62,8 +65,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
-        val navController = rememberAnimatedNavController()
         val screens = getScreens()
+        navController = rememberAnimatedNavController()
         BaseScaffold(screens, navController) {
             AnimatedNavHost(
                 navController = navController,

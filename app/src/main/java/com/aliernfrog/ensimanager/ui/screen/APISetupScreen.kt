@@ -155,16 +155,17 @@ private fun Error(apiState: EnsiAPIState) {
 private fun BottomBarActions(apiState: EnsiAPIState, navController: NavController) {
     val scope = rememberCoroutineScope()
     if (apiState.setupCancellable) OutlinedButton(
-        onClick = { navController.popBackStack() },
+        onClick = {
+            navController.navigate(NavigationConstant.POST_SETUP_DESTINATION) {
+                popUpTo(0)
+            }
+        },
         enabled = !apiState.setupFetching
     ) {
         Text(stringResource(R.string.action_cancel))
     }
     Button(
-        onClick = { scope.launch {
-            val data = apiState.fetchApiData()
-            if (data != null) navController.navigate(NavigationConstant.POST_SETUP_DESTINATION)
-        } },
+        onClick = { scope.launch { apiState.fetchApiData() } },
         enabled = !apiState.setupFetching && apiState.setupEndpointsUrl.isNotBlank(),
         modifier = Modifier.animateContentSize()
     ) {

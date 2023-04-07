@@ -2,13 +2,15 @@ package com.aliernfrog.ensimanager.state
 
 import android.content.SharedPreferences
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.ConfigKey
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.EnsiAPIData
+import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +21,8 @@ import java.net.URL
 
 class EnsiAPIState(
     private val config: SharedPreferences,
-    private val topToastState: TopToastState
+    private val topToastState: TopToastState,
+    private val getNavController: () -> NavHostController
 ) {
     private val gson = Gson()
 
@@ -35,39 +38,36 @@ class EnsiAPIState(
     init {
         if (setupEndpointsUrl.isBlank()) setupCancellable = false
         else CoroutineScope(Dispatchers.Main).launch {
-            fetchApiData()
+            fetchApiData(true)
         }
     }
 
-    suspend fun fetchApiData(): EnsiAPIData? {
+    suspend fun fetchApiData(switchScreenOnSuccess: Boolean = false, showToastOnSuccess: Boolean = true) {
         setupFetching = true
-        return withContext(Dispatchers.IO) {
-            return@withContext try {
+        withContext(Dispatchers.IO) {
+            try {
                 //TODO? check if status code is 2xx and print response if not
                 val content = URL(setupEndpointsUrl).readText()
                 val data = gson.fromJson(content, EnsiAPIData::class.java)
                 apiData = data
                 setupCancellable = true
-                setupFetching = false
-                savePrefs()
-                data
+                saveConfig()
+                if (showToastOnSuccess) topToastState.showToast(R.string.setup_saved, Icons.Rounded.Check)
+                if (switchScreenOnSuccess) withContext(Dispatchers.Main) {
+                    getNavController().navigate(NavigationConstant.POST_SETUP_DESTINATION) { popUpTo(0) }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                setupFetching = false
                 setupError = e.toString()
-                null
             }
+            setupFetching = false
         }
     }
 
-    private fun savePrefs() {
+    private fun saveConfig() {
         val configEdit = config.edit()
         configEdit.putString(ConfigKey.KEY_API_ENDPOINTS_URL, setupEndpointsUrl)
         configEdit.putString(ConfigKey.KEY_API_AUTHORIZATION, setupAuth)
         configEdit.apply()
-        topToastState.showToast(
-            text = R.string.setup_saved,
-            icon = Icons.Rounded.Done
-        )
     }
 }
