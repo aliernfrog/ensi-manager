@@ -42,7 +42,10 @@ class EnsiAPIState(
     init {
         if (setupEndpointsUrl.isBlank()) setupCancellable = false
         else CoroutineScope(Dispatchers.Main).launch {
-            fetchApiData(true)
+            fetchApiData(
+                switchScreenOnSuccess = true,
+                showToastOnSuccess = false
+            )
         }
     }
 
