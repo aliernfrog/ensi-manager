@@ -7,7 +7,7 @@ import java.net.URL
 
 class WebUtil {
     companion object {
-        fun sendRequest(toUrl: String, method: String, authorization: String? = null, json: JSONObject? = null): HTTPResponse? {
+        fun sendRequest(toUrl: String, method: String, authorization: String? = null, json: JSONObject? = null): HTTPResponse {
             return try {
                 val url = URL(toUrl)
                 val connection = url.openConnection() as HttpURLConnection

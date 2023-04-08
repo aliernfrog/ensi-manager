@@ -3,6 +3,7 @@ package com.aliernfrog.ensimanager.state
 import android.content.SharedPreferences
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,6 +15,8 @@ import com.aliernfrog.ensimanager.data.EnsiAPIEndpoint
 import com.aliernfrog.ensimanager.data.HTTPResponse
 import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.extension.doRequest
+import com.aliernfrog.ensimanager.util.staticutil.WebUtil
+import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -53,16 +56,22 @@ class EnsiAPIState(
         setupFetching = true
         withContext(Dispatchers.IO) {
             try {
-                //TODO? check if status code is 2xx and print response if not
-                val content = URL(setupEndpointsUrl).readText()
-                val data = gson.fromJson(content, EnsiAPIData::class.java)
-                apiData = data
-                setupCancellable = true
-                saveConfig()
-                if (showToastOnSuccess) topToastState.showToast(R.string.setup_saved, Icons.Rounded.Check)
-                if (switchScreenOnSuccess) withContext(Dispatchers.Main) {
-                    getNavController().navigate(NavigationConstant.POST_SETUP_DESTINATION) { popUpTo(0) }
-                }
+                val response = WebUtil.sendRequest(setupEndpointsUrl, "GET")
+                val isSuccess = response.error == null && response.statusCode.toString().startsWith("2")
+                if (isSuccess) {
+                    val data = gson.fromJson(response.responseBody, EnsiAPIData::class.java)
+                    apiData = data
+                    setupCancellable = true
+                    saveConfig()
+                    if (showToastOnSuccess) topToastState.showToast(R.string.setup_saved, Icons.Rounded.Check)
+                    if (switchScreenOnSuccess) withContext(Dispatchers.Main) {
+                        getNavController().navigate(NavigationConstant.POST_SETUP_DESTINATION) { popUpTo(0) }
+                    }
+                } else topToastState.showToast(
+                    text = if (response.error != null) response.error else "[${response.statusCode}] ${response.responseBody}",
+                    icon = Icons.Rounded.PriorityHigh,
+                    iconTintColor = TopToastColor.ERROR
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 setupError = e.toString()
