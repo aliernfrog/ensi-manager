@@ -1,13 +1,13 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
-import com.aliernfrog.ensimanager.data.ApiResponse
+import com.aliernfrog.ensimanager.data.HTTPResponse
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
 class WebUtil {
     companion object {
-        fun sendRequest(toUrl: String, method: String, authorization: String? = null, json: JSONObject? = null): ApiResponse? {
+        fun sendRequest(toUrl: String, method: String, authorization: String? = null, json: JSONObject? = null): HTTPResponse {
             return try {
                 val url = URL(toUrl)
                 val connection = url.openConnection() as HttpURLConnection
@@ -20,9 +20,17 @@ class WebUtil {
                     }
                 }
                 val response = getResponseFromConnection(connection)
-                ApiResponse(connection.responseCode, response)
-            } catch (_: Exception) {
-                null
+                HTTPResponse(
+                    statusCode = connection.responseCode,
+                    responseBody = response
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                HTTPResponse(
+                    statusCode = null,
+                    responseBody = null,
+                    error = e.toString()
+                )
             }
         }
 

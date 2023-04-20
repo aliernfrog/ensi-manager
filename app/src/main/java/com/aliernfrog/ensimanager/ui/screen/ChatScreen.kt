@@ -63,7 +63,6 @@ fun ChatScreen(chatState: ChatState) {
         }
     }
     LaunchedEffect(Unit) {
-        chatState.updateApiProperties()
         chatState.fetchCurrentList(context)
     }
 }

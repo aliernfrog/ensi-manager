@@ -1,20 +1,9 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
-import com.aliernfrog.ensimanager.data.ApiRoute
 import org.json.JSONArray
 
 class GeneralUtil {
     companion object {
-        fun getApiRouteFromString(string: String?): ApiRoute? {
-            if (string == null) return null
-            return try {
-                val split = string.split(" ## ")
-                ApiRoute(split[0].uppercase(), split[1])
-            } catch (_: Exception) {
-                null
-            }
-        }
-
         fun isJsonArray(string: String): Boolean {
             return try {
                 JSONArray(string)

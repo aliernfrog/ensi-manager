@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">Ensi Manager</string>
     <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
     <string name="action_done">Done</string>
-    <string name="error_invalidRoute">Invalid route provided</string>
+    <string name="error">Error</string>
     <string name="error_noBody">Body is blank, response code: %STATUS%</string>
+    <string name="setup">API setup</string>
+    <string name="setup_endpoints_url">Endpoints URL</string>
+    <string name="setup_endpoints_url_info">A GET request will be done to fetch endpoints</string>
+    <string name="setup_auth">Authorization</string>
+    <string name="setup_auth_info">Used in authorization header when needed</string>
+    <string name="setup_saved">Saved configuration</string>
     <string name="screen_chat">Chat</string>
     <string name="screen_dashboard">Dashboard</string>
     <string name="chat_words">Words</string>
@@ -29,4 +36,6 @@
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Theme based on colors of your device</string>
     <string name="settings_api">API</string>
+    <string name="settings_api_config">API configuration</string>
+    <string name="settings_api_config_description">Configure endpoints and authorization</string>
 </resources>

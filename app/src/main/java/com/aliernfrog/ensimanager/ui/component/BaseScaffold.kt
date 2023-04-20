@@ -26,7 +26,7 @@ fun BaseScaffold(screens: List<Screen>, navController: NavController, content: @
         bottomBar = { BottomBar(navController, screens, currentScreen) },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        val paddingValues = if (currentScreen?.isSubScreen != true) it
+        val paddingValues = if (currentScreen?.hideBottomBar != true) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),
             top = it.calculateTopPadding(),
@@ -40,12 +40,12 @@ fun BaseScaffold(screens: List<Screen>, navController: NavController, content: @
 @Composable
 private fun BottomBar(navController: NavController, screens: List<Screen>, currentScreen: Screen?) {
     AnimatedVisibility(
-        visible = !(currentScreen?.isSubScreen ?: false),
+        visible = !(currentScreen?.hideBottomBar ?: true),
         enter = slideInVertically(animationSpec = tween(durationMillis = 150), initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(animationSpec = tween(durationMillis = 150), targetOffsetY = { it }) + fadeOut()
     ) {
         BottomAppBar {
-            screens.filter { !it.isSubScreen }.forEach {
+            screens.filter { !it.hideBottomBar }.forEach {
                 val selected = it.route == currentScreen?.route
                 NavigationBarItem(
                     selected = selected,
@@ -58,7 +58,8 @@ private fun BottomBar(navController: NavController, screens: List<Screen>, curre
                     },
                     label = { Text(it.name) },
                     onClick = {
-                        if (it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
+                        if (!selected && currentScreen?.hideBottomBar != true)
+                            navController.navigate(it.route) { popUpTo(0) }
                     }
                 )
             }

@@ -11,12 +11,15 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.state.DashboardState
+import com.aliernfrog.ensimanager.state.EnsiAPIState
 import com.aliernfrog.ensimanager.state.SettingsState
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
+import com.aliernfrog.ensimanager.ui.screen.APISetupScreen
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
 import com.aliernfrog.ensimanager.ui.screen.SettingsScreen
@@ -34,18 +37,22 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
+    private lateinit var navController: NavHostController
     private lateinit var topToastState: TopToastState
     private lateinit var settingsState: SettingsState
+    private lateinit var apiState: EnsiAPIState
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
+        navController = NavHostController(applicationContext)
         topToastState = TopToastState(window.decorView)
         settingsState = SettingsState(config, ScrollState(0))
-        chatState = ChatState(config, topToastState, LazyListState())
-        dashboardState = DashboardState(config, topToastState)
+        apiState = EnsiAPIState(config, topToastState) { navController }
+        chatState = ChatState(topToastState, apiState, LazyListState())
+        dashboardState = DashboardState(topToastState, apiState)
         setContent {
             val darkTheme = getDarkThemePreference()
             EnsiManagerTheme(darkTheme, settingsState.materialYou) {
@@ -58,8 +65,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
-        val navController = rememberAnimatedNavController()
         val screens = getScreens()
+        navController = rememberAnimatedNavController()
         BaseScaffold(screens, navController) {
             AnimatedNavHost(
                 navController = navController,
@@ -85,9 +92,15 @@ class MainActivity : ComponentActivity() {
                     animationSpec = tween(100)
                 ) }
             ) {
+                composable(Destination.SETUP.route) { APISetupScreen(apiState, navController) }
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
-                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState) }
+                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState, navController) }
+                composable(Destination.SETTINGS_SUBSCREEN.route) {
+                    SettingsScreen(settingsState, navController, showApiOptions = false) {
+                        navController.popBackStack()
+                    }
+                }
             }
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
