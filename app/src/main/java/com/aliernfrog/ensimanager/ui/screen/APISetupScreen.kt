@@ -31,7 +31,6 @@ import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.theme.AppBottomSheetShape
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.util.Destination
-import com.aliernfrog.ensimanager.util.NavigationConstant
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +62,7 @@ fun APISetupScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
                 ) {
-                    BottomBarActions(apiState, navController)
+                    BottomBarActions(apiState)
                 }
             }
         }
@@ -152,13 +151,11 @@ private fun Error(apiState: EnsiAPIState) {
 }
 
 @Composable
-private fun BottomBarActions(apiState: EnsiAPIState, navController: NavController) {
+private fun BottomBarActions(apiState: EnsiAPIState) {
     val scope = rememberCoroutineScope()
     if (apiState.setupCancellable) OutlinedButton(
         onClick = {
-            navController.navigate(NavigationConstant.POST_SETUP_DESTINATION) {
-                popUpTo(0)
-            }
+            apiState.dismissApiSetup()
         },
         enabled = !apiState.setupFetching
     ) {

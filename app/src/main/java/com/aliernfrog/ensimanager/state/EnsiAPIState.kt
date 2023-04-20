@@ -45,13 +45,12 @@ class EnsiAPIState(
         if (setupEndpointsUrl.isBlank()) setupCancellable = false
         else CoroutineScope(Dispatchers.Main).launch {
             fetchApiData(
-                switchScreenOnSuccess = true,
                 showToastOnSuccess = false
             )
         }
     }
 
-    suspend fun fetchApiData(switchScreenOnSuccess: Boolean = false, showToastOnSuccess: Boolean = true) {
+    suspend fun fetchApiData(showToastOnSuccess: Boolean = true) {
         setupFetching = true
         withContext(Dispatchers.IO) {
             try {
@@ -60,12 +59,12 @@ class EnsiAPIState(
                 if (isSuccess) {
                     val data = gson.fromJson(response.responseBody, EnsiAPIData::class.java)
                     apiData = data
-                    setupCancellable = true
                     saveConfig()
                     if (showToastOnSuccess) topToastState.showToast(R.string.setup_saved, Icons.Rounded.Check)
-                    if (switchScreenOnSuccess) withContext(Dispatchers.Main) {
-                        getNavController().navigate(NavigationConstant.POST_SETUP_DESTINATION) { popUpTo(0) }
+                    if (!setupCancellable) withContext(Dispatchers.Main) {
+                        dismissApiSetup()
                     }
+                    setupCancellable = true
                 } else topToastState.showToast(
                     text = response.error ?: "[${response.statusCode}] ${response.responseBody}",
                     icon = Icons.Rounded.PriorityHigh,
@@ -94,5 +93,14 @@ class EnsiAPIState(
             json = json,
             authorization = setupAuth
         )
+    }
+
+    fun dismissApiSetup() {
+        val navController = getNavController()
+        if (navController.previousBackStackEntry == null) {
+            navController.navigate(NavigationConstant.POST_SETUP_DESTINATION) { popUpTo(0) }
+        } else {
+            navController.popBackStack()
+        }
     }
 }
