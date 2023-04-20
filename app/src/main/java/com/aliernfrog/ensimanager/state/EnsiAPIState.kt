@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.net.URL
 
 class EnsiAPIState(
     private val config: SharedPreferences,
@@ -68,7 +67,7 @@ class EnsiAPIState(
                         getNavController().navigate(NavigationConstant.POST_SETUP_DESTINATION) { popUpTo(0) }
                     }
                 } else topToastState.showToast(
-                    text = if (response.error != null) response.error else "[${response.statusCode}] ${response.responseBody}",
+                    text = response.error ?: "[${response.statusCode}] ${response.responseBody}",
                     icon = Icons.Rounded.PriorityHigh,
                     iconTintColor = TopToastColor.ERROR
                 )
