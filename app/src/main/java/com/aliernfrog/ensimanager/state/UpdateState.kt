@@ -96,6 +96,9 @@ class UpdateState(
                         iconTintColor = TopToastColor.ON_SURFACE
                     )
                 }
+            } catch (e: CancellationException) {
+                // TODO maybe properly fix?
+                e.printStackTrace()
             } catch (e: Exception) {
                 e.printStackTrace()
                 if (manuallyTriggered) topToastState.showToast(
