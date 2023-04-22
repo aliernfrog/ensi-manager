@@ -3,6 +3,7 @@ package com.aliernfrog.ensimanager
 import com.aliernfrog.ensimanager.data.PrefEditItem
 import com.aliernfrog.ensimanager.data.Social
 
+const val githubRepoURL = "https://github.com/aliernfrog/ensi-manager"
 const val experimentalSettingsRequiredClicks = 10
 
 object ConfigKey {
@@ -18,7 +19,7 @@ object ConfigKey {
 
 object SettingsConstant {
     val socials = listOf(
-        Social("Ensi Manager GitHub", "https://github.com/aliernfrog/ensi-manager"),
+        Social("Ensi Manager GitHub", githubRepoURL),
         Social("aliernfrog Discord", "https://discord.gg/SQXqBMs"),
         Social("aliernfrog website", "https://aliernfrog.github.io")
     )

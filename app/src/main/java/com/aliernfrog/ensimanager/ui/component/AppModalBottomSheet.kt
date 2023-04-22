@@ -27,12 +27,37 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.ui.theme.AppBottomSheetShape
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AppModalBottomSheet(
     title: String? = null,
     sheetState: ModalBottomSheetState,
     sheetScrollState: ScrollState = rememberScrollState(),
+    sheetContent: @Composable ColumnScope.() -> Unit
+) {
+    BaseModalBottomSheet(sheetState) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(AppBottomSheetShape)
+                .verticalScroll(sheetScrollState)
+        ) {
+            if (title != null) Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally)
+            )
+            sheetContent()
+            Spacer(Modifier.systemBarsPadding())
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@Composable
+fun BaseModalBottomSheet(
+    sheetState: ModalBottomSheetState,
     sheetContent: @Composable ColumnScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -62,21 +87,7 @@ fun AppModalBottomSheet(
                         .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
                         .align(Alignment.CenterHorizontally)
                 )
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(AppBottomSheetShape)
-                        .verticalScroll(sheetScrollState)
-                ) {
-                    if (title != null) Text(
-                        text = title,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 30.sp,
-                        modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally)
-                    )
-                    sheetContent()
-                    Spacer(Modifier.systemBarsPadding())
-                }
+                sheetContent()
             }
         }
     )

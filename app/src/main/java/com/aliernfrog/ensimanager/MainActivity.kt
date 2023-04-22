@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.state.*
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
-import com.aliernfrog.ensimanager.ui.dialog.UpdateDialog
 import com.aliernfrog.ensimanager.ui.screen.APISetupScreen
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
 import com.aliernfrog.ensimanager.ui.screen.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
+import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.ensimanager.util.Destination
@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity() {
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
         WordSheet(chatState, state = chatState.wordSheetState)
-        UpdateDialog(updateState)
+        UpdateSheet(updateState)
     }
 
     @Composable
