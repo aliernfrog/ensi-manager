@@ -47,7 +47,7 @@ class UpdateState(
 
     init {
         if (autoUpdatesEnabled) CoroutineScope(Dispatchers.Default).launch {
-            checkUpdates(manuallyTriggered = true, ignoreVersion = true)
+            checkUpdates()
         }
     }
 
