@@ -202,7 +202,7 @@ private fun ExperimentalSettings(updateState: UpdateState, settingsState: Settin
             OutlinedTextField(
                 label = { Text(text = "Prefs: ${prefEdit.key}") },
                 value = value.value,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 shape = AppComponentShape,
                 onValueChange = {
                     value.value = it
