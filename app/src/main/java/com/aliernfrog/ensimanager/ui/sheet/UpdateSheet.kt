@@ -98,7 +98,7 @@ private fun Actions(
         IconButton(onClick = onGithubClick) {
             Icon(
                 painter = painterResource(R.drawable.github),
-                contentDescription = null
+                contentDescription = stringResource(R.string.updates_openInGithub)
             )
         }
         Button(
