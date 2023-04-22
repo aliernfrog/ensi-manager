@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
@@ -38,11 +39,16 @@ fun UpdateSheet(
             onGithubClick = { uriHandler.openUri(updateState.latestVersionInfo.htmlUrl) },
             onUpdateClick = { uriHandler.openUri(updateState.latestVersionInfo.downloadLink) }
         )
+        Divider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        )
         MarkdownText(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .navigationBarsPadding()
-                .padding(horizontal = 16.dp),
+                .padding(16.dp),
             markdown = updateState.latestVersionInfo.body,
             color = LocalContentColor.current,
             style = LocalTextStyle.current,
@@ -82,7 +88,8 @@ private fun Actions(
             ) {
                 Text(
                     text = versionName,
-                    fontSize = 25.sp
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = stringResource(
@@ -90,6 +97,7 @@ private fun Actions(
                         else R.string.updates_stable
                     ),
                     fontSize = 15.sp,
+                    fontWeight = FontWeight.Light,
                     color = LocalContentColor.current.copy(alpha = 0.7f),
                     modifier = Modifier.padding(horizontal = 6.dp)
                 )

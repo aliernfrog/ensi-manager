@@ -85,7 +85,9 @@ class UpdateState(
                             scope.launch { updateSheetState.show() }
                         }
                     ) else {
-                        coroutineScope { updateSheetState.show() }
+                        coroutineScope {
+                            updateSheetState.show()
+                        }
                     }
                 } else {
                     if (manuallyTriggered) topToastState.showToast(
