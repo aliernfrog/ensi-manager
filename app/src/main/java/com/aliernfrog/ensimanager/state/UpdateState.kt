@@ -29,6 +29,7 @@ class UpdateState(
     config: SharedPreferences,
     context: Context
 ) {
+    private lateinit var scope: CoroutineScope
     val updateSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
     private val releaseUrl = config.getString(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL)!!
@@ -80,9 +81,12 @@ class UpdateState(
                         icon = Icons.Rounded.Update,
                         stayMs = 20000,
                         onToastClick = {
-                            CoroutineScope(Dispatchers.Default).launch { updateSheetState.show() }
+                            if (!::scope.isInitialized) scope = CoroutineScope(Dispatchers.Default)
+                            scope.launch { updateSheetState.show() }
                         }
-                    ) else withContext(Dispatchers.Default) { updateSheetState.show() }
+                    ) else {
+                        coroutineScope { updateSheetState.show() }
+                    }
                 } else {
                     if (manuallyTriggered) topToastState.showToast(
                         text = R.string.updates_noUpdates,
