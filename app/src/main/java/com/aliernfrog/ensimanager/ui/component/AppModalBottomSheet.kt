@@ -11,6 +11,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +45,6 @@ fun AppModalBottomSheet(
         ) {
             if (title != null) Text(
                 text = title,
-                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 30.sp,
                 modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally)
             )
@@ -69,25 +69,28 @@ fun BaseModalBottomSheet(
         sheetElevation = 0.dp,
         content = {},
         sheetContent = {
-            Column(
+            Surface(
                 modifier = Modifier
                     .statusBarsPadding()
                     .fillMaxWidth()
                     .shadow(16.dp, AppBottomSheetShape)
                     .clip(AppBottomSheetShape)
-                    .background(MaterialTheme.colorScheme.background)
                     .imePadding(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                color = MaterialTheme.colorScheme.surface
             ) {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(32.dp, 4.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
-                        .align(Alignment.CenterHorizontally)
-                )
-                sheetContent()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .size(32.dp, 4.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    sheetContent()
+                }
             }
         }
     )
