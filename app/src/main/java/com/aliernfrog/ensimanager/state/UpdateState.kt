@@ -76,18 +76,9 @@ class UpdateState(
                         htmlUrl = latestHtmlUrl,
                         downloadLink = latestDownload
                     )
-                    if (!manuallyTriggered) topToastState.showToast(
-                        text = R.string.updates_updateAvailable,
-                        icon = Icons.Rounded.Update,
-                        stayMs = 20000,
-                        onToastClick = {
-                            if (!::scope.isInitialized) scope = CoroutineScope(Dispatchers.Default)
-                            scope.launch { updateSheetState.show() }
-                        }
-                    ) else {
-                        coroutineScope {
-                            updateSheetState.show()
-                        }
+                    if (!manuallyTriggered) showUpdateToast()
+                    else coroutineScope {
+                        updateSheetState.show()
                     }
                 } else {
                     if (manuallyTriggered) topToastState.showToast(
@@ -108,5 +99,20 @@ class UpdateState(
                 )
             }
         }
+    }
+
+    fun showUpdateToast() {
+        topToastState.showToast(
+            text = R.string.updates_updateAvailable,
+            icon = Icons.Rounded.Update,
+            stayMs = 20000,
+            onToastClick = {
+                scope.launch { updateSheetState.show() }
+            }
+        )
+    }
+
+    fun setScope(coroutineScope: CoroutineScope) {
+        if (!::scope.isInitialized) scope = coroutineScope
     }
 }

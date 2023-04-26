@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.state.*
@@ -54,9 +56,13 @@ class MainActivity : ComponentActivity() {
         dashboardState = DashboardState(topToastState, apiState)
         setContent {
             val darkTheme = getDarkThemePreference()
+            val scope = rememberCoroutineScope()
             EnsiManagerTheme(darkTheme, settingsState.materialYou) {
                 BaseScaffold()
                 TopToastHost(topToastState)
+            }
+            LaunchedEffect(Unit) {
+                updateState.setScope(scope)
             }
         }
     }

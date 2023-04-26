@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Public
@@ -179,6 +180,7 @@ private fun Links(settingsState: SettingsState) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ExperimentalSettings(updateState: UpdateState, settingsState: SettingsState) {
     val context = LocalContext.current
@@ -194,8 +196,20 @@ private fun ExperimentalSettings(updateState: UpdateState, settingsState: Settin
                 settingsState.forceShowMaterialYouOption = it
             }
         )
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdateIgnoreVersion)) {
-            scope.launch { updateState.checkUpdates(manuallyTriggered = true, ignoreVersion = true) }
+        ButtonShapeless(
+            title = stringResource(R.string.settings_experimental_checkUpdates)
+        ) {
+            scope.launch { updateState.checkUpdates(ignoreVersion = true) }
+        }
+        ButtonShapeless(
+            title = stringResource(R.string.settings_experimental_showUpdateToast)
+        ) {
+            updateState.showUpdateToast()
+        }
+        ButtonShapeless(
+            title = stringResource(R.string.settings_experimental_showUpdateDialog)
+        ) {
+            scope.launch { updateState.updateSheetState.show() }
         }
         SettingsConstant.experimentalPrefOptions.forEach { prefEdit ->
             val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
