@@ -64,4 +64,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
     implementation("com.github.aliernfrog:top-toast-compose:1.2.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation("com.github.jeziellago:compose-markdown:0.3.3")
 }

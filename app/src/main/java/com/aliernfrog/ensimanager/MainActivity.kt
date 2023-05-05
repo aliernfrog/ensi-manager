@@ -6,24 +6,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.aliernfrog.ensimanager.state.ChatState
-import com.aliernfrog.ensimanager.state.DashboardState
-import com.aliernfrog.ensimanager.state.EnsiAPIState
-import com.aliernfrog.ensimanager.state.SettingsState
+import com.aliernfrog.ensimanager.state.*
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.APISetupScreen
 import com.aliernfrog.ensimanager.ui.screen.ChatScreen
 import com.aliernfrog.ensimanager.ui.screen.DashboardScreen
 import com.aliernfrog.ensimanager.ui.screen.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
+import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.ensimanager.util.Destination
@@ -40,6 +39,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     private lateinit var topToastState: TopToastState
     private lateinit var settingsState: SettingsState
+    private lateinit var updateState: UpdateState
     private lateinit var apiState: EnsiAPIState
     private lateinit var chatState: ChatState
     private lateinit var dashboardState: DashboardState
@@ -49,15 +49,20 @@ class MainActivity : ComponentActivity() {
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         navController = NavHostController(applicationContext)
         topToastState = TopToastState(window.decorView)
-        settingsState = SettingsState(config, ScrollState(0))
+        settingsState = SettingsState(topToastState, config)
+        updateState = UpdateState(topToastState, config, applicationContext)
         apiState = EnsiAPIState(config, topToastState) { navController }
         chatState = ChatState(topToastState, apiState, LazyListState())
         dashboardState = DashboardState(topToastState, apiState)
         setContent {
             val darkTheme = getDarkThemePreference()
+            val scope = rememberCoroutineScope()
             EnsiManagerTheme(darkTheme, settingsState.materialYou) {
                 BaseScaffold()
                 TopToastHost(topToastState)
+            }
+            LaunchedEffect(Unit) {
+                updateState.setScope(scope)
             }
         }
     }
@@ -95,9 +100,9 @@ class MainActivity : ComponentActivity() {
                 composable(Destination.SETUP.route) { APISetupScreen(apiState, navController) }
                 composable(Destination.CHAT.route) { ChatScreen(chatState) }
                 composable(Destination.DASHBOARD.route) { DashboardScreen(dashboardState) }
-                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState, navController) }
+                composable(Destination.SETTINGS.route) { SettingsScreen(settingsState, updateState, navController) }
                 composable(Destination.SETTINGS_SUBSCREEN.route) {
-                    SettingsScreen(settingsState, navController, showApiOptions = false) {
+                    SettingsScreen(settingsState, updateState, navController, showApiOptions = false) {
                         navController.popBackStack()
                     }
                 }
@@ -105,6 +110,7 @@ class MainActivity : ComponentActivity() {
         }
         AddWordSheet(chatState, state = chatState.addWordSheetState)
         WordSheet(chatState, state = chatState.wordSheetState)
+        UpdateSheet(updateState)
     }
 
     @Composable

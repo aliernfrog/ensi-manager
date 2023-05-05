@@ -2,6 +2,7 @@
     <string name="app_name">Ensi Manager</string>
     <string name="action_back">Back</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_dismiss">Dismiss</string>
     <string name="action_done">Done</string>
     <string name="error">Error</string>
     <string name="error_noBody">Body is blank, response code: %STATUS%</string>
@@ -38,4 +39,27 @@
     <string name="settings_api">API</string>
     <string name="settings_api_config">API configuration</string>
     <string name="settings_api_config_description">Configure endpoints and authorization</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_version">Ensi Manager version</string>
+    <string name="settings_about_checkUpdates">Check for updates</string>
+    <string name="settings_about_autoCheckUpdates">Check for updates automatically</string>
+    <string name="settings_about_autoCheckUpdates_description">Check for Ensi Manager updates automatically on launch</string>
+    <string name="settings_about_links">Related links</string>
+    <string name="settings_about_links_description">Click to view related links</string>
+    <string name="settings_experimental">Experimental settings</string>
+    <string name="settings_experimental_enabled">Experimental settings enabled!</string>
+    <string name="settings_experimental_description">These settings are not intended for normal usage and they might break Ensi Manager when misused</string>
+    <string name="settings_experimental_forceShowMaterialYouOption">Force show Material You option</string>
+    <string name="settings_experimental_checkUpdates">Check updates (ignore version)</string>
+    <string name="settings_experimental_showUpdateToast">Show update toast</string>
+    <string name="settings_experimental_showUpdateDialog">Show update dialog</string>
+    <string name="settings_experimental_resetPrefs">Reset prefs</string>
+    <string name="settings_experimental_resetPrefsDone">Restored default values for experimental prefs</string>
+    <string name="updates_updateAvailable">Ensi Manager update available! Click for more details</string>
+    <string name="updates_noUpdates">No updates available</string>
+    <string name="updates_error">Something went wrong while checking for updates</string>
+    <string name="updates_stable">Stable</string>
+    <string name="updates_preRelease">Pre-release</string>
+    <string name="updates_openInGithub">View in GitHub</string>
+    <string name="updates_update">Update</string>
 </resources>

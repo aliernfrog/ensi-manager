@@ -11,6 +11,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,12 +28,36 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.ui.theme.AppBottomSheetShape
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AppModalBottomSheet(
     title: String? = null,
     sheetState: ModalBottomSheetState,
     sheetScrollState: ScrollState = rememberScrollState(),
+    sheetContent: @Composable ColumnScope.() -> Unit
+) {
+    BaseModalBottomSheet(sheetState) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(AppBottomSheetShape)
+                .verticalScroll(sheetScrollState)
+        ) {
+            if (title != null) Text(
+                text = title,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally)
+            )
+            sheetContent()
+            Spacer(Modifier.systemBarsPadding())
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@Composable
+fun BaseModalBottomSheet(
+    sheetState: ModalBottomSheetState,
     sheetContent: @Composable ColumnScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -44,38 +69,27 @@ fun AppModalBottomSheet(
         sheetElevation = 0.dp,
         content = {},
         sheetContent = {
-            Column(
+            Surface(
                 modifier = Modifier
                     .statusBarsPadding()
                     .fillMaxWidth()
                     .shadow(16.dp, AppBottomSheetShape)
                     .clip(AppBottomSheetShape)
-                    .background(MaterialTheme.colorScheme.background)
                     .imePadding(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                color = MaterialTheme.colorScheme.surface
             ) {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(32.dp, 4.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
-                        .align(Alignment.CenterHorizontally)
-                )
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(AppBottomSheetShape)
-                        .verticalScroll(sheetScrollState)
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (title != null) Text(
-                        text = title,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 30.sp,
-                        modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally)
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .size(32.dp, 4.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
+                            .align(Alignment.CenterHorizontally)
                     )
                     sheetContent()
-                    Spacer(Modifier.systemBarsPadding())
                 }
             }
         }
