@@ -36,7 +36,7 @@ class UpdateState(
     private val autoUpdatesEnabled = config.getBoolean(ConfigKey.KEY_APP_AUTO_UPDATES, true)
     private val currentVersionName = GeneralUtil.getAppVersionName(context)
     private val currentVersionCode = GeneralUtil.getAppVersionCode(context)
-    private val isCurrentPreRelease = GeneralUtil.getAppVersionName(context).contains("-alpha")
+    private val isCurrentPreRelease = currentVersionName.contains("-alpha")
 
     var latestVersionInfo by mutableStateOf(ReleaseInfo(
         versionName = currentVersionName,
