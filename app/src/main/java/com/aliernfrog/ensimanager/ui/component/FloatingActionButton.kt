@@ -1,6 +1,6 @@
 package com.aliernfrog.ensimanager.ui.component
 
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -22,7 +22,7 @@ fun FloatingActionButton(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier.systemBarsPadding(),
+        modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(20.dp),
         containerColor = containerColor,
         contentColor = contentColor
