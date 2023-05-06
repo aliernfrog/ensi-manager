@@ -14,8 +14,8 @@ android {
         applicationId = "com.aliernfrog.ensimanager"
         minSdk = 24
         targetSdk = 33
-        versionCode = 175
-        versionName = "1.7.5"
+        versionCode = 180
+        versionName = "1.8.0"
         vectorDrawables { useSupportLibrary = true }
     }
 
