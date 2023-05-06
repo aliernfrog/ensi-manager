@@ -45,7 +45,7 @@ android {
         kotlinCompilerExtensionVersion = composeCompilerVersion
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -60,8 +60,8 @@ dependencies {
     implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.material3:material3:1.1.0-rc01")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.29.0-alpha")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha")
     implementation("com.github.aliernfrog:top-toast-compose:1.2.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("io.coil-kt:coil-compose:2.3.0")
