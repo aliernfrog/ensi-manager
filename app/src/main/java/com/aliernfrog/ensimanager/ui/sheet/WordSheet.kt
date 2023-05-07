@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val type = when(chatState.chosenWordType.value) {
+    val type = when(chatState.chosenWordType) {
         ChatScreenType.VERBS -> "verb"
         else -> "word"
     }
@@ -31,7 +31,7 @@ fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
         Text(typeUppercase, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp))
         SelectionContainer(Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = chatState.chosenWord.value,
+                text = chatState.chosenWord,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

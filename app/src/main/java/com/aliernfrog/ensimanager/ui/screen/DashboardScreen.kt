@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardScreen(dashboardState: DashboardState) {
     val scope = rememberCoroutineScope()
-    val refreshing = dashboardState.fetchingState.value == FetchingState.FETCHING
+    val refreshing = dashboardState.fetchingState == FetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { dashboardState.fetchStatus() }
     })
@@ -60,7 +60,7 @@ fun DashboardScreen(dashboardState: DashboardState) {
 private fun Status(dashboardState: DashboardState) {
     ColumnRounded(title = stringResource(R.string.dashboard_status)) {
         SelectionContainer(Modifier.padding(horizontal = 8.dp)) {
-            Text(text = dashboardState.status.value, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(text = dashboardState.status, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

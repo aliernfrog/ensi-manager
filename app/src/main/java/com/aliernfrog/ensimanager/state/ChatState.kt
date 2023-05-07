@@ -10,7 +10,9 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
@@ -34,52 +36,52 @@ class ChatState(
     val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
     val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
-    val type = mutableStateOf(ChatScreenType.WORDS)
-    val filter = mutableStateOf("")
-    val addWordInput = mutableStateOf("")
-    val fetchingState = mutableStateOf(FetchingState.FETCHING)
+    var type by mutableStateOf(ChatScreenType.WORDS)
+    var filter by mutableStateOf("")
+    var addWordInput by mutableStateOf("")
+    var fetchingState by mutableStateOf(FetchingState.FETCHING)
 
-    val chosenWord = mutableStateOf("")
-    val chosenWordType = mutableStateOf(0)
+    var chosenWord by mutableStateOf("")
+    var chosenWordType by mutableStateOf(0)
 
-    private var words = mutableStateOf(listOf<String>())
-    private var verbs = mutableStateOf(listOf<String>())
+    private var words by mutableStateOf(listOf<String>())
+    private var verbs by mutableStateOf(listOf<String>())
 
     fun getCurrentList(): List<String> {
-        return when(type.value) {
-            ChatScreenType.VERBS -> verbs.value
-            else -> words.value
-        }.filter { it.lowercase().contains(filter.value.lowercase()) }
+        return when(type) {
+            ChatScreenType.VERBS -> verbs
+            else -> words
+        }.filter { it.lowercase().contains(filter.lowercase()) }
     }
 
     suspend fun fetchCurrentList(context: Context) {
-        fetchingState.value = FetchingState.FETCHING
-        when(type.value) {
+        fetchingState = FetchingState.FETCHING
+        when(type) {
             ChatScreenType.WORDS -> fetchWords(context)
             ChatScreenType.VERBS -> fetchVerbs(context)
         }
-        fetchingState.value = FetchingState.DONE
+        fetchingState = FetchingState.DONE
     }
 
     suspend fun deleteChosenWord(context: Context) {
-        when(chosenWordType.value) {
-            ChatScreenType.WORDS -> deleteWord(chosenWord.value, context)
-            ChatScreenType.VERBS -> deleteVerb(chosenWord.value, context)
+        when(chosenWordType) {
+            ChatScreenType.WORDS -> deleteWord(chosenWord, context)
+            ChatScreenType.VERBS -> deleteVerb(chosenWord, context)
         }
         fetchCurrentList(context)
     }
 
     suspend fun addWordFromInput(context: Context) {
-        when(type.value) {
-            ChatScreenType.WORDS -> addWord(addWordInput.value, context)
-            ChatScreenType.VERBS -> addVerb(addWordInput.value, context)
+        when(type) {
+            ChatScreenType.WORDS -> addWord(addWordInput, context)
+            ChatScreenType.VERBS -> addVerb(addWordInput, context)
         }
         fetchCurrentList(context)
     }
 
     suspend fun showWordSheet(word: String) {
-        chosenWord.value = word
-        chosenWordType.value = type.value
+        chosenWord = word
+        chosenWordType = type
         wordSheetState.show()
     }
 
@@ -89,7 +91,7 @@ class ChatState(
                 response = apiState.doRequest(apiState.apiData?.getWords),
                 context = context
             ) {
-                words.value = it
+                words = it
             }
         }
     }
@@ -126,7 +128,7 @@ class ChatState(
                 response = apiState.doRequest(apiState.apiData?.getVerbs),
                 context = context
             ) {
-                verbs.value = it
+                verbs = it
             }
         }
     }

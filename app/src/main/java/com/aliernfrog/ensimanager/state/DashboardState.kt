@@ -7,7 +7,9 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.HTTPResponse
@@ -25,37 +27,37 @@ class DashboardState(
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
-    val status = mutableStateOf("Fetching...")
-    val fetchingState = mutableStateOf(FetchingState.FETCHING)
+    var status by mutableStateOf("Fetching...")
+    var fetchingState by mutableStateOf(FetchingState.FETCHING)
 
     suspend fun fetchStatus() {
-        fetchingState.value = FetchingState.FETCHING
+        fetchingState = FetchingState.FETCHING
         withContext(Dispatchers.IO) {
             val response = apiState.doRequest(apiState.apiData?.getStatus)
-            status.value = "[${response?.statusCode}] ${response?.responseBody}"
-            fetchingState.value = FetchingState.DONE
+            status = "[${response?.statusCode}] ${response?.responseBody}"
+            fetchingState = FetchingState.DONE
         }
     }
 
     suspend fun postAddon(context: Context) {
-        fetchingState.value = FetchingState.FETCHING
+        fetchingState = FetchingState.FETCHING
         withContext(Dispatchers.IO) {
             handleSuccessResponse(
                 response = apiState.doRequest(apiState.apiData?.postEnsicordAddon),
                 context = context
             )
-            fetchingState.value = FetchingState.DONE
+            fetchingState = FetchingState.DONE
         }
     }
 
     suspend fun destroyProcess(context: Context) {
-        fetchingState.value = FetchingState.FETCHING
+        fetchingState = FetchingState.FETCHING
         withContext(Dispatchers.IO) {
             handleSuccessResponse(
                 response = apiState.doRequest(apiState.apiData?.destroyProcess),
                 context = context
             )
-            fetchingState.value = FetchingState.DONE
+            fetchingState = FetchingState.DONE
         }
     }
 

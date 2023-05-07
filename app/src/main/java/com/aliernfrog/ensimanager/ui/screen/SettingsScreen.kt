@@ -12,9 +12,11 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
@@ -212,14 +214,14 @@ private fun ExperimentalSettings(updateState: UpdateState, settingsState: Settin
             scope.launch { updateState.updateSheetState.show() }
         }
         SettingsConstant.experimentalPrefOptions.forEach { prefEdit ->
-            val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
+            var value by remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
             OutlinedTextField(
-                label = { Text(text = "Prefs: ${prefEdit.key}") },
-                value = value.value,
+                label = { Text("Prefs: ${prefEdit.key}") },
+                value = value,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 shape = AppComponentShape,
                 onValueChange = {
-                    value.value = it
+                    value = it
                     configEditor.putString(prefEdit.key, it)
                     configEditor.apply()
                 }

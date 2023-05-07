@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 fun ChatScreen(chatState: ChatState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val refreshing = chatState.fetchingState.value == FetchingState.FETCHING
+    val refreshing = chatState.fetchingState == FetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { chatState.fetchCurrentList(context) }
     })
@@ -94,23 +94,23 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     val scope = rememberCoroutineScope()
     SegmentedButtons(
         options = listOf(stringResource(R.string.chat_words), stringResource(R.string.chat_verbs)),
-        initialIndex = chatState.type.value,
+        initialIndex = chatState.type,
     ) {
-        chatState.type.value = it
+        chatState.type = it
         scope.launch { chatState.fetchCurrentList(context) }
     }
     TextField(
-        value = chatState.filter.value,
-        onValueChange = { chatState.filter.value = it },
+        value = chatState.filter,
+        onValueChange = { chatState.filter = it },
         placeholder = { Text(stringResource(R.string.chat_search)) },
         leadingIcon = rememberVectorPainter(Icons.Rounded.Search),
         trailingIcon = {
             AnimatedVisibility(
-                visible = chatState.filter.value.isNotEmpty(),
+                visible = chatState.filter.isNotEmpty(),
                 enter = fadeIn() + expandHorizontally(),
                 exit = fadeOut() + shrinkHorizontally()
             ) {
-                IconButton(onClick = { chatState.filter.value = "" }) {
+                IconButton(onClick = { chatState.filter = "" }) {
                     Icon(
                         painter = rememberVectorPainter(Icons.Rounded.Clear),
                         contentDescription = null
@@ -122,7 +122,7 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
         contentColor = MaterialTheme.colorScheme.onSurface
     )
     Text(
-        text = stringResource(when (chatState.type.value) {
+        text = stringResource(when (chatState.type) {
             ChatScreenType.VERBS -> R.string.chat_verbs_count
             else -> R.string.chat_words_count
         }).replace("%", wordsShown.toString()),
@@ -141,10 +141,10 @@ private fun FloatingButtons(
     addWordButtonModifier: Modifier
 ) {
     val scope = rememberCoroutineScope()
-    val firstVisibleItemIndex = remember { derivedStateOf { chatState.lazyListState.firstVisibleItemIndex } }
-    val layoutInfo = remember { derivedStateOf { chatState.lazyListState.layoutInfo } }
+    val firstVisibleItemIndex by remember { derivedStateOf { chatState.lazyListState.firstVisibleItemIndex } }
+    val layoutInfo by remember { derivedStateOf { chatState.lazyListState.layoutInfo } }
     AnimatedVisibility(
-        visible = firstVisibleItemIndex.value > 0,
+        visible = firstVisibleItemIndex > 0,
         modifier = scrollTopButtonModifier,
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
@@ -157,7 +157,7 @@ private fun FloatingButtons(
     }
     Column(bottomButtonsColumnModifier) {
         AnimatedVisibility(
-            visible = isAtBottom(layoutInfo.value),
+            visible = isAtBottom(layoutInfo),
             modifier = scrollBottomButtonModifier,
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut()

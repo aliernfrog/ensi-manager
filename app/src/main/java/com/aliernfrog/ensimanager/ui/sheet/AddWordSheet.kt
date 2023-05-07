@@ -28,11 +28,11 @@ import kotlinx.coroutines.launch
 fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val action = stringResource(when (chatState.type.value) {
+    val action = stringResource(when (chatState.type) {
         ChatScreenType.VERBS -> R.string.chat_verbs_add
         else -> R.string.chat_words_add
     })
-    val placeholder = stringResource(when (chatState.type.value) {
+    val placeholder = stringResource(when (chatState.type) {
         ChatScreenType.VERBS -> R.string.chat_verbs_add_placeholder
         else -> R.string.chat_words_add_placeholder
     })
@@ -41,16 +41,16 @@ fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
         sheetState = state
     ) {
         OutlinedTextField(
-            value = chatState.addWordInput.value,
-            onValueChange = { chatState.addWordInput.value = it },
+            value = chatState.addWordInput,
+            onValueChange = { chatState.addWordInput = it },
             placeholder = { Text(placeholder) },
             trailingIcon = {
                 AnimatedVisibility(
-                    visible = chatState.addWordInput.value.isNotEmpty(),
+                    visible = chatState.addWordInput.isNotEmpty(),
                     enter = fadeIn() + expandHorizontally(),
                     exit = fadeOut() + shrinkHorizontally()
                 ) {
-                    IconButton(onClick = { chatState.addWordInput.value = "" }) {
+                    IconButton(onClick = { chatState.addWordInput = "" }) {
                         Icon(
                             painter = rememberVectorPainter(Icons.Rounded.Clear),
                             contentDescription = null
