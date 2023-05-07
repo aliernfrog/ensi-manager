@@ -106,6 +106,7 @@ class UpdateState(
             text = R.string.updates_updateAvailable,
             icon = Icons.Rounded.Update,
             stayMs = 20000,
+            dismissOnClick = true,
             onToastClick = {
                 scope.launch { updateSheetState.show() }
             }
