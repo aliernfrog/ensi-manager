@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.composable
+package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,14 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ManagerComposableShape
+import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 
 @Composable
-fun ManagerWord(word: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun Word(word: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Row(
         modifier = modifier.fillMaxWidth()
             .padding(8.dp)
-            .clip(ManagerComposableShape)
+            .clip(AppComponentShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick() }
             .padding(8.dp),

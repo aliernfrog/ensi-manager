@@ -7,10 +7,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,41 +22,45 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.DashboardState
-import com.aliernfrog.ensimanager.ui.composable.ManagerColumn
+import com.aliernfrog.ensimanager.ui.component.ColumnRounded
+import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(dashboardState: DashboardState) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val refreshing = dashboardState.fetchingState.value == FetchingState.FETCHING
+    val refreshing = dashboardState.fetchingState == FetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
-        scope.launch { dashboardState.fetchStatus(context) }
+        scope.launch { dashboardState.fetchStatus() }
     })
-    Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
-        Column(Modifier.fillMaxSize().verticalScroll(dashboardState.scrollState)) {
-            Status(dashboardState)
-            Actions(dashboardState)
+    AppScaffold(
+        title = stringResource(R.string.screen_dashboard),
+        topAppBarState = dashboardState.topAppBarState
+    ) {
+        Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
+            Column(Modifier.fillMaxSize().verticalScroll(dashboardState.scrollState)) {
+                Status(dashboardState)
+                Actions(dashboardState)
+            }
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = pullRefreshState,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
-        PullRefreshIndicator(
-            refreshing = refreshing,
-            state = pullRefreshState,
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
     }
     LaunchedEffect(Unit) {
-        dashboardState.updateApiProperties()
-        dashboardState.fetchStatus(context)
+        dashboardState.fetchStatus()
     }
 }
 
 @Composable
 private fun Status(dashboardState: DashboardState) {
-    ManagerColumn(title = stringResource(R.string.dashboard_status)) {
+    ColumnRounded(title = stringResource(R.string.dashboard_status)) {
         SelectionContainer(Modifier.padding(horizontal = 8.dp)) {
-            Text(text = dashboardState.status.value, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(text = dashboardState.status, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

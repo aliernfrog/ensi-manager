@@ -12,14 +12,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,39 +29,40 @@ import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.state.ChatState
-import com.aliernfrog.ensimanager.ui.composable.ManagerFAB
-import com.aliernfrog.ensimanager.ui.composable.ManagerSegmentedButtons
-import com.aliernfrog.ensimanager.ui.composable.ManagerTextField
-import com.aliernfrog.ensimanager.ui.composable.ManagerWord
+import com.aliernfrog.ensimanager.ui.component.*
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(chatState: ChatState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val refreshing = chatState.fetchingState.value == FetchingState.FETCHING
+    val refreshing = chatState.fetchingState == FetchingState.FETCHING
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { chatState.fetchCurrentList(context) }
     })
-    Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
-        WordsList(chatState)
-        FloatingButtons(
-            chatState = chatState,
-            scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
-            bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
-            scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
-            addWordButtonModifier = Modifier.align(Alignment.BottomEnd)
-        )
-        PullRefreshIndicator(
-            refreshing = refreshing,
-            state = pullRefreshState,
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+    AppScaffold(
+        title = stringResource(R.string.screen_chat),
+        topAppBarState = chatState.topAppBarState
+    ) {
+        Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
+            WordsList(chatState)
+            FloatingButtons(
+                chatState = chatState,
+                scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
+                bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
+                scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
+                addWordButtonModifier = Modifier.align(Alignment.BottomEnd)
+            )
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = pullRefreshState,
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
     LaunchedEffect(Unit) {
-        chatState.updateApiProperties()
         chatState.fetchCurrentList(context)
     }
 }
@@ -77,7 +80,7 @@ private fun WordsList(chatState: ChatState) {
             ListControls(chatState, list.size)
         }
         items(list) {
-            ManagerWord(it, Modifier.animateItemPlacement()) { scope.launch { chatState.showWordSheet(it) } }
+            Word(it, Modifier.animateItemPlacement()) { scope.launch { chatState.showWordSheet(it) } }
         }
         item {
             Spacer(Modifier.height(70.dp))
@@ -89,20 +92,37 @@ private fun WordsList(chatState: ChatState) {
 private fun ListControls(chatState: ChatState, wordsShown: Int) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    ManagerSegmentedButtons(
+    SegmentedButtons(
         options = listOf(stringResource(R.string.chat_words), stringResource(R.string.chat_verbs)),
-        initialIndex = chatState.type.value,
+        initialIndex = chatState.type,
     ) {
-        chatState.type.value = it
+        chatState.type = it
         scope.launch { chatState.fetchCurrentList(context) }
     }
-    ManagerTextField(
-        value = chatState.filter.value,
-        onValueChange = { chatState.filter.value = it },
-        label = { Text(stringResource(R.string.chat_filter)) }
+    TextField(
+        value = chatState.filter,
+        onValueChange = { chatState.filter = it },
+        placeholder = { Text(stringResource(R.string.chat_search)) },
+        leadingIcon = rememberVectorPainter(Icons.Rounded.Search),
+        trailingIcon = {
+            AnimatedVisibility(
+                visible = chatState.filter.isNotEmpty(),
+                enter = fadeIn() + expandHorizontally(),
+                exit = fadeOut() + shrinkHorizontally()
+            ) {
+                IconButton(onClick = { chatState.filter = "" }) {
+                    Icon(
+                        painter = rememberVectorPainter(Icons.Rounded.Clear),
+                        contentDescription = null
+                    )
+                }
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+        contentColor = MaterialTheme.colorScheme.onSurface
     )
     Text(
-        text = stringResource(when (chatState.type.value) {
+        text = stringResource(when (chatState.type) {
             ChatScreenType.VERBS -> R.string.chat_verbs_count
             else -> R.string.chat_words_count
         }).replace("%", wordsShown.toString()),
@@ -110,7 +130,7 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
@@ -121,30 +141,38 @@ private fun FloatingButtons(
     addWordButtonModifier: Modifier
 ) {
     val scope = rememberCoroutineScope()
-    val firstVisibleItemIndex = remember { derivedStateOf { chatState.lazyListState.firstVisibleItemIndex } }
-    val layoutInfo = remember { derivedStateOf { chatState.lazyListState.layoutInfo } }
+    val firstVisibleItemIndex by remember { derivedStateOf { chatState.lazyListState.firstVisibleItemIndex } }
+    val layoutInfo by remember { derivedStateOf { chatState.lazyListState.layoutInfo } }
     AnimatedVisibility(
-        visible = firstVisibleItemIndex.value > 0,
+        visible = firstVisibleItemIndex > 0,
         modifier = scrollTopButtonModifier,
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
-        ManagerFAB(icon = Icons.Outlined.KeyboardArrowUp) {
+        FloatingActionButton(
+            icon = Icons.Outlined.KeyboardArrowUp
+        ) {
             scope.launch { chatState.lazyListState.animateScrollToItem(0) }
         }
     }
     Column(bottomButtonsColumnModifier) {
         AnimatedVisibility(
-            visible = isAtBottom(layoutInfo.value),
+            visible = isAtBottom(layoutInfo),
             modifier = scrollBottomButtonModifier,
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut()
         ) {
-            ManagerFAB(icon = Icons.Outlined.KeyboardArrowDown) {
+            FloatingActionButton(
+                icon = Icons.Outlined.KeyboardArrowDown
+            ) {
                 scope.launch { chatState.lazyListState.animateScrollToItem(chatState.lazyListState.layoutInfo.totalItemsCount + 1) }
             }
         }
-        ManagerFAB(icon = Icons.Outlined.Add, modifier = addWordButtonModifier, containerColor = MaterialTheme.colorScheme.primary) {
+        FloatingActionButton(
+            icon = Icons.Outlined.Add,
+            modifier = addWordButtonModifier,
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
             scope.launch { chatState.addWordSheetState.show() }
         }
     }

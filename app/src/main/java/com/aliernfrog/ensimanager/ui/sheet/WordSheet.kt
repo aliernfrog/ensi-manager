@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.state.ChatState
-import com.aliernfrog.ensimanager.ui.composable.ManagerModalBottomSheet
+import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -22,16 +22,16 @@ import kotlinx.coroutines.launch
 fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val type = when(chatState.chosenWordType.value) {
+    val type = when(chatState.chosenWordType) {
         ChatScreenType.VERBS -> "verb"
         else -> "word"
     }
     val typeUppercase = type.replaceFirstChar { it.uppercase() }
-    ManagerModalBottomSheet(sheetState = state) {
+    AppModalBottomSheet(sheetState = state) {
         Text(typeUppercase, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp))
         SelectionContainer(Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = chatState.chosenWord.value,
+                text = chatState.chosenWord,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

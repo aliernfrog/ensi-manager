@@ -1,6 +1,6 @@
 package com.aliernfrog.ensimanager.data
 
-data class ApiRoute(
-    val method: String,
+data class Social(
+    val name: String,
     val url: String
 )
