@@ -8,7 +8,7 @@ import org.json.JSONObject
 fun EnsiAPIEndpoint.doRequest(
     json: JSONObject? = null,
     authorization: String? = null
-): HTTPResponse? {
+): HTTPResponse {
     return WebUtil.sendRequest(
         toUrl = this.url,
         method = this.method,

@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextField(
     value: String,
@@ -46,20 +45,22 @@ fun TextField(
     containerColor: Color = MaterialTheme.colorScheme.secondary,
     contentColor: Color = contentColorFor(containerColor),
     rounded: Boolean = true,
-    colors: TextFieldColors = TextFieldDefaults.textFieldColors(
+    colors: TextFieldColors = TextFieldDefaults.colors(
         focusedTextColor = contentColor,
         unfocusedTextColor = contentColor,
-        containerColor = containerColor,
+        focusedContainerColor = containerColor,
+        unfocusedContainerColor = containerColor,
+        disabledContainerColor = containerColor,
         cursorColor = contentColor,
         selectionColors = TextSelectionColors(handleColor = contentColor, backgroundColor = contentColor.copy(0.5f)),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
         focusedLabelColor = contentColor,
         unfocusedLabelColor = contentColor.copy(0.7f),
         focusedPlaceholderColor = contentColor.copy(0.7f),
         unfocusedPlaceholderColor = contentColor.copy(0.7f),
-        disabledIndicatorColor = Color.Transparent,
-        errorIndicatorColor = Color.Transparent,
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent
     )
 ) {
     Box(

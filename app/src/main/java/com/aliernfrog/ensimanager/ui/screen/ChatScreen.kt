@@ -130,7 +130,7 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(

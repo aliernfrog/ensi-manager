@@ -1,4 +1,4 @@
-package com.aliernfrog.lactool.ui.component
+package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope

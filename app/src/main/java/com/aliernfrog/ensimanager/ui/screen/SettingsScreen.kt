@@ -33,7 +33,7 @@ import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.theme.supportsMaterialYou
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
-import com.aliernfrog.lactool.ui.component.ColumnDivider
+import com.aliernfrog.ensimanager.ui.component.ColumnDivider
 import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.launch
 
