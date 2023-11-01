@@ -15,6 +15,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.state.*
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.APISetupScreen
@@ -30,9 +33,6 @@ import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.state.TopToastState
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
@@ -67,13 +67,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun BaseScaffold() {
         val screens = getScreens()
-        navController = rememberAnimatedNavController()
+        navController = rememberNavController()
         BaseScaffold(screens, navController) {
-            AnimatedNavHost(
+            NavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
                 modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),

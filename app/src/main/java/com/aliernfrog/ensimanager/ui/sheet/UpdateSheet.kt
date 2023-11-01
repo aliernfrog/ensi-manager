@@ -39,7 +39,7 @@ fun UpdateSheet(
             onGithubClick = { uriHandler.openUri(updateState.latestVersionInfo.htmlUrl) },
             onUpdateClick = { uriHandler.openUri(updateState.latestVersionInfo.downloadLink) }
         )
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)

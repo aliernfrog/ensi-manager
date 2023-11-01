@@ -1,10 +1,10 @@
 package com.aliernfrog.ensimanager.util
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
@@ -27,7 +27,7 @@ enum class Destination(
     val isSubScreen: Boolean = false
 ) {
     SETUP("setup", R.string.setup, null, null, isSubScreen = true),
-    CHAT("chat", R.string.screen_chat, Icons.Default.Chat, Icons.Outlined.Chat),
+    CHAT("chat", R.string.screen_chat, Icons.AutoMirrored.Filled.Chat, Icons.AutoMirrored.Outlined.Chat),
     DASHBOARD("dashboard", R.string.screen_dashboard, Icons.Default.Dashboard, Icons.Outlined.Dashboard),
     SETTINGS("settings", R.string.settings, Icons.Default.Settings, Icons.Outlined.Settings),
     SETTINGS_SUBSCREEN("settingsSubscreen", R.string.settings, null, null, isSubScreen = true)

@@ -3,7 +3,7 @@ package com.aliernfrog.ensimanager.ui.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,11 +21,19 @@ fun ColumnDivider(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier) {
-        if (topDivider) Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
+        if (topDivider) HorizontalDivider(
+            modifier = Modifier.padding(16.dp).alpha(0.7f),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
         if (title != null) Text(text = title, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
         Column(innerModifier) {
             content()
         }
-        if (bottomDivider) Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
+        if (bottomDivider) HorizontalDivider(
+            modifier = Modifier.padding(16.dp).alpha(0.7f),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
     }
 }

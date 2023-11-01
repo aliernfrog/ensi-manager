@@ -35,7 +35,11 @@ fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
+        HorizontalDivider(
+            modifier = Modifier.padding(16.dp).alpha(0.7f),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
         Button(
             onClick = { scope.launch { chatState.deleteChosenWord(context); state.hide() } },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),

@@ -3,17 +3,17 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeVersion = "1.5.0-alpha03"
-val composeCompilerVersion = "1.4.6"
+val composeMaterialVersion = "1.6.0-alpha08"
+val composeCompilerVersion = "1.5.3"
 
 android {
     namespace = "com.aliernfrog.ensimanager"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.aliernfrog.ensimanager"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 180
         versionName = "1.8.0"
         vectorDrawables { useSupportLibrary = true }
@@ -53,17 +53,15 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.10.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.1")
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.material:material:$composeVersion")
-    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.1.0-rc01")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha")
-    implementation("com.github.aliernfrog:top-toast-compose:1.3.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.compose.ui:ui:$composeMaterialVersion")
+    implementation("androidx.compose.material:material:$composeMaterialVersion")
+    implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha10")
+    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("com.github.aliernfrog:top-toast-compose:1.3.4")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("io.coil-kt:coil-compose:2.3.0")
-    implementation("com.github.jeziellago:compose-markdown:0.3.3")
+    implementation("com.github.jeziellago:compose-markdown:0.3.6")
 }
