@@ -10,28 +10,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ChatScreenType
-import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
+import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
-    val context = LocalContext.current
+fun WordSheet(
+    chatViewModel: ChatViewModel = getViewModel(),
+    state: ModalBottomSheetState = chatViewModel.wordSheetState
+) {
     val scope = rememberCoroutineScope()
-    val type = when(chatState.chosenWordType) {
-        ChatScreenType.VERBS -> "verb"
-        else -> "word"
-    }
+    val type = chatViewModel.chosenWordType.type
     val typeUppercase = type.replaceFirstChar { it.uppercase() }
+
     AppModalBottomSheet(sheetState = state) {
         Text(typeUppercase, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp))
         SelectionContainer(Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = chatState.chosenWord,
+                text = chatViewModel.chosenWord,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -41,7 +40,10 @@ fun WordSheet(chatState: ChatState, state: ModalBottomSheetState) {
             color = MaterialTheme.colorScheme.surfaceVariant
         )
         Button(
-            onClick = { scope.launch { chatState.deleteChosenWord(context); state.hide() } },
+            onClick = { scope.launch {
+                chatViewModel.deleteChosenWord()
+                state.hide()
+            } },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {

@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
     implementation("androidx.compose.material3:material3:1.2.0-alpha10")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
     implementation("androidx.navigation:navigation-compose:2.7.4")
     implementation("com.github.aliernfrog:top-toast-compose:1.3.4")
     implementation("com.google.code.gson:gson:2.10.1")

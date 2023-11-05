@@ -23,7 +23,7 @@ fun FloatingActionButton(
     FloatingActionButton(
         onClick = onClick,
         modifier = modifier.padding(8.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(16.dp),
         containerColor = containerColor,
         contentColor = contentColor
     ) {
