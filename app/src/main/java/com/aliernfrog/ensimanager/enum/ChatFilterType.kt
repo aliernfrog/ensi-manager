@@ -20,7 +20,7 @@ enum class ChatFilterType(
     VERBS(
         type = "verb",
         titleId = R.string.chat_verbs,
-        countTextId = R.string.chat_words_count,
+        countTextId = R.string.chat_verbs_count,
         addWordTitleId = R.string.chat_verbs_add,
         addWordPlaceholderId = R.string.chat_verbs_add_placeholder
     )
