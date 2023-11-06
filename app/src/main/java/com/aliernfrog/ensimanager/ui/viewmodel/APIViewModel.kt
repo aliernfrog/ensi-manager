@@ -44,7 +44,7 @@ class APIViewModel(
     var setupAuthorization by mutableStateOf(prefs.apiAuthorization)
 
     init {
-        CoroutineScope(Dispatchers.Main).launch {
+        if (setupEndpointsURL.isNotBlank()) CoroutineScope(Dispatchers.Main).launch {
             fetchApiData(
                 showToastOnSuccess = false
             )

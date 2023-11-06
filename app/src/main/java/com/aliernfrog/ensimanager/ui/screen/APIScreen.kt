@@ -99,7 +99,7 @@ fun APIConfigurationScreen(
                                 apiViewModel.fetchApiData()
                             }
                         },
-                        enabled = !apiViewModel.fetching
+                        enabled = !apiViewModel.fetching && apiViewModel.setupEndpointsURL.isNotBlank()
                     ) {
                         Box {
                             Text(
