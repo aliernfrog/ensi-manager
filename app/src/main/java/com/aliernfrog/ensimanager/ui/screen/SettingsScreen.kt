@@ -19,7 +19,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.SettingsConstant
-import com.aliernfrog.ensimanager.ui.component.*
+import com.aliernfrog.ensimanager.ui.component.AppScaffold
+import com.aliernfrog.ensimanager.ui.component.RadioButtons
+import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
+import com.aliernfrog.ensimanager.ui.component.form.ExpandableRow
+import com.aliernfrog.ensimanager.ui.component.form.FormSection
+import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
@@ -56,30 +61,23 @@ private fun AppearanceOptions(
         stringResource(R.string.settings_appearance_theme_light),
         stringResource(R.string.settings_appearance_theme_dark)
     )
-    ColumnDivider(title = stringResource(R.string.settings_appearance)) {
-        ButtonShapeless(
+    FormSection(title = stringResource(R.string.settings_appearance)) {
+        ExpandableRow(
+            expanded = settingsViewModel.themeOptionsExpanded,
             title = stringResource(R.string.settings_appearance_theme),
             description = stringResource(R.string.settings_appearance_theme_description),
-            expanded = settingsViewModel.themeOptionsExpanded
+            onClickHeader = {
+                settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
+            }
         ) {
-            settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
-        }
-        AnimatedVisibility(
-            visible = settingsViewModel.themeOptionsExpanded,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
-        ) {
-            ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-                RadioButtons(
-                    options = themeOptions,
-                    initialIndex = settingsViewModel.prefs.theme,
-                    optionsRounded = true
-                ) {
-                    settingsViewModel.prefs.theme = it
-                }
+            RadioButtons(
+                options = themeOptions,
+                selectedOptionIndex = settingsViewModel.prefs.theme
+            ) {
+                settingsViewModel.prefs.theme = it
             }
         }
-        if (settingsViewModel.showMaterialYouOption) Switch(
+        if (settingsViewModel.showMaterialYouOption) SwitchRow(
             title = stringResource(R.string.settings_appearance_materialYou),
             description = stringResource(R.string.settings_appearance_materialYou_description),
             checked = settingsViewModel.prefs.materialYou
@@ -93,8 +91,8 @@ private fun AppearanceOptions(
 private fun APIOptions(
     onNavigateAPIConfigScreenRequest: () -> Unit
 ) {
-    ColumnDivider(title = stringResource(R.string.settings_api)) {
-        ButtonShapeless(
+    FormSection(title = stringResource(R.string.settings_api)) {
+        ButtonRow(
             title = stringResource(R.string.settings_api_config),
             description = stringResource(R.string.settings_api_config_description),
             expanded = false,
@@ -112,11 +110,11 @@ private fun AboutApp(
 ) {
     val scope = rememberCoroutineScope()
     val version = "${mainViewModel.applicationVersionName} (${mainViewModel.applicationVersionCode})"
-    ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
-        ButtonWithComponent(
+    FormSection(title = stringResource(R.string.settings_about), bottomDivider = false) {
+        ButtonRow(
             title = stringResource(R.string.settings_about_version),
             description = version,
-            component = {
+            trailingComponent = {
                 OutlinedButton(
                     onClick = { scope.launch {
                         mainViewModel.checkUpdates(manuallyTriggered = true)
@@ -128,7 +126,7 @@ private fun AboutApp(
         ) {
             settingsViewModel.onAboutClick()
         }
-        Switch(
+        SwitchRow(
             title = stringResource(R.string.settings_about_autoCheckUpdates),
             description = stringResource(R.string.settings_about_autoCheckUpdates_description),
             checked = settingsViewModel.prefs.autoCheckUpdates
@@ -148,33 +146,28 @@ private fun Links(
     onExpandedChange: (Boolean) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
-    ButtonShapeless(
+    ExpandableRow(
+        expanded = expanded,
         title = stringResource(R.string.settings_about_links),
         description = stringResource(R.string.settings_about_links_description),
-        expanded = expanded
+        onClickHeader = {
+            onExpandedChange(!expanded)
+        }
     ) {
-        onExpandedChange(!expanded)
-    }
-    AnimatedVisibility(
-        visible = expanded,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut()
-    ) {
-        ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-            SettingsConstant.socials.forEach {
-                val icon = when(it.url.split("/")[2]) {
-                    "discord.gg" -> painterResource(id = R.drawable.discord)
-                    "github.com" -> painterResource(id = R.drawable.github)
-                    else -> rememberVectorPainter(Icons.Rounded.Public)
-                }
-                ButtonShapeless(
-                    title = it.name,
-                    painter = icon,
-                    rounded = true,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ) {
-                    uriHandler.openUri(it.url)
-                }
+        SettingsConstant.socials.forEach {
+            val icon = when(it.url.split("/")[2]) {
+                "discord.gg" -> painterResource(id = R.drawable.discord)
+                "github.com" -> painterResource(id = R.drawable.github)
+                else -> rememberVectorPainter(Icons.Rounded.Public)
+            }
+            ButtonRow(
+                title = it.name,
+                description = it.url,
+                painter = icon,
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            ) {
+                uriHandler.openUri(it.url)
             }
         }
     }
@@ -188,26 +181,26 @@ private fun ExperimentalSettings(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
+    FormSection(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
         Text(stringResource(R.string.settings_experimental_description), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
-        Switch(
+        SwitchRow(
             title = stringResource(R.string.settings_experimental_showMaterialYouOption),
             checked = settingsViewModel.showMaterialYouOption,
             onCheckedChange = {
                 settingsViewModel.showMaterialYouOption = it
             }
         )
-        ButtonShapeless(
+        ButtonRow(
             title = stringResource(R.string.settings_experimental_checkUpdates)
         ) {
             scope.launch { mainViewModel.checkUpdates(ignoreVersion = true) }
         }
-        ButtonShapeless(
+        ButtonRow(
             title = stringResource(R.string.settings_experimental_showUpdateToast)
         ) {
             mainViewModel.showUpdateToast()
         }
-        ButtonShapeless(
+        ButtonRow(
             title = stringResource(R.string.settings_experimental_showUpdateDialog)
         ) {
             scope.launch { mainViewModel.updateSheetState.show() }
@@ -226,7 +219,7 @@ private fun ExperimentalSettings(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_resetPrefs), contentColor = MaterialTheme.colorScheme.error) {
+        ButtonRow(title = stringResource(R.string.settings_experimental_resetPrefs), contentColor = MaterialTheme.colorScheme.error) {
             SettingsConstant.experimentalPrefOptions.forEach {
                 it.setValue(it.default, settingsViewModel.prefs)
             }

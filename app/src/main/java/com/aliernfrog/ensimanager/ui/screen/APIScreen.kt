@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
-import com.aliernfrog.ensimanager.ui.component.ColumnDivider
+import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -166,7 +166,7 @@ fun APIConfigurationScreen(
             )
 
             AnimatedVisibility(visible = apiViewModel.error != null) {
-                ColumnDivider(
+                FormSection(
                     title = stringResource(R.string.error),
                     topDivider = true,
                     bottomDivider = false
