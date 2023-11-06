@@ -102,14 +102,6 @@ private fun ListControls(
     wordsShown: Int
 ) {
     val scope = rememberCoroutineScope()
-    SegmentedButtons(
-        options = ChatFilterType.values().map { stringResource(it.titleId) },
-        initialIndex = chatViewModel.type.ordinal,
-    ) {
-        chatViewModel.type = ChatFilterType.values()[it]
-        scope.launch { chatViewModel.fetchCurrentList() }
-    }
-
     TextField(
         value = chatViewModel.filter,
         onValueChange = { chatViewModel.filter = it },
@@ -132,6 +124,16 @@ private fun ListControls(
         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
         contentColor = MaterialTheme.colorScheme.onSurface
     )
+
+    SegmentedButtons(
+        options = ChatFilterType.values().map { stringResource(it.titleId) },
+        selectedIndex = chatViewModel.type.ordinal,
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
+        chatViewModel.type = ChatFilterType.values()[it]
+        scope.launch { chatViewModel.fetchCurrentList() }
+    }
+
     Text(
         text = stringResource(
             chatViewModel.type.countTextId
