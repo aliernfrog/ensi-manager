@@ -22,33 +22,34 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ChatScreenType
-import com.aliernfrog.ensimanager.FetchingState
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.state.ChatState
+import com.aliernfrog.ensimanager.enum.ChatFilterType
 import com.aliernfrog.ensimanager.ui.component.*
+import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(chatState: ChatState) {
-    val context = LocalContext.current
+fun ChatScreen(
+    chatViewModel: ChatViewModel = getViewModel()
+) {
     val scope = rememberCoroutineScope()
-    val refreshing = chatState.fetchingState == FetchingState.FETCHING
+    val refreshing = chatViewModel.isFetching
     val pullRefreshState = rememberPullRefreshState(refreshing, {
-        scope.launch { chatState.fetchCurrentList(context) }
+        scope.launch { chatViewModel.fetchCurrentList() }
     })
+
     AppScaffold(
-        title = stringResource(R.string.screen_chat),
-        topAppBarState = chatState.topAppBarState
+        title = stringResource(R.string.chat),
+        topAppBarState = chatViewModel.topAppBarState
     ) {
         Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
-            WordsList(chatState)
+            WordsList(chatViewModel)
             FloatingButtons(
-                chatState = chatState,
+                chatViewModel = chatViewModel,
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
                 bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
                 scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
@@ -63,24 +64,31 @@ fun ChatScreen(chatState: ChatState) {
         }
     }
     LaunchedEffect(Unit) {
-        chatState.fetchCurrentList(context)
+        chatViewModel.fetchCurrentList()
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun WordsList(chatState: ChatState) {
-    val list = chatState.getCurrentList()
+private fun WordsList(
+    chatViewModel: ChatViewModel = getViewModel()
+) {
+    val list = chatViewModel.currentList
     val scope = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = chatState.lazyListState
+        state = chatViewModel.lazyListState
     ) {
         item {
-            ListControls(chatState, list.size)
+            ListControls(chatViewModel, list.size)
         }
         items(list) {
-            Word(it, Modifier.animateItemPlacement()) { scope.launch { chatState.showWordSheet(it) } }
+            Word(
+                word = it,
+                modifier = Modifier.animateItemPlacement()
+            ) { scope.launch {
+                chatViewModel.showWordSheet(it)
+            } }
         }
         item {
             Spacer(Modifier.height(70.dp))
@@ -89,28 +97,31 @@ private fun WordsList(chatState: ChatState) {
 }
 
 @Composable
-private fun ListControls(chatState: ChatState, wordsShown: Int) {
-    val context = LocalContext.current
+private fun ListControls(
+    chatViewModel: ChatViewModel = getViewModel(),
+    wordsShown: Int
+) {
     val scope = rememberCoroutineScope()
     SegmentedButtons(
-        options = listOf(stringResource(R.string.chat_words), stringResource(R.string.chat_verbs)),
-        initialIndex = chatState.type,
+        options = ChatFilterType.values().map { stringResource(it.titleId) },
+        initialIndex = chatViewModel.type.ordinal,
     ) {
-        chatState.type = it
-        scope.launch { chatState.fetchCurrentList(context) }
+        chatViewModel.type = ChatFilterType.values()[it]
+        scope.launch { chatViewModel.fetchCurrentList() }
     }
+
     TextField(
-        value = chatState.filter,
-        onValueChange = { chatState.filter = it },
+        value = chatViewModel.filter,
+        onValueChange = { chatViewModel.filter = it },
         placeholder = { Text(stringResource(R.string.chat_search)) },
         leadingIcon = rememberVectorPainter(Icons.Rounded.Search),
         trailingIcon = {
             AnimatedVisibility(
-                visible = chatState.filter.isNotEmpty(),
+                visible = chatViewModel.filter.isNotEmpty(),
                 enter = fadeIn() + expandHorizontally(),
                 exit = fadeOut() + shrinkHorizontally()
             ) {
-                IconButton(onClick = { chatState.filter = "" }) {
+                IconButton(onClick = { chatViewModel.filter = "" }) {
                     Icon(
                         painter = rememberVectorPainter(Icons.Rounded.Clear),
                         contentDescription = null
@@ -122,10 +133,9 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
         contentColor = MaterialTheme.colorScheme.onSurface
     )
     Text(
-        text = stringResource(when (chatState.type) {
-            ChatScreenType.VERBS -> R.string.chat_verbs_count
-            else -> R.string.chat_words_count
-        }).replace("%", wordsShown.toString()),
+        text = stringResource(
+            chatViewModel.type.countTextId
+        ).replace("%", wordsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
 }
@@ -134,15 +144,20 @@ private fun ListControls(chatState: ChatState, wordsShown: Int) {
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    chatState: ChatState,
+    chatViewModel: ChatViewModel = getViewModel(),
     scrollTopButtonModifier: Modifier,
     bottomButtonsColumnModifier: Modifier,
     scrollBottomButtonModifier: Modifier,
     addWordButtonModifier: Modifier
 ) {
     val scope = rememberCoroutineScope()
-    val firstVisibleItemIndex by remember { derivedStateOf { chatState.lazyListState.firstVisibleItemIndex } }
-    val layoutInfo by remember { derivedStateOf { chatState.lazyListState.layoutInfo } }
+    val firstVisibleItemIndex by remember {
+        derivedStateOf { chatViewModel.lazyListState.firstVisibleItemIndex }
+    }
+    val layoutInfo by remember {
+        derivedStateOf { chatViewModel.lazyListState.layoutInfo }
+    }
+
     AnimatedVisibility(
         visible = firstVisibleItemIndex > 0,
         modifier = scrollTopButtonModifier,
@@ -151,10 +166,11 @@ private fun FloatingButtons(
     ) {
         FloatingActionButton(
             icon = Icons.Outlined.KeyboardArrowUp
-        ) {
-            scope.launch { chatState.lazyListState.animateScrollToItem(0) }
-        }
+        ) { scope.launch {
+            chatViewModel.lazyListState.animateScrollToItem(0)
+        } }
     }
+
     Column(bottomButtonsColumnModifier) {
         AnimatedVisibility(
             visible = isAtBottom(layoutInfo),
@@ -164,17 +180,18 @@ private fun FloatingButtons(
         ) {
             FloatingActionButton(
                 icon = Icons.Outlined.KeyboardArrowDown
-            ) {
-                scope.launch { chatState.lazyListState.animateScrollToItem(chatState.lazyListState.layoutInfo.totalItemsCount + 1) }
-            }
+            ) { scope.launch {
+                chatViewModel.lazyListState.animateScrollToItem(chatViewModel.lazyListState.layoutInfo.totalItemsCount + 1)
+            } }
         }
+
         FloatingActionButton(
             icon = Icons.Outlined.Add,
             modifier = addWordButtonModifier,
             containerColor = MaterialTheme.colorScheme.primary
-        ) {
-            scope.launch { chatState.addWordSheetState.show() }
-        }
+        ) { scope.launch {
+            chatViewModel.addWordSheetState.show()
+        } }
     }
 }
 

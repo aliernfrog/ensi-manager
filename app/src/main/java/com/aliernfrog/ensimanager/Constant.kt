@@ -25,24 +25,12 @@ object SettingsConstant {
     )
     val experimentalPrefOptions = listOf(
         PrefEditItem(
-            key = ConfigKey.KEY_APP_UPDATES_URL,
+            labelResourceId = R.string.settings_experimental_updatesURL,
+            getValue = { it.updatesURL },
+            setValue = { newValue, prefs ->
+                prefs.updatesURL = newValue
+            },
             default = ConfigKey.DEFAULT_UPDATES_URL
         )
     )
-}
-
-object Theme {
-    const val SYSTEM = 0
-    const val LIGHT = 1
-    const val DARK = 2
-}
-
-object ChatScreenType {
-    const val WORDS = 0
-    const val VERBS = 1
-}
-
-object FetchingState {
-    const val FETCHING = 0
-    const val DONE = 1
 }

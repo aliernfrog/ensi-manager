@@ -3,7 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeMaterialVersion = "1.6.0-alpha08"
+// 1.6.0-alpha08 has issues with LazyColumn/LazyRow
+// material3 also needs to be 1.2.0-alpha09 since latest version depends on this buggy version
+// https://issuetracker.google.com/issues/308840227
+val composeMaterialVersion = "1.6.0-alpha07"
 val composeCompilerVersion = "1.5.3"
 
 android {
@@ -59,7 +62,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:$composeMaterialVersion")
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha10")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha09")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
     implementation("androidx.navigation:navigation-compose:2.7.4")
     implementation("com.github.aliernfrog:top-toast-compose:1.3.4")
     implementation("com.google.code.gson:gson:2.10.1")

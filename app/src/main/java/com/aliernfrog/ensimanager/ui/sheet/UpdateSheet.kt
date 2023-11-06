@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Update
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -19,38 +21,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.state.UpdateState
+import com.aliernfrog.ensimanager.data.ReleaseInfo
 import com.aliernfrog.ensimanager.ui.component.BaseModalBottomSheet
+import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UpdateSheet(
-    updateState: UpdateState
+    mainViewModel: MainViewModel = getViewModel(),
+    sheetState: ModalBottomSheetState = mainViewModel.updateSheetState,
+    latestVersionInfo: ReleaseInfo = mainViewModel.latestVersionInfo
 ) {
     val uriHandler = LocalUriHandler.current
     BaseModalBottomSheet(
-        sheetState = updateState.updateSheetState
+        sheetState = sheetState
     ) {
         Actions(
-            versionName = updateState.latestVersionInfo.versionName,
-            preRelease = updateState.latestVersionInfo.preRelease,
-            onGithubClick = { uriHandler.openUri(updateState.latestVersionInfo.htmlUrl) },
-            onUpdateClick = { uriHandler.openUri(updateState.latestVersionInfo.downloadLink) }
+            versionName = latestVersionInfo.versionName,
+            preRelease = latestVersionInfo.preRelease,
+            onGithubClick = { uriHandler.openUri(latestVersionInfo.htmlUrl) },
+            onUpdateClick = { uriHandler.openUri(latestVersionInfo.downloadLink) }
         )
         HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            modifier = Modifier.alpha(0.3f),
+            thickness = 1.dp
         )
         MarkdownText(
             modifier = Modifier
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
                 .padding(16.dp),
-            markdown = updateState.latestVersionInfo.body,
+            markdown = latestVersionInfo.body,
             color = LocalContentColor.current,
+            linkColor = MaterialTheme.colorScheme.primary,
             style = LocalTextStyle.current,
             onLinkClicked = {
                 uriHandler.openUri(it)
@@ -71,14 +78,18 @@ private fun Actions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .horizontalFadingEdge(versionNameScrollState, MaterialTheme.colorScheme.surface)
+                .horizontalFadingEdge(
+                    scrollState = versionNameScrollState,
+                    edgeColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    //TODO isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
+                )
         ) {
             Row(
                 modifier = Modifier
@@ -106,16 +117,15 @@ private fun Actions(
         IconButton(onClick = onGithubClick) {
             Icon(
                 painter = painterResource(R.drawable.github),
-                contentDescription = stringResource(R.string.updates_openInGithub)
+                contentDescription = stringResource(R.string.updates_openInGithub),
+                modifier = Modifier.padding(6.dp)
             )
         }
         Button(
             onClick = onUpdateClick
         ) {
-            Icon(
-                painter = rememberVectorPainter(Icons.Rounded.Update),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 4.dp)
+            ButtonIcon(
+                painter = rememberVectorPainter(Icons.Default.Update)
             )
             Text(stringResource(R.string.updates_update))
         }
