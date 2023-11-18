@@ -1,31 +1,32 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
+import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddWordSheet(
     chatViewModel: ChatViewModel = getViewModel(),
-    state: ModalBottomSheetState = chatViewModel.addWordSheetState
+    state: SheetState = chatViewModel.addWordSheetState
 ) {
     val scope = rememberCoroutineScope()
     val type = chatViewModel.type
@@ -52,23 +53,24 @@ fun AddWordSheet(
                     }
                 }
             },
-            shape = AppComponentShape,
             modifier = Modifier.animateContentSize().fillMaxWidth().padding(8.dp)
         )
-        Button(
-            onClick = { scope.launch {
-                chatViewModel.addWordFromInput()
-                state.hide()
-            } },
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Icon(
-                painter = rememberVectorPainter(Icons.Rounded.Done),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 4.dp)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+            modifier = Modifier.fillMaxWidth().padding(
+                vertical = 4.dp,
+                horizontal = 8.dp
             )
-            Text(action)
+        ) {
+            Button(
+                onClick = { scope.launch {
+                    chatViewModel.addWordFromInput()
+                    state.hide()
+                } }
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.Rounded.Done))
+                Text(action)
+            }
         }
     }
 }

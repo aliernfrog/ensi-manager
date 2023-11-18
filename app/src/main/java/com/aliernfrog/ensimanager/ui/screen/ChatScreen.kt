@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.enum.ChatFilterType
 import com.aliernfrog.ensimanager.ui.component.*
+import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
+import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -41,6 +43,10 @@ fun ChatScreen(
     val pullRefreshState = rememberPullRefreshState(refreshing, {
         scope.launch { chatViewModel.fetchCurrentList() }
     })
+
+    LaunchedEffect(Unit) {
+        chatViewModel.fetchCurrentList()
+    }
 
     AppScaffold(
         title = stringResource(R.string.chat),
@@ -63,9 +69,9 @@ fun ChatScreen(
             )
         }
     }
-    LaunchedEffect(Unit) {
-        chatViewModel.fetchCurrentList()
-    }
+
+    AddWordSheet()
+    WordSheet()
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -142,7 +148,7 @@ private fun ListControls(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(

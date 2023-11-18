@@ -3,7 +3,6 @@ package com.aliernfrog.ensimanager.ui.screen
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Public
@@ -173,7 +172,7 @@ private fun Links(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExperimentalSettings(
     mainViewModel: MainViewModel = getViewModel(),

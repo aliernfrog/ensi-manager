@@ -2,13 +2,11 @@ package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +26,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 class ChatViewModel(
     context: Context,
     private val contextUtils: ContextUtils,
@@ -37,8 +35,8 @@ class ChatViewModel(
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val lazyListState = LazyListState()
-    val addWordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, Density(context), isSkipHalfExpanded = true)
-    val wordSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden, Density(context))
+    val addWordSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
+    val wordSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
     var type by mutableStateOf(ChatFilterType.WORDS)
     var filter by mutableStateOf("")

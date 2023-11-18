@@ -10,19 +10,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
-import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
-import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
@@ -81,7 +80,6 @@ fun MainScreen() {
             }
         }
     }
-    AddWordSheet()
-    WordSheet()
+
     UpdateSheet()
 }

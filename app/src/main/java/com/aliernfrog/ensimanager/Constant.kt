@@ -1,10 +1,13 @@
 package com.aliernfrog.ensimanager
 
+import android.os.Build
 import com.aliernfrog.ensimanager.data.PrefEditItem
 import com.aliernfrog.ensimanager.data.Social
 
 const val githubRepoURL = "https://github.com/aliernfrog/ensi-manager"
 const val experimentalSettingsRequiredClicks = 10
+
+val imeSupportsSyncAppContent = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"

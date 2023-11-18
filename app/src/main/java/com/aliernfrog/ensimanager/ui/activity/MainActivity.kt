@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalView
+import com.aliernfrog.ensimanager.ui.component.InsetsObserver
 import com.aliernfrog.ensimanager.ui.screen.MainScreen
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.ensimanager.ui.theme.Theme
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
             darkTheme = darkTheme,
             dynamicColors = mainViewModel.prefs.materialYou
         ) {
+            InsetsObserver()
             MainScreen()
             TopToastHost(mainViewModel.topToastState)
         }

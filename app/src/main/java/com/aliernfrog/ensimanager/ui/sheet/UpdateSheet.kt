@@ -1,11 +1,11 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.*
@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -29,17 +30,26 @@ import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateSheet(
     mainViewModel: MainViewModel = getViewModel(),
-    sheetState: ModalBottomSheetState = mainViewModel.updateSheetState,
+    sheetState: SheetState = mainViewModel.updateSheetState,
     latestVersionInfo: ReleaseInfo = mainViewModel.latestVersionInfo
 ) {
     val uriHandler = LocalUriHandler.current
     BaseModalBottomSheet(
-        sheetState = sheetState
-    ) {
+        sheetState = sheetState,
+        dragHandle = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .size(32.dp, 4.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
+            )
+        }
+    ) { bottomPadding ->
         Actions(
             versionName = latestVersionInfo.versionName,
             preRelease = latestVersionInfo.preRelease,
@@ -54,6 +64,7 @@ fun UpdateSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
+                .padding(bottom = bottomPadding)
                 .padding(16.dp),
             markdown = latestVersionInfo.body,
             color = LocalContentColor.current,

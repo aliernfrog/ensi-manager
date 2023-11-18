@@ -3,8 +3,6 @@ package com.aliernfrog.ensimanager.ui.sheet
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -16,11 +14,11 @@ import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WordSheet(
     chatViewModel: ChatViewModel = getViewModel(),
-    state: ModalBottomSheetState = chatViewModel.wordSheetState
+    state: SheetState = chatViewModel.wordSheetState
 ) {
     val scope = rememberCoroutineScope()
     val type = chatViewModel.chosenWordType.type
@@ -30,14 +28,12 @@ fun WordSheet(
         Text(typeUppercase, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp))
         SelectionContainer(Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = chatViewModel.chosenWord,
-                color = MaterialTheme.colorScheme.onBackground
+                text = chatViewModel.chosenWord
             )
         }
         HorizontalDivider(
             modifier = Modifier.padding(16.dp).alpha(0.7f),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant
+            thickness = 1.dp
         )
         Button(
             onClick = { scope.launch {
