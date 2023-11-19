@@ -10,6 +10,9 @@ val appModule = module {
     singleOf(::ContextUtils)
     singleOf(::PreferenceManager)
     single {
-        TopToastState(composeView = null)
+        TopToastState(
+            composeView = null,
+            allowSwipingByDefault = false
+        )
     }
 }
