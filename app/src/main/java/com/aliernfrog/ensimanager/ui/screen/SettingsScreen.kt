@@ -27,7 +27,6 @@ import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
-import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -222,10 +221,9 @@ private fun ExperimentalSettings(
             SettingsConstant.experimentalPrefOptions.forEach {
                 it.setValue(it.default, settingsViewModel.prefs)
             }
-            settingsViewModel.topToastState.showToast(
+            settingsViewModel.topToastState.showAndroidToast(
                 text = R.string.settings_experimental_resetPrefsDone,
-                icon = Icons.Rounded.Done,
-                type = TopToastType.ANDROID
+                icon = Icons.Rounded.Done
             )
             GeneralUtil.restartApp(context)
         }
