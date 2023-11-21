@@ -2,7 +2,6 @@ package com.aliernfrog.ensimanager.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
@@ -74,7 +73,6 @@ fun ChatScreen(
     WordSheet()
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WordsList(
     chatViewModel: ChatViewModel = getViewModel()
@@ -90,8 +88,7 @@ private fun WordsList(
         }
         items(list) {
             Word(
-                word = it,
-                modifier = Modifier.animateItemPlacement()
+                word = it
             ) { scope.launch {
                 chatViewModel.showWordSheet(it)
             } }
