@@ -6,21 +6,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
@@ -32,27 +32,36 @@ import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel = getViewModel()
 ) {
-    val scope = rememberCoroutineScope()
-    val refreshing = chatViewModel.isFetching
-    val pullRefreshState = rememberPullRefreshState(refreshing, {
-        scope.launch { chatViewModel.fetchCurrentList() }
-    })
+    val pullToRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(Unit) {
         chatViewModel.fetchCurrentList()
+    }
+
+    if (pullToRefreshState.isRefreshing) LaunchedEffect(Unit) {
+        chatViewModel.fetchCurrentList()
+    }
+
+    LaunchedEffect(chatViewModel.isFetching) {
+        if (chatViewModel.isFetching) pullToRefreshState.startRefresh()
+        else pullToRefreshState.endRefresh()
     }
 
     AppScaffold(
         title = stringResource(R.string.chat),
         topAppBarState = chatViewModel.topAppBarState
     ) {
-        Box(Modifier.fillMaxWidth().pullRefresh(pullRefreshState), contentAlignment = Alignment.TopCenter) {
-            WordsList(chatViewModel)
+
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+            WordsList(
+                chatViewModel,
+                pullToRefreshState.nestedScrollConnection
+            )
             FloatingButtons(
                 chatViewModel = chatViewModel,
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
@@ -60,12 +69,15 @@ fun ChatScreen(
                 scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
                 addWordButtonModifier = Modifier.align(Alignment.BottomEnd)
             )
-            PullRefreshIndicator(
+            PullToRefreshContainer(
+                state = pullToRefreshState
+            )
+            /*PullRefreshIndicator(
                 refreshing = refreshing,
                 state = pullRefreshState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface
-            )
+            )*/
         }
     }
 
@@ -75,12 +87,13 @@ fun ChatScreen(
 
 @Composable
 private fun WordsList(
-    chatViewModel: ChatViewModel = getViewModel()
+    chatViewModel: ChatViewModel = getViewModel(),
+    nestedScrollConnection: NestedScrollConnection
 ) {
     val list = chatViewModel.currentList
     val scope = rememberCoroutineScope()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection),
         state = chatViewModel.lazyListState
     ) {
         item {
