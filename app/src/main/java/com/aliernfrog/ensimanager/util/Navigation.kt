@@ -7,6 +7,8 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.ensimanager.R
 
@@ -19,7 +21,9 @@ enum class Destination(
     val labelId: Int,
     val vectorFilled: ImageVector? = null,
     val vectorOutlined: ImageVector? = null,
-    val isSubScreen: Boolean = false
+    val showInNavigationBar: Boolean = true,
+    val showNavigationBar: Boolean = showInNavigationBar,
+    val hasNotification: MutableState<Boolean> = mutableStateOf(false)
 ) {
     DASHBOARD(
         route = "dashboard",
@@ -45,6 +49,6 @@ enum class Destination(
     API_CONFIG(
         route = "apiConfig",
         labelId = R.string.setup,
-        isSubScreen = true
+        showInNavigationBar = false
     )
 }

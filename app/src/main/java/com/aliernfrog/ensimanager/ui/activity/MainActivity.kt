@@ -1,12 +1,21 @@
 package com.aliernfrog.ensimanager.ui.activity
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import com.aliernfrog.ensimanager.ui.component.InsetsObserver
 import com.aliernfrog.ensimanager.ui.screen.MainScreen
@@ -37,8 +46,10 @@ class MainActivity : ComponentActivity() {
             dynamicColors = mainViewModel.prefs.materialYou
         ) {
             InsetsObserver()
-            MainScreen()
-            TopToastHost(mainViewModel.topToastState)
+            AppContainer {
+                MainScreen()
+                TopToastHost(mainViewModel.topToastState)
+            }
         }
         LaunchedEffect(Unit) {
             mainViewModel.scope = scope
@@ -46,6 +57,23 @@ class MainActivity : ComponentActivity() {
 
             if (mainViewModel.prefs.autoCheckUpdates) mainViewModel.checkUpdates()
         }
+    }
+
+    @Composable
+    private fun AppContainer(
+        content: @Composable BoxScope.() -> Unit
+    ) {
+        val config = LocalConfiguration.current
+        var modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            modifier = modifier
+                .displayCutoutPadding()
+                .navigationBarsPadding()
+
+        Box(
+            modifier = modifier,
+            content = content
+        )
     }
 
     @Composable
