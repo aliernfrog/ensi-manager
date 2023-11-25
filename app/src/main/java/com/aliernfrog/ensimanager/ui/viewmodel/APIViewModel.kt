@@ -43,11 +43,12 @@ class APIViewModel(
     var setupEndpointsURL by mutableStateOf(prefs.apiEndpointsUrl)
     var setupAuthorization by mutableStateOf(prefs.apiAuthorization)
 
-    init {
-        if (setupEndpointsURL.isNotBlank()) CoroutineScope(Dispatchers.Main).launch {
-            fetchApiData(
+    fun doInitialConnection(onFinish: () -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (setupEndpointsURL.isNotBlank()) fetchApiData(
                 showToastOnSuccess = false
             )
+            onFinish()
         }
     }
 

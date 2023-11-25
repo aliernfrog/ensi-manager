@@ -17,17 +17,27 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aliernfrog.ensimanager.ui.component.InsetsObserver
 import com.aliernfrog.ensimanager.ui.screen.MainScreen
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.ensimanager.ui.theme.Theme
+import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : ComponentActivity() {
+    @Volatile
+    private var isAppReady = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val splashScreen = installSplashScreen()
+        initializeApi()
+        splashScreen.setKeepOnScreenCondition { !isAppReady }
 
         setContent {
             AppContent()
@@ -82,6 +92,14 @@ class MainActivity : ComponentActivity() {
             Theme.LIGHT.int -> false
             Theme.DARK.int -> true
             else -> isSystemInDarkTheme()
+        }
+    }
+
+    private fun initializeApi() {
+        val apiViewModel by inject<APIViewModel>()
+
+        apiViewModel.doInitialConnection {
+            isAppReady = true
         }
     }
 }
