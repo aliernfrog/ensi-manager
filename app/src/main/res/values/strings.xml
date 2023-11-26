@@ -22,6 +22,10 @@
     <string name="logs">Logs</string>
     <string name="logs_description">View logs of the bot</string>
     <string name="logs_couldntFetch">Something went wrong while fetching logs</string>
+    <string name="logs_type_log">Debug</string>
+    <string name="logs_type_warn">Warning</string>
+    <string name="logs_type_error">Error</string>
+    <string name="logs_reversed">Reversed</string>
     <string name="chat">Chat</string>
     <string name="chat_words">Words</string>
     <string name="chat_verbs">Verbs</string>

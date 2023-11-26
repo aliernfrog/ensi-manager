@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,18 +20,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -52,10 +60,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.EnsiLog
+import com.aliernfrog.ensimanager.enum.EnsiLogType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
+import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -105,14 +115,72 @@ private fun LogsList(
     dashboardViewModel: DashboardViewModel = getViewModel(),
     nestedScrollConnection: NestedScrollConnection
 ) {
+    val filtersScrollState = rememberScrollState()
     LazyColumn(
         modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection),
         state = dashboardViewModel.logsLazyListState
     ) {
-        itemsIndexed(dashboardViewModel.logs) { index, item ->
+        item {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalFadingEdge(
+                        scrollState = filtersScrollState,
+                        edgeColor = MaterialTheme.colorScheme.surface
+                    )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Max)
+                        .horizontalScroll(filtersScrollState)
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    EnsiLogType.values().forEach {
+                        val selected = dashboardViewModel.shownLogTypes.contains(it)
+                        FilterChip(
+                            selected = selected,
+                            label = { Text(stringResource(it.nameId)) },
+                            leadingIcon = if (selected) { {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            } } else { null },
+                            onClick = {
+                                if (selected) dashboardViewModel.shownLogTypes.remove(it)
+                                else dashboardViewModel.shownLogTypes.add(it)
+                            }
+                        )
+                    }
+                    VerticalDivider(
+                        modifier = Modifier.fillMaxSize().padding(
+                            horizontal = 4.dp,
+                            vertical = 8.dp
+                        ),
+                        thickness = 1.dp
+                    )
+                    InputChip(
+                        selected = dashboardViewModel.logsReversed,
+                        onClick = { dashboardViewModel.logsReversed = !dashboardViewModel.logsReversed },
+                        label = { Text(stringResource(R.string.logs_reversed)) },
+                        leadingIcon = if (dashboardViewModel.logsReversed) { {
+                            Icon(
+                                imageVector = Icons.Default.Done,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        } } else { null }
+                    )
+                }
+            }
+        }
+        itemsIndexed(dashboardViewModel.shownLogs) { index, item ->
             LogItem(
                 log = item,
-                isLastItem = index == dashboardViewModel.logs.size-1
+                isLastItem = index == dashboardViewModel.shownLogs.size-1
             )
         }
         item {

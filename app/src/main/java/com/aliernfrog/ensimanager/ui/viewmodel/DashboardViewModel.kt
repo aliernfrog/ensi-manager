@@ -8,12 +8,14 @@ import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.EnsiLog
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import com.aliernfrog.ensimanager.enum.EnsiLogType
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.isSuccessful
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
@@ -43,8 +45,16 @@ class DashboardViewModel(
     var status by mutableStateOf(contextUtils.getString(R.string.dashboard_fetching))
         private set
 
-    var logs by mutableStateOf(listOf<EnsiLog>())
-        private set
+    private var logs by mutableStateOf(listOf<EnsiLog>())
+    var shownLogTypes = mutableStateListOf(*EnsiLogType.values())
+    var logsReversed by mutableStateOf(false)
+    val shownLogs: List<EnsiLog>
+        get() = logs.filter {
+            shownLogTypes.contains(it.type)
+        }.let {
+            // inverted logic to make the "reversed" one show oldest at top
+            return@let if (!logsReversed) it.reversed() else it
+        }
 
     val isFetching get() = apiViewModel.fetching
 
