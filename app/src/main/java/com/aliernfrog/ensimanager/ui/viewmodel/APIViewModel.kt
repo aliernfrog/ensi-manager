@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.PriorityHigh
@@ -25,9 +26,11 @@ import org.json.JSONObject
 
 class APIViewModel(
     private val prefs: PreferenceManager,
-    private val topToastState: TopToastState
+    private val topToastState: TopToastState,
+    context: Context
 ) : ViewModel() {
     private val gson = Gson()
+    private val userAgent = WebUtil.buildUserAgent(context)
 
     var apiData by mutableStateOf<EnsiAPIData?>(null)
         private set
@@ -56,7 +59,11 @@ class APIViewModel(
         fetching = true
         withContext(Dispatchers.IO) {
             try {
-                val response = WebUtil.sendRequest(setupEndpointsURL, "GET")
+                val response = WebUtil.sendRequest(
+                    toUrl = setupEndpointsURL,
+                    method = "GET",
+                    userAgent = userAgent
+                )
                 val isSuccess = response.error == null && response.statusCode.toString().startsWith("2")
                 if (isSuccess) {
                     val data = gson.fromJson(response.responseBody, EnsiAPIData::class.java)
@@ -89,7 +96,8 @@ class APIViewModel(
         return withContext(Dispatchers.IO) {
             val response = endpoint?.doRequest(
                 json = json,
-                authorization = setupAuthorization
+                authorization = setupAuthorization,
+                userAgent = userAgent
             )
             fetching = false
             return@withContext response
