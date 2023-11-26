@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiLog
 import com.aliernfrog.ensimanager.data.HTTPResponse
 import com.aliernfrog.ensimanager.enum.EnsiLogType
@@ -78,7 +80,7 @@ class DashboardViewModel(
                 }
             } catch (_: CancellationException) {
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "fetchLogs: ", e)
                 topToastState.showErrorToast(R.string.logs_couldntFetch)
             }
         }
