@@ -1,7 +1,6 @@
 package com.aliernfrog.ensimanager.ui.screen
 
 import android.annotation.SuppressLint
-import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -56,6 +55,7 @@ import com.aliernfrog.ensimanager.data.EnsiLog
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
+import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -139,7 +139,7 @@ private fun LogItem(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(35.dp)
+                    .width(28.dp)
                     .background(color),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -154,18 +154,13 @@ private fun LogItem(
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
                 Text(
-                    text = DateUtils.getRelativeDateTimeString(
-                        /* c = */ context,
-                        /* time = */ log.date,
-                        /* minResolution = */ DateUtils.SECOND_IN_MILLIS,
-                        /* transitionResolution = */ DateUtils.DAY_IN_MILLIS,
-                        /* flags = */ 0
-                    ).toString(),
-                    fontSize = 14.sp,
+                    text = log.getTimeStr(context),
+                    fontSize = 12.sp,
                     modifier = Modifier.alpha(0.5f)
                 )
                 Text(
                     text = log.str,
+                    fontSize = 13.sp,
                     fontFamily = FontFamily.Monospace
                 )
             }

@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.EnsiLog
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.isSuccessful
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.summary
@@ -60,6 +61,11 @@ class DashboardViewModel(
                 val response = apiViewModel.doRequest(apiViewModel.apiData?.getLogs)
                 if (response?.isSuccessful != true) return@withContext topToastState.toastSummary(response)
                 logs = gson.fromJson(response.responseBody, Array<EnsiLog>::class.java).toList()
+                contextUtils.run { ctx ->
+                    logs.forEach {
+                        it.getTimeStr(ctx, force = true)
+                    }
+                }
             } catch (_: CancellationException) {
             } catch (e: Exception) {
                 e.printStackTrace()
