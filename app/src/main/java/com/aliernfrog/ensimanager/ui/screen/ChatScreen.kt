@@ -56,14 +56,11 @@ fun ChatScreen(
         title = stringResource(R.string.chat),
         topAppBarState = chatViewModel.topAppBarState
     ) {
-
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
             WordsList(
-                chatViewModel,
-                pullToRefreshState.nestedScrollConnection
+                nestedScrollConnection = pullToRefreshState.nestedScrollConnection
             )
             FloatingButtons(
-                chatViewModel = chatViewModel,
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
                 bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
                 scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
@@ -72,12 +69,6 @@ fun ChatScreen(
             PullToRefreshContainer(
                 state = pullToRefreshState
             )
-            /*PullRefreshIndicator(
-                refreshing = refreshing,
-                state = pullRefreshState,
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )*/
         }
     }
 

@@ -1,6 +1,7 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.PriorityHigh
@@ -11,11 +12,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.data.EnsiLog
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import com.aliernfrog.ensimanager.util.extension.isSuccessful
+import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.extension.summary
+import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
+import com.google.gson.Gson
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -23,12 +31,18 @@ import kotlinx.coroutines.withContext
 class DashboardViewModel(
     private val contextUtils: ContextUtils,
     private val topToastState: TopToastState,
-    private val apiViewModel: APIViewModel
+    private val apiViewModel: APIViewModel,
+    private val gson: Gson
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
+    val logsTopAppBarState = TopAppBarState(0F, 0F, 0F)
+    val logsLazyListState = LazyListState()
     val scrollState = ScrollState(0)
 
     var status by mutableStateOf(contextUtils.getString(R.string.dashboard_fetching))
+        private set
+
+    var logs by mutableStateOf(listOf<EnsiLog>())
         private set
 
     val isFetching get() = apiViewModel.fetching
@@ -36,7 +50,21 @@ class DashboardViewModel(
     suspend fun fetchStatus() {
         withContext(Dispatchers.IO) {
             val response = apiViewModel.doRequest(apiViewModel.apiData?.getStatus)
-            status = "[${response?.statusCode}] ${response?.responseBody}"
+            status = response.summary
+        }
+    }
+
+    suspend fun fetchLogs() {
+        withContext(Dispatchers.IO) {
+            try {
+                val response = apiViewModel.doRequest(apiViewModel.apiData?.getLogs)
+                if (response?.isSuccessful != true) return@withContext topToastState.toastSummary(response)
+                logs = gson.fromJson(response.responseBody, Array<EnsiLog>::class.java).toList()
+            } catch (_: CancellationException) {
+            } catch (e: Exception) {
+                e.printStackTrace()
+                topToastState.showErrorToast(R.string.logs_couldntFetch)
+            }
         }
     }
 

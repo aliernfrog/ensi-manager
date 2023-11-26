@@ -16,8 +16,12 @@
     <string name="dashboard_status">Status</string>
     <string name="dashboard_fetching">Fetching..</string>
     <string name="dashboard_post_addon">Post Ensicord add-on</string>
+    <string name="dashboard_post_addon_description">Updates the Ensicord add-on in GitHub</string>
     <string name="dashboard_destroy_process">Destroy process</string>
-    <string name="dashboard_destroy_process_description">Do this when bot doesn\'t work correctly</string>
+    <string name="dashboard_destroy_process_description">Stops the bot, can be done if something is wrong</string>
+    <string name="logs">Logs</string>
+    <string name="logs_description">View logs of the bot</string>
+    <string name="logs_couldntFetch">Something went wrong while fetching logs</string>
     <string name="chat">Chat</string>
     <string name="chat_words">Words</string>
     <string name="chat_verbs">Verbs</string>

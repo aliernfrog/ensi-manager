@@ -27,9 +27,9 @@ import org.json.JSONObject
 class APIViewModel(
     private val prefs: PreferenceManager,
     private val topToastState: TopToastState,
+    private val gson: Gson,
     context: Context
 ) : ViewModel() {
-    private val gson = Gson()
     private val userAgent = WebUtil.buildUserAgent(context)
 
     var apiData by mutableStateOf<EnsiAPIData?>(null)
