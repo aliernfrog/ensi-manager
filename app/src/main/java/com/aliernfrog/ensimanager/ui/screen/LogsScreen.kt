@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -202,7 +202,6 @@ private fun LogItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
-                .clickable {}
         ) {
             Column(
                 modifier = Modifier
@@ -226,11 +225,13 @@ private fun LogItem(
                     fontSize = 12.sp,
                     modifier = Modifier.alpha(0.5f)
                 )
-                Text(
-                    text = log.str,
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily.Monospace
-                )
+                SelectionContainer {
+                    Text(
+                        text = log.str,
+                        fontSize = 13.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
             }
         }
         if (!isLastItem) HorizontalDivider(
