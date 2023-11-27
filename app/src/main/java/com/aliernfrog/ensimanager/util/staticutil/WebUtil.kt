@@ -2,6 +2,8 @@ package com.aliernfrog.ensimanager.util.staticutil
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
+import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.HTTPResponse
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -34,7 +36,7 @@ class WebUtil {
                     responseBody = response
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "sendRequest: ", e)
                 HTTPResponse(
                     statusCode = null,
                     responseBody = null,

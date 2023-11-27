@@ -4,6 +4,7 @@ import android.os.Build
 import com.aliernfrog.ensimanager.data.PrefEditItem
 import com.aliernfrog.ensimanager.data.Social
 
+const val TAG = "EnsiManager"
 const val githubRepoURL = "https://github.com/aliernfrog/ensi-manager"
 const val experimentalSettingsRequiredClicks = 10
 

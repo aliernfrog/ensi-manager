@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager.data
 
 data class EnsiAPIData(
     val getStatus: EnsiAPIEndpoint,
+    val getLogs: EnsiAPIEndpoint,
     val destroyProcess: EnsiAPIEndpoint,
     val getWords: EnsiAPIEndpoint,
     val addWord: EnsiAPIEndpoint,

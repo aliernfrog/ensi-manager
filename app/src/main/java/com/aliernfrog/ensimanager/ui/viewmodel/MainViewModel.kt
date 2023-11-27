@@ -1,6 +1,7 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.ReleaseInfo
 import com.aliernfrog.ensimanager.githubRepoURL
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
@@ -87,10 +89,9 @@ class MainViewModel(
                         iconTintColor = TopToastColor.ON_SURFACE
                     )
                 }
-            } catch (e: CancellationException) {
-                e.printStackTrace()
+            } catch (_: CancellationException) {
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "checkUpdates: ", e)
                 if (manuallyTriggered) topToastState.showToast(
                     text = R.string.updates_error,
                     icon = Icons.Rounded.PriorityHigh,

@@ -1,6 +1,5 @@
 package com.aliernfrog.ensimanager.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,16 +37,19 @@ import org.koin.androidx.compose.getViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    dashboardViewModel: DashboardViewModel = getViewModel()
+    dashboardViewModel: DashboardViewModel = getViewModel(),
+    onNavigateLogsScreenRequest: () -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(Unit) {
         dashboardViewModel.fetchStatus()
+        dashboardViewModel.fetchLogs()
     }
 
     if (pullToRefreshState.isRefreshing) LaunchedEffect(Unit) {
         dashboardViewModel.fetchStatus()
+        dashboardViewModel.fetchLogs()
     }
 
     LaunchedEffect(dashboardViewModel.isFetching) {
@@ -63,10 +66,11 @@ fun DashboardScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .nestedScroll(pullToRefreshState.nestedScrollConnection)
-                    .verticalScroll(dashboardViewModel.scrollState),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .verticalScroll(dashboardViewModel.scrollState)
             ) {
-                ScreenContent()
+                ScreenContent(
+                    onNavigateLogsScreenRequest = onNavigateLogsScreenRequest
+                )
             }
             PullToRefreshContainer(
                 state = pullToRefreshState
@@ -77,11 +81,15 @@ fun DashboardScreen(
 
 @Composable
 private fun ScreenContent(
-    dashboardViewModel: DashboardViewModel = getViewModel()
+    dashboardViewModel: DashboardViewModel = getViewModel(),
+    onNavigateLogsScreenRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    ColumnRounded(title = stringResource(R.string.dashboard_status)) {
+    ColumnRounded(
+        title = stringResource(R.string.dashboard_status),
+        modifier = Modifier.padding(bottom = 8.dp)
+    ) {
         SelectionContainer(Modifier.padding(horizontal = 8.dp)) {
             Text(
                 text = dashboardViewModel.status,
@@ -89,9 +97,22 @@ private fun ScreenContent(
             )
         }
     }
+
     VerticalSegmentedButtons({
         ButtonRow(
+            title = stringResource(R.string.logs),
+            description = stringResource(R.string.logs_description),
+            painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            expanded = false,
+            arrowRotation = 90f
+        ) {
+            onNavigateLogsScreenRequest()
+        }
+    }, {
+        ButtonRow(
             title = stringResource(R.string.dashboard_post_addon),
+            description = stringResource(R.string.dashboard_post_addon_description),
             painter = rememberVectorPainter(Icons.Default.Upload),
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
@@ -107,5 +128,5 @@ private fun ScreenContent(
         ) {
             scope.launch { dashboardViewModel.destroyProcess() }
         }
-    }, modifier = Modifier.padding(8.dp))
+    }, modifier = Modifier.padding(horizontal = 8.dp))
 }

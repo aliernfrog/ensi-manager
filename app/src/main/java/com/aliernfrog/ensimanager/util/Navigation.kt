@@ -32,6 +32,12 @@ enum class Destination(
         vectorOutlined = Icons.Outlined.Dashboard
     ),
 
+    LOGS(
+        route = "logs",
+        labelId = R.string.logs,
+        showInNavigationBar = false
+    ),
+
     CHAT(
         route = "chat",
         labelId = R.string.chat,

@@ -1,6 +1,7 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.PriorityHigh
@@ -9,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiAPIData
 import com.aliernfrog.ensimanager.data.EnsiAPIEndpoint
 import com.aliernfrog.ensimanager.data.HTTPResponse
@@ -27,9 +29,9 @@ import org.json.JSONObject
 class APIViewModel(
     private val prefs: PreferenceManager,
     private val topToastState: TopToastState,
+    private val gson: Gson,
     context: Context
 ) : ViewModel() {
-    private val gson = Gson()
     private val userAgent = WebUtil.buildUserAgent(context)
 
     var apiData by mutableStateOf<EnsiAPIData?>(null)
@@ -76,7 +78,7 @@ class APIViewModel(
                     iconTintColor = TopToastColor.ERROR
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "fetchApiData: ", e)
                 error = e.toString()
             }
             fetching = false

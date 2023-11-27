@@ -13,6 +13,8 @@
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIData { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIEndpoint { *; }
+-keep class com.aliernfrog.ensimanager.data.EnsiLog { *; }
+-keep class com.aliernfrog.ensimanager.enum.EnsiLogType { *; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
