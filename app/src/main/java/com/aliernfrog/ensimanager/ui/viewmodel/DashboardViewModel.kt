@@ -73,9 +73,11 @@ class DashboardViewModel(
                 val response = apiViewModel.doRequest(apiViewModel.apiData?.getLogs)
                 if (response?.isSuccessful != true) return@withContext topToastState.toastSummary(response)
                 logs = gson.fromJson(response.responseBody, Array<EnsiLog>::class.java).toList()
-                contextUtils.run { ctx ->
-                    logs.forEach {
-                        it.getTimeStr(ctx, force = true)
+                withContext(Dispatchers.Main) {
+                    contextUtils.run { ctx ->
+                        logs.forEach {
+                            it.getTimeStr(ctx, force = true)
+                        }
                     }
                 }
             } catch (_: CancellationException) {
