@@ -47,6 +47,7 @@ class APIViewModel(
 
     var setupEndpointsURL by mutableStateOf(prefs.apiEndpointsUrl)
     var setupAuthorization by mutableStateOf(prefs.apiAuthorization)
+    var migratedTo by mutableStateOf<String?>(null)
 
     fun doInitialConnection(onFinish: () -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -69,6 +70,11 @@ class APIViewModel(
                 val isSuccess = response.error == null && response.statusCode.toString().startsWith("2")
                 if (isSuccess) {
                     val data = gson.fromJson(response.responseBody, EnsiAPIData::class.java)
+                    data.migration?.url?.let { newURL ->
+                        migratedTo = newURL
+                        setupEndpointsURL = newURL
+                        return@withContext fetchApiData(showToastOnSuccess = showToastOnSuccess)
+                    }
                     apiData = data
                     saveConfig()
                     if (showToastOnSuccess) topToastState.showToast(R.string.setup_saved, Icons.Rounded.Check)

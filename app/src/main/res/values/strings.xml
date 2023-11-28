@@ -2,6 +2,7 @@
     <string name="app_name">Ensi Manager</string>
     <string name="action_back">Back</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_dismiss">Dismiss</string>
     <string name="action_clear">Clear</string>
     <string name="action_done">Done</string>
     <string name="error">Error</string>
@@ -11,6 +12,8 @@
     <string name="setup_endpoints_url_info">A GET request will be done to fetch endpoints</string>
     <string name="setup_auth">Authorization</string>
     <string name="setup_auth_info">Used in authorization header when needed</string>
+    <string name="setup_migrated">Migrated</string>
+    <string name="setup_migrated_description">Endpoint you used has migrated to: {URL}</string>
     <string name="setup_saved">Saved configuration</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_status">Status</string>

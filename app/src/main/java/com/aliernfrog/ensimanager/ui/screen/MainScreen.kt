@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
+import com.aliernfrog.ensimanager.ui.dialog.APIMigratedDialog
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
@@ -89,5 +90,6 @@ fun MainScreen() {
         }
     }
 
+    APIMigratedDialog()
     UpdateSheet()
 }
