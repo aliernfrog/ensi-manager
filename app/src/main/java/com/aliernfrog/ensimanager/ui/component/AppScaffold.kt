@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -114,7 +114,7 @@ private fun AppPinnedTopBar(
 private fun BackButton(onClick: (() -> Unit)?) {
     if (onClick != null) IconButton(onClick = onClick) {
         Icon(
-            imageVector = Icons.Rounded.ArrowBack,
+            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
             contentDescription = stringResource(R.string.action_back),
             modifier = Modifier.padding(horizontal = 8.dp)
         )

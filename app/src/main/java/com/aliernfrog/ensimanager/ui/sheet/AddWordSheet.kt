@@ -1,77 +1,92 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ChatScreenType
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.state.ChatState
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
+import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddWordSheet(chatState: ChatState, state: ModalBottomSheetState) {
-    val context = LocalContext.current
+fun AddWordSheet(
+    chatViewModel: ChatViewModel = getViewModel(),
+    state: SheetState = chatViewModel.addWordSheetState
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
-    val action = stringResource(when (chatState.type) {
-        ChatScreenType.VERBS -> R.string.chat_verbs_add
-        else -> R.string.chat_words_add
-    })
-    val placeholder = stringResource(when (chatState.type) {
-        ChatScreenType.VERBS -> R.string.chat_verbs_add_placeholder
-        else -> R.string.chat_words_add_placeholder
-    })
+    val focusRequester = remember { FocusRequester() }
+    val type = chatViewModel.type
+    val action = stringResource(type.addWordTitleId)
+
+    LaunchedEffect(state.isVisible) {
+        if (state.isVisible) try {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        } catch (_: Exception) {}
+    }
+
     AppModalBottomSheet(
         title = action,
         sheetState = state
     ) {
         OutlinedTextField(
-            value = chatState.addWordInput,
-            onValueChange = { chatState.addWordInput = it },
-            placeholder = { Text(placeholder) },
-            trailingIcon = {
-                AnimatedVisibility(
-                    visible = chatState.addWordInput.isNotEmpty(),
-                    enter = fadeIn() + expandHorizontally(),
-                    exit = fadeOut() + shrinkHorizontally()
-                ) {
-                    IconButton(onClick = { chatState.addWordInput = "" }) {
-                        Icon(
-                            painter = rememberVectorPainter(Icons.Rounded.Clear),
-                            contentDescription = null
-                        )
-                    }
-                }
-            },
-            shape = AppComponentShape,
-            modifier = Modifier.animateContentSize().fillMaxWidth().padding(8.dp)
+            value = chatViewModel.addWordInput,
+            onValueChange = { chatViewModel.addWordInput = it },
+            placeholder = { Text(stringResource(type.addWordPlaceholderId)) },
+            modifier = Modifier
+                .animateContentSize()
+                .fillMaxWidth()
+                .padding(8.dp)
+                .focusRequester(focusRequester)
         )
-        Button(
-            onClick = { scope.launch { chatState.addWordFromInput(context); state.hide() } },
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Icon(
-                painter = rememberVectorPainter(Icons.Rounded.Done),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 4.dp)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+            modifier = Modifier.fillMaxWidth().padding(
+                vertical = 4.dp,
+                horizontal = 8.dp
             )
-            Text(action)
+        ) {
+            Crossfade(chatViewModel.addWordInput.isNotBlank()) { enabled ->
+                OutlinedButton(
+                    onClick = { chatViewModel.addWordInput = "" },
+                    enabled = enabled
+                ) {
+                    ButtonIcon(rememberVectorPainter(Icons.Default.Clear))
+                    Text(stringResource(R.string.action_clear))
+                }
+            }
+
+            Button(
+                onClick = { scope.launch {
+                    chatViewModel.addWordFromInput()
+                    state.hide()
+                } }
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.Rounded.Done))
+                Text(action)
+            }
         }
     }
 }
