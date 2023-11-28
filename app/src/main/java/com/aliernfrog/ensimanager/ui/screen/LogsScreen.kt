@@ -54,8 +54,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
@@ -126,7 +128,8 @@ private fun LogsList(
                     .fillMaxWidth()
                     .horizontalFadingEdge(
                         scrollState = filtersScrollState,
-                        edgeColor = MaterialTheme.colorScheme.surface
+                        edgeColor = MaterialTheme.colorScheme.surface,
+                        isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
             ) {
                 Row(

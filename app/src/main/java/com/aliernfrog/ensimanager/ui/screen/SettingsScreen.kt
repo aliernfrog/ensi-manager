@@ -12,9 +12,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.SettingsConstant
@@ -94,7 +96,7 @@ private fun APIOptions(
             title = stringResource(R.string.settings_api_config),
             description = stringResource(R.string.settings_api_config_description),
             expanded = false,
-            arrowRotation = 90f
+            arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
         ) {
             onNavigateAPIConfigScreenRequest()
         }

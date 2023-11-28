@@ -23,7 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
@@ -105,7 +107,7 @@ private fun ScreenContent(
             painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             expanded = false,
-            arrowRotation = 90f
+            arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
         ) {
             onNavigateLogsScreenRequest()
         }
