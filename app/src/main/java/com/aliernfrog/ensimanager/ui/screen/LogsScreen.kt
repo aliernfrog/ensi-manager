@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -112,6 +113,7 @@ fun LogsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LogsList(
     dashboardViewModel: DashboardViewModel = getViewModel(),
@@ -135,10 +137,11 @@ private fun LogsList(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Max)
+                        //.height(IntrinsicSize.Max)
                         .horizontalScroll(filtersScrollState)
                         .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     EnsiLogType.values().forEach {
                         val selected = dashboardViewModel.shownLogTypes.contains(it)
@@ -159,10 +162,14 @@ private fun LogsList(
                         )
                     }
                     VerticalDivider(
-                        modifier = Modifier.fillMaxSize().padding(
-                            horizontal = 4.dp,
-                            vertical = 8.dp
-                        ),
+                        // TODO use Intrinsic height (for some reason its broken)
+                        modifier = Modifier
+                            //.fillMaxSize()
+                            .height(32.dp)
+                            .padding(
+                                horizontal = 4.dp,
+                                vertical = 4.dp
+                            ),
                         thickness = 1.dp
                     )
                     InputChip(
