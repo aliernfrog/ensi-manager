@@ -3,9 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeMaterial3Version = "1.2.0-alpha11"
-val composeMaterialVersion = "1.6.0-beta01"
-val composeCompilerVersion = "1.5.4"
+val composeMaterialVersion = "1.6.0-beta03"
+val composeMaterial3Version = "1.2.0-beta01"
+val composeCompilerVersion = "1.5.6"
 
 android {
     namespace = "com.aliernfrog.ensimanager"
@@ -57,15 +57,15 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.compose.ui:ui:$composeMaterialVersion")
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
     implementation("androidx.compose.material3:material3:$composeMaterial3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("io.insert-koin:koin-androidx-compose:3.5.0")
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("com.github.aliernfrog:top-toast-compose:1.3.5-alpha01")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.github.jeziellago:compose-markdown:0.3.6")
+    implementation("com.github.jeziellago:compose-markdown:0.3.7")
 }
