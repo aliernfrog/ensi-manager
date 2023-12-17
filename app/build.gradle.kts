@@ -15,8 +15,8 @@ android {
         applicationId = "com.aliernfrog.ensimanager"
         minSdk = 24
         targetSdk = 34
-        versionCode = 19100
-        versionName = "1.9.1"
+        versionCode = 19200
+        versionName = "1.9.2"
         vectorDrawables { useSupportLibrary = true }
     }
 
@@ -65,7 +65,7 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("io.insert-koin:koin-androidx-compose:3.5.0")
     implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("com.github.aliernfrog:top-toast-compose:1.3.5-alpha01")
+    implementation("aliernfrog:top-toast-compose:1.4.0-alpha03")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.jeziellago:compose-markdown:0.3.7")
 }
