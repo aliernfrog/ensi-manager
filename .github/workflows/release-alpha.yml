@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: read
 
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +22,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew assembleRelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sign APK
         id: sign_apk
