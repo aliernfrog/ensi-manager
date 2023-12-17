@@ -14,6 +14,7 @@ val appModule = module {
     single {
         TopToastState(
             composeView = null,
+            appTheme = null,
             allowSwipingByDefault = false
         )
     }
