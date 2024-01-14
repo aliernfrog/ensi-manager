@@ -30,12 +30,12 @@ import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateSheet(
-    mainViewModel: MainViewModel = getViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
     sheetState: SheetState = mainViewModel.updateSheetState,
     latestVersionInfo: ReleaseInfo = mainViewModel.latestVersionInfo
 ) {
@@ -62,6 +62,7 @@ fun UpdateSheet(
             modifier = Modifier.alpha(0.3f),
             thickness = 1.dp
         )
+        // TODO MarkdownText crashes with the latest compose material dependencies
         MarkdownText(
             modifier = Modifier
                 .fillMaxWidth()
@@ -69,9 +70,10 @@ fun UpdateSheet(
                 .padding(bottom = bottomPadding)
                 .padding(16.dp),
             markdown = latestVersionInfo.body,
-            color = LocalContentColor.current,
             linkColor = MaterialTheme.colorScheme.primary,
-            style = LocalTextStyle.current,
+            style = LocalTextStyle.current.copy(
+                color = LocalContentColor.current
+            ),
             onLinkClicked = {
                 uriHandler.openUri(it)
             }

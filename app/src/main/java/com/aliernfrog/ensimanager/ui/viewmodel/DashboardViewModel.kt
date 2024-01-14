@@ -48,7 +48,7 @@ class DashboardViewModel(
         private set
 
     private var logs by mutableStateOf(listOf<EnsiLog>())
-    var shownLogTypes = mutableStateListOf(*EnsiLogType.values())
+    var shownLogTypes = mutableStateListOf(*EnsiLogType.entries.toTypedArray())
     var logsReversed by mutableStateOf(false)
     val shownLogs: List<EnsiLog>
         get() = logs.filter {

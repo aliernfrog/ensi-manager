@@ -36,13 +36,13 @@ import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    mainViewModel: MainViewModel = getViewModel(),
-    settingsViewModel: SettingsViewModel = getViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel(),
     onNavigateAPIConfigScreenRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -69,7 +69,7 @@ fun SettingsScreen(
 
 @Composable
 private fun AppearanceOptions(
-    settingsViewModel: SettingsViewModel = getViewModel()
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val themeOptions = listOf(
         stringResource(R.string.settings_appearance_theme_system),
@@ -121,8 +121,8 @@ private fun APIOptions(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AboutApp(
-    mainViewModel: MainViewModel = getViewModel(),
-    settingsViewModel: SettingsViewModel = getViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val version = "${mainViewModel.applicationVersionName} (${mainViewModel.applicationVersionCode})"
@@ -191,8 +191,8 @@ private fun Links(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExperimentalSettings(
-    mainViewModel: MainViewModel = getViewModel(),
-    settingsViewModel: SettingsViewModel = getViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
