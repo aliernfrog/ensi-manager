@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun APIMigratedDialog(
-    apiViewModel: APIViewModel = getViewModel()
+    apiViewModel: APIViewModel = koinViewModel()
 ) {
     val onDismissRequest = {
         apiViewModel.migratedTo = null

@@ -70,12 +70,12 @@ import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsScreen(
-    dashboardViewModel: DashboardViewModel = getViewModel(),
+    dashboardViewModel: DashboardViewModel = koinViewModel(),
     onBackClick: () -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
@@ -116,7 +116,7 @@ fun LogsScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LogsList(
-    dashboardViewModel: DashboardViewModel = getViewModel(),
+    dashboardViewModel: DashboardViewModel = koinViewModel(),
     nestedScrollConnection: NestedScrollConnection
 ) {
     val filtersScrollState = rememberScrollState()
@@ -143,7 +143,7 @@ private fun LogsList(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    EnsiLogType.values().forEach {
+                    EnsiLogType.entries.forEach {
                         val selected = dashboardViewModel.shownLogTypes.contains(it)
                         FilterChip(
                             selected = selected,
@@ -254,7 +254,7 @@ private fun LogItem(
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    dashboardViewModel: DashboardViewModel = getViewModel(),
+    dashboardViewModel: DashboardViewModel = koinViewModel(),
     scrollTopButtonModifier: Modifier,
     scrollBottomButtonModifier: Modifier
 ) {

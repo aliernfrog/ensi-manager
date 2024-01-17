@@ -26,12 +26,12 @@ import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddWordSheet(
-    chatViewModel: ChatViewModel = getViewModel(),
+    chatViewModel: ChatViewModel = koinViewModel(),
     state: SheetState = chatViewModel.addWordSheetState
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current

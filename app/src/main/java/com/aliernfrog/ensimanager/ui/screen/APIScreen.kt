@@ -49,11 +49,11 @@ import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun APIScreen(
-    apiViewModel: APIViewModel = getViewModel(),
+    apiViewModel: APIViewModel = koinViewModel(),
     content: @Composable () -> Unit
 ) {
     AnimatedContent(targetState = !apiViewModel.isReady) { showAPIConfiguration ->
@@ -67,7 +67,7 @@ fun APIScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun APIConfigurationScreen(
-    apiViewModel: APIViewModel = getViewModel(),
+    apiViewModel: APIViewModel = koinViewModel(),
     onBackClick: (() -> Unit)? = null
 ) {
     val scope = rememberCoroutineScope()
