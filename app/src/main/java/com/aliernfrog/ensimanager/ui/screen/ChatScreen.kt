@@ -30,12 +30,12 @@ import com.aliernfrog.ensimanager.ui.sheet.AddWordSheet
 import com.aliernfrog.ensimanager.ui.sheet.WordSheet
 import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    chatViewModel: ChatViewModel = getViewModel()
+    chatViewModel: ChatViewModel = koinViewModel()
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -78,7 +78,7 @@ fun ChatScreen(
 
 @Composable
 private fun WordsList(
-    chatViewModel: ChatViewModel = getViewModel(),
+    chatViewModel: ChatViewModel = koinViewModel(),
     nestedScrollConnection: NestedScrollConnection
 ) {
     val list = chatViewModel.currentList
@@ -105,7 +105,7 @@ private fun WordsList(
 
 @Composable
 private fun ListControls(
-    chatViewModel: ChatViewModel = getViewModel(),
+    chatViewModel: ChatViewModel = koinViewModel(),
     wordsShown: Int
 ) {
     val scope = rememberCoroutineScope()
@@ -133,11 +133,11 @@ private fun ListControls(
     )
 
     SegmentedButtons(
-        options = ChatFilterType.values().map { stringResource(it.titleId) },
+        options = ChatFilterType.entries.map { stringResource(it.titleId) },
         selectedIndex = chatViewModel.type.ordinal,
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
-        chatViewModel.type = ChatFilterType.values()[it]
+        chatViewModel.type = ChatFilterType.entries[it]
         scope.launch { chatViewModel.fetchCurrentList() }
     }
 
@@ -153,7 +153,7 @@ private fun ListControls(
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    chatViewModel: ChatViewModel = getViewModel(),
+    chatViewModel: ChatViewModel = koinViewModel(),
     scrollTopButtonModifier: Modifier,
     bottomButtonsColumnModifier: Modifier,
     scrollBottomButtonModifier: Modifier,

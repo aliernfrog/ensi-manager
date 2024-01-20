@@ -34,12 +34,12 @@ import com.aliernfrog.ensimanager.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    dashboardViewModel: DashboardViewModel = getViewModel(),
+    dashboardViewModel: DashboardViewModel = koinViewModel(),
     onNavigateLogsScreenRequest: () -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
@@ -83,7 +83,7 @@ fun DashboardScreen(
 
 @Composable
 private fun ScreenContent(
-    dashboardViewModel: DashboardViewModel = getViewModel(),
+    dashboardViewModel: DashboardViewModel = koinViewModel(),
     onNavigateLogsScreenRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
