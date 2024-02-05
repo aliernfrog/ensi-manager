@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeMaterialVersion = "1.6.0-rc01"
-val composeMaterial3Version = "1.2.0-beta02"
+val composeMaterialVersion = "1.6.0"
+val composeMaterial3Version = "1.2.0-rc01"
 val composeCompilerVersion = "1.5.8"
 
 android {
