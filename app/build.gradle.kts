@@ -65,7 +65,7 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("aliernfrog:top-toast-compose:1.4.0-alpha04")
+    implementation("aliernfrog:top-toast-compose:1.4.0-alpha05")
     implementation("com.google.code.gson:gson:2.10.1")
     //0.4.0 and above versions of compose-markdown library crashes with the latest compose alpha libraries
     //noinspection GradleDependency
