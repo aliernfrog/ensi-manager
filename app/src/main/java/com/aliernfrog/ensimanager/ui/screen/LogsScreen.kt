@@ -136,66 +136,61 @@ private fun LogsList(
         state = dashboardViewModel.logsLazyListState
     ) {
         item {
-            Box(
-                Modifier
+            Row(
+                modifier = Modifier
                     .fillMaxWidth()
                     .horizontalFadingEdge(
                         scrollState = filtersScrollState,
                         edgeColor = MaterialTheme.colorScheme.surface,
                         isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
+                    //.height(IntrinsicSize.Max)
+                    .horizontalScroll(filtersScrollState)
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        //.height(IntrinsicSize.Max)
-                        .horizontalScroll(filtersScrollState)
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    EnsiLogType.entries.forEach {
-                        val selected = dashboardViewModel.shownLogTypes.contains(it)
-                        FilterChip(
-                            selected = selected,
-                            label = { Text(stringResource(it.nameId)) },
-                            leadingIcon = if (selected) { {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            } } else { null },
-                            onClick = {
-                                if (selected) dashboardViewModel.shownLogTypes.remove(it)
-                                else dashboardViewModel.shownLogTypes.add(it)
-                            }
-                        )
-                    }
-                    VerticalDivider(
-                        // TODO use Intrinsic height (for some reason its broken)
-                        modifier = Modifier
-                            //.fillMaxSize()
-                            .height(32.dp)
-                            .padding(
-                                horizontal = 4.dp,
-                                vertical = 4.dp
-                            ),
-                        thickness = 1.dp
-                    )
-                    InputChip(
-                        selected = dashboardViewModel.logsReversed,
-                        onClick = { dashboardViewModel.logsReversed = !dashboardViewModel.logsReversed },
-                        label = { Text(stringResource(R.string.logs_reversed)) },
-                        leadingIcon = if (dashboardViewModel.logsReversed) { {
+                EnsiLogType.entries.forEach {
+                    val selected = dashboardViewModel.shownLogTypes.contains(it)
+                    FilterChip(
+                        selected = selected,
+                        label = { Text(stringResource(it.nameId)) },
+                        leadingIcon = if (selected) { {
                             Icon(
                                 imageVector = Icons.Default.Done,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
-                        } } else { null }
+                        } } else { null },
+                        onClick = {
+                            if (selected) dashboardViewModel.shownLogTypes.remove(it)
+                            else dashboardViewModel.shownLogTypes.add(it)
+                        }
                     )
                 }
+                VerticalDivider(
+                    // TODO use Intrinsic height (for some reason its broken)
+                    modifier = Modifier
+                        //.fillMaxHeight()
+                        .height(32.dp)
+                        .padding(
+                            horizontal = 4.dp,
+                            vertical = 4.dp
+                        ),
+                    thickness = 1.dp
+                )
+                InputChip(
+                    selected = dashboardViewModel.logsReversed,
+                    onClick = { dashboardViewModel.logsReversed = !dashboardViewModel.logsReversed },
+                    label = { Text(stringResource(R.string.logs_reversed)) },
+                    leadingIcon = if (dashboardViewModel.logsReversed) { {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    } } else { null }
+                )
             }
         }
         itemsIndexed(dashboardViewModel.shownLogs) { index, item ->

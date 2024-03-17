@@ -3,9 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeMaterialVersion = "1.6.0"
-val composeMaterial3Version = "1.2.0-rc01"
-val composeCompilerVersion = "1.5.8"
+val composeMaterialVersion = "1.7.0-alpha04"
+val composeMaterial3Version = "1.3.0-alpha02"
+val composeCompilerVersion = "1.5.10"
 
 android {
     namespace = "com.aliernfrog.ensimanager"
@@ -64,10 +64,8 @@ dependencies {
     implementation("androidx.compose.material3:material3:$composeMaterial3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
-    implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("aliernfrog:top-toast-compose:1.4.0-alpha05")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("aliernfrog:top-toast-compose:2.0.0")
     implementation("com.google.code.gson:gson:2.10.1")
-    //0.4.0 and above versions of compose-markdown library crashes with the latest compose alpha libraries
-    //noinspection GradleDependency
-    implementation("com.github.jeziellago:compose-markdown:0.3.7")
+    implementation("com.github.jeziellago:compose-markdown:0.4.1")
 }

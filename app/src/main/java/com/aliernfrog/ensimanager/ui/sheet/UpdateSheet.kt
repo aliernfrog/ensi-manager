@@ -35,7 +35,6 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.ReleaseInfo
 import com.aliernfrog.ensimanager.ui.component.BaseModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.component.SmallDragHandle
 import com.aliernfrog.ensimanager.ui.component.form.DividerRow
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -48,8 +47,7 @@ fun UpdateSheet(
 ) {
     val uriHandler = LocalUriHandler.current
     BaseModalBottomSheet(
-        sheetState = sheetState,
-        dragHandle = { SmallDragHandle() }
+        sheetState = sheetState
     ) { bottomPadding ->
         Actions(
             versionName = latestVersionInfo.versionName,
