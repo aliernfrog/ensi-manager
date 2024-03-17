@@ -35,7 +35,8 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    chatViewModel: ChatViewModel = koinViewModel()
+    chatViewModel: ChatViewModel = koinViewModel(),
+    onNavigateSettingsRequest: () -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -53,7 +54,17 @@ fun ChatScreen(
     }
 
     AppScaffold(
-        title = stringResource(R.string.chat),
+        topBar = {
+            AppTopBar(
+                title = stringResource(R.string.chat),
+                scrollBehavior = it,
+                actions = {
+                    SettingsButton(
+                        onClick = onNavigateSettingsRequest
+                    )
+                }
+            )
+        },
         topAppBarState = chatViewModel.topAppBarState
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {

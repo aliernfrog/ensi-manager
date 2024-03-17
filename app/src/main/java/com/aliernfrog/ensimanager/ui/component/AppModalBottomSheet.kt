@@ -1,13 +1,23 @@
 package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.imeSupportsSyncAppContent
 import com.aliernfrog.ensimanager.ui.theme.AppBottomSheetShape
 import com.aliernfrog.ensimanager.ui.viewmodel.InsetsViewModel
-import com.aliernfrog.ensimanager.util.extension.isAnyVisible
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -65,12 +74,12 @@ fun BaseModalBottomSheet(
     content: @Composable ColumnScope.(bottomPadding: Dp) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    if (sheetState.isAnyVisible()) ModalBottomSheet(
+    if (sheetState.currentValue != SheetValue.Hidden || sheetState.targetValue != SheetValue.Hidden) ModalBottomSheet(
         onDismissRequest = { scope.launch {
             sheetState.hide()
         } },
         modifier = Modifier
-            .padding(top = insetsViewModel.topPadding),
+            .padding(top = insetsViewModel.topPadding*2),
         sheetState = sheetState,
         dragHandle = dragHandle,
         windowInsets = WindowInsets(0.dp)
@@ -83,4 +92,15 @@ fun BaseModalBottomSheet(
             + (if (imeSupportsSyncAppContent) 0.dp else insetsViewModel.imePadding)
         )
     }
+}
+
+@Composable
+fun SmallDragHandle() {
+    Box(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .size(32.dp, 4.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
+    )
 }

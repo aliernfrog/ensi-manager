@@ -17,14 +17,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.dialog.APIMigratedDialog
+import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
+import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
+import com.aliernfrog.ensimanager.util.extension.popBackStackSafe
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    mainViewModel: MainViewModel = koinViewModel()
+) {
     val navController = rememberNavController()
+    val onNavigateSettingsRequest = {
+        navController.navigate(Destination.SETTINGS.route)
+    }
+    val onNavigateBackRequest = {
+        navController.popBackStackSafe()
+    }
     BaseScaffold(navController) {
         NavHost(
             navController = navController,
@@ -57,39 +69,48 @@ fun MainScreen() {
             }
         ) {
             composable(Destination.DASHBOARD.route) {
-                APIScreen {
+                APIScreen(
+                    onNavigateSettingsRequest = onNavigateSettingsRequest
+                ) {
                     DashboardScreen(
-                        onNavigateLogsScreenRequest = {
-                            navController.navigate(Destination.LOGS.route)
+                        onNavigateRequest = { destination ->
+                            navController.navigate(destination.route)
                         }
                     )
                 }
             }
             composable(Destination.LOGS.route) {
                 LogsScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onNavigateSettingsRequest = onNavigateSettingsRequest,
+                    onNavigateBackRequest = onNavigateBackRequest
                 )
             }
             composable(Destination.CHAT.route) {
-                APIScreen {
-                    ChatScreen()
+                APIScreen(
+                    onNavigateSettingsRequest = onNavigateSettingsRequest
+                ) {
+                    ChatScreen(
+                        onNavigateSettingsRequest = onNavigateSettingsRequest
+                    )
                 }
             }
             composable(Destination.SETTINGS.route) {
                 SettingsScreen(
-                    onNavigateAPIConfigScreenRequest = {
-                        navController.navigate(Destination.API_CONFIG.route)
-                    }
+                    onNavigateBackRequest = onNavigateBackRequest
                 )
             }
             composable(Destination.API_CONFIG.route) {
                 APIConfigurationScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onNavigateSettingsRequest = onNavigateSettingsRequest,
+                    onNavigateBackRequest = onNavigateBackRequest
                 )
             }
         }
     }
 
     APIMigratedDialog()
-    UpdateSheet()
+    UpdateSheet(
+        sheetState = mainViewModel.updateSheetState,
+        latestVersionInfo = mainViewModel.latestVersionInfo
+    )
 }

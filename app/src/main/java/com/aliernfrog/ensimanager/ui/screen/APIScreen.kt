@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
+import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
+import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import kotlinx.coroutines.launch
@@ -54,10 +57,13 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun APIScreen(
     apiViewModel: APIViewModel = koinViewModel(),
+    onNavigateSettingsRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
     AnimatedContent(targetState = !apiViewModel.isReady) { showAPIConfiguration ->
-        if (showAPIConfiguration) APIConfigurationScreen()
+        if (showAPIConfiguration) APIConfigurationScreen(
+            onNavigateSettingsRequest = onNavigateSettingsRequest
+        )
         else content()
     }
 
@@ -68,7 +74,8 @@ fun APIScreen(
 @Composable
 fun APIConfigurationScreen(
     apiViewModel: APIViewModel = koinViewModel(),
-    onBackClick: (() -> Unit)? = null
+    onNavigateSettingsRequest: (() -> Unit)?,
+    onNavigateBackRequest: (() -> Unit)? = null
 ) {
     val scope = rememberCoroutineScope()
 
@@ -76,7 +83,21 @@ fun APIConfigurationScreen(
     BackHandler(apiViewModel.fetching) {}
 
     AppScaffold(
-        title = stringResource(R.string.setup),
+        topBar = {
+          AppSmallTopBar(
+              title = stringResource(R.string.setup),
+              scrollBehavior = it,
+              onNavigationClick = if (apiViewModel.fetching) null else onNavigateBackRequest,
+              actions = {
+                  onNavigateSettingsRequest?.let { onClick ->
+                      SettingsButton(
+                          enabled = !apiViewModel.fetching,
+                          onClick = onClick
+                      )
+                  }
+              }
+          )
+        },
         bottomBar = {
             BottomAppBar(
                 tonalElevation = 0.dp
@@ -85,7 +106,7 @@ fun APIConfigurationScreen(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
                 ) {
-                    onBackClick?.let {
+                    onNavigateBackRequest?.let {
                         OutlinedButton(
                             onClick = it,
                             enabled = !apiViewModel.fetching
@@ -118,7 +139,7 @@ fun APIConfigurationScreen(
                 }
             }
         },
-        onBackClick = if (apiViewModel.fetching) null else onBackClick
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             OutlinedTextField(

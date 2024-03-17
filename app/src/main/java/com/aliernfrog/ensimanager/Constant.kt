@@ -1,6 +1,8 @@
 package com.aliernfrog.ensimanager
 
 import android.os.Build
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
 import com.aliernfrog.ensimanager.data.PrefEditItem
 import com.aliernfrog.ensimanager.data.Social
 
@@ -23,9 +25,21 @@ object ConfigKey {
 
 object SettingsConstant {
     val socials = listOf(
-        Social("Ensi Manager GitHub", githubRepoURL),
-        Social("aliernfrog Discord", "https://discord.gg/SQXqBMs"),
-        Social("aliernfrog website", "https://aliernfrog.github.io")
+        Social(
+            label = "GitHub",
+            icon = R.drawable.github,
+            url = githubRepoURL
+        ),
+        Social(
+            label = "Discord",
+            icon = R.drawable.discord,
+            url = "https://discord.gg/SQXqBMs"
+        ),
+        Social(
+            label = "Website",
+            icon = Icons.Default.Language,
+            url = "https://aliernfrog.github.io"
+        )
     )
     val experimentalPrefOptions = listOf(
         PrefEditItem(

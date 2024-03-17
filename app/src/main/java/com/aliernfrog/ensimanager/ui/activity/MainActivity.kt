@@ -97,8 +97,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun isDarkThemeEnabled(theme: Int): Boolean {
         return when(theme) {
-            Theme.LIGHT.int -> false
-            Theme.DARK.int -> true
+            Theme.LIGHT.ordinal -> false
+            Theme.DARK.ordinal -> true
             else -> isSystemInDarkTheme()
         }
     }
