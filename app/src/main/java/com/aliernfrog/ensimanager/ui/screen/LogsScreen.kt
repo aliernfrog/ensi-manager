@@ -27,7 +27,6 @@ import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -65,7 +64,9 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.EnsiLog
 import com.aliernfrog.ensimanager.enum.EnsiLogType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
+import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
+import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
@@ -76,7 +77,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LogsScreen(
     dashboardViewModel: DashboardViewModel = koinViewModel(),
-    onBackClick: () -> Unit
+    onNavigateSettingsRequest: () -> Unit,
+    onNavigateBackRequest: () -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -94,9 +96,19 @@ fun LogsScreen(
     }
 
     AppScaffold(
-        title = stringResource(R.string.logs),
-        topAppBarState = dashboardViewModel.logsTopAppBarState,
-        onBackClick = onBackClick
+        topBar = {
+            AppTopBar(
+                title = stringResource(R.string.logs),
+                scrollBehavior = it,
+                onNavigationClick = onNavigateBackRequest,
+                actions = {
+                    SettingsButton(
+                        onClick = onNavigateSettingsRequest
+                    )
+                }
+            )
+        },
+        topAppBarState = dashboardViewModel.logsTopAppBarState
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
             LogsList(
@@ -113,7 +125,6 @@ fun LogsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LogsList(
     dashboardViewModel: DashboardViewModel = koinViewModel(),
@@ -125,66 +136,61 @@ private fun LogsList(
         state = dashboardViewModel.logsLazyListState
     ) {
         item {
-            Box(
-                Modifier
+            Row(
+                modifier = Modifier
                     .fillMaxWidth()
                     .horizontalFadingEdge(
                         scrollState = filtersScrollState,
                         edgeColor = MaterialTheme.colorScheme.surface,
                         isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
+                    //.height(IntrinsicSize.Max)
+                    .horizontalScroll(filtersScrollState)
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        //.height(IntrinsicSize.Max)
-                        .horizontalScroll(filtersScrollState)
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    EnsiLogType.entries.forEach {
-                        val selected = dashboardViewModel.shownLogTypes.contains(it)
-                        FilterChip(
-                            selected = selected,
-                            label = { Text(stringResource(it.nameId)) },
-                            leadingIcon = if (selected) { {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            } } else { null },
-                            onClick = {
-                                if (selected) dashboardViewModel.shownLogTypes.remove(it)
-                                else dashboardViewModel.shownLogTypes.add(it)
-                            }
-                        )
-                    }
-                    VerticalDivider(
-                        // TODO use Intrinsic height (for some reason its broken)
-                        modifier = Modifier
-                            //.fillMaxSize()
-                            .height(32.dp)
-                            .padding(
-                                horizontal = 4.dp,
-                                vertical = 4.dp
-                            ),
-                        thickness = 1.dp
-                    )
-                    InputChip(
-                        selected = dashboardViewModel.logsReversed,
-                        onClick = { dashboardViewModel.logsReversed = !dashboardViewModel.logsReversed },
-                        label = { Text(stringResource(R.string.logs_reversed)) },
-                        leadingIcon = if (dashboardViewModel.logsReversed) { {
+                EnsiLogType.entries.forEach {
+                    val selected = dashboardViewModel.shownLogTypes.contains(it)
+                    FilterChip(
+                        selected = selected,
+                        label = { Text(stringResource(it.nameId)) },
+                        leadingIcon = if (selected) { {
                             Icon(
                                 imageVector = Icons.Default.Done,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
-                        } } else { null }
+                        } } else { null },
+                        onClick = {
+                            if (selected) dashboardViewModel.shownLogTypes.remove(it)
+                            else dashboardViewModel.shownLogTypes.add(it)
+                        }
                     )
                 }
+                VerticalDivider(
+                    // TODO use Intrinsic height (for some reason its broken)
+                    modifier = Modifier
+                        //.fillMaxHeight()
+                        .height(32.dp)
+                        .padding(
+                            horizontal = 4.dp,
+                            vertical = 4.dp
+                        ),
+                    thickness = 1.dp
+                )
+                InputChip(
+                    selected = dashboardViewModel.logsReversed,
+                    onClick = { dashboardViewModel.logsReversed = !dashboardViewModel.logsReversed },
+                    label = { Text(stringResource(R.string.logs_reversed)) },
+                    leadingIcon = if (dashboardViewModel.logsReversed) { {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    } } else { null }
+                )
             }
         }
         itemsIndexed(dashboardViewModel.shownLogs) { index, item ->

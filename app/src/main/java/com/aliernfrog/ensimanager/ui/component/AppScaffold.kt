@@ -6,42 +6,37 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.enum.TopBarStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(
-    title: String,
+    topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
     topAppBarState: TopAppBarState = TopAppBarState(0F,0F,0F),
-    topBarStyle: TopBarStyle = TopBarStyle.LARGE,
-    topBarActions: @Composable RowScope.() -> Unit = {},
+    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState),
     bottomBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
-    onBackClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val scrollBehavior = when (topBarStyle) {
-        TopBarStyle.LARGE -> TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
-        TopBarStyle.PINNED -> TopAppBarDefaults.pinnedScrollBehavior()
-    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppStyledTopBar(
-                style = topBarStyle,
-                title = title,
-                scrollBehavior = scrollBehavior,
-                onBackClick = onBackClick,
-                actions = topBarActions
-            )
-        },
+        topBar = { topBar(scrollBehavior) },
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,
         contentWindowInsets = WindowInsets(0,0,0,0),
@@ -55,68 +50,56 @@ fun AppScaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AppStyledTopBar(
-    style: TopBarStyle,
+fun AppTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    onBackClick: (() -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {}
-) {
-    when (style) {
-        TopBarStyle.LARGE -> AppLargeTopBar(
-            title = title,
-            scrollBehavior = scrollBehavior,
-            onBackClick = onBackClick,
-            actions = actions
-        )
-        TopBarStyle.PINNED -> AppPinnedTopBar(
-            title = title,
-            scrollBehavior = scrollBehavior,
-            onBackClick = onBackClick,
-            actions = actions
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppLargeTopBar(
-    title: String,
-    scrollBehavior: TopAppBarScrollBehavior,
-    onBackClick: (() -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {},
+    colors: TopAppBarColors = TopAppBarDefaults.largeTopAppBarColors(),
+    navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+    onNavigationClick: (() -> Unit)? = null
 ) {
     LargeTopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
-        navigationIcon = { BackButton(onBackClick) },
+        colors = colors,
+        navigationIcon = {
+            onNavigationClick?.let {
+                IconButton(onClick = it) {
+                    Icon(
+                        imageVector = navigationIcon,
+                        contentDescription = stringResource(R.string.action_back)
+                    )
+                }
+            }
+        },
         actions = actions
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AppPinnedTopBar(
+fun AppSmallTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    onBackClick: (() -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {},
+    colors: TopAppBarColors = TopAppBarDefaults.largeTopAppBarColors(),
+    navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+    onNavigationClick: (() -> Unit)? = null
 ) {
     TopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
-        navigationIcon = { BackButton(onBackClick) },
+        colors = colors,
+        navigationIcon = {
+            onNavigationClick?.let {
+                IconButton(onClick = it) {
+                    Icon(
+                        imageVector = navigationIcon,
+                        contentDescription = stringResource(R.string.action_back)
+                    )
+                }
+            }
+        },
         actions = actions
     )
-}
-
-@Composable
-private fun BackButton(onClick: (() -> Unit)?) {
-    if (onClick != null) IconButton(onClick = onClick) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-            contentDescription = stringResource(R.string.action_back),
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
-    }
 }

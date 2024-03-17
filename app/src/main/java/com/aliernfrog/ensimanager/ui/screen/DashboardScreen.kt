@@ -29,10 +29,13 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
+import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.ColumnRounded
+import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
+import com.aliernfrog.ensimanager.util.Destination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -40,7 +43,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DashboardScreen(
     dashboardViewModel: DashboardViewModel = koinViewModel(),
-    onNavigateLogsScreenRequest: () -> Unit
+    onNavigateRequest: (Destination) -> Unit
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -60,7 +63,17 @@ fun DashboardScreen(
     }
 
     AppScaffold(
-        title = stringResource(R.string.dashboard),
+        topBar = {
+          AppTopBar(
+              title = stringResource(R.string.dashboard),
+              scrollBehavior = it,
+              actions = {
+                  SettingsButton(
+                      onClick = { onNavigateRequest(Destination.SETTINGS) }
+                  )
+              }
+          )
+        },
         topAppBarState = dashboardViewModel.topAppBarState
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
@@ -71,7 +84,9 @@ fun DashboardScreen(
                     .verticalScroll(dashboardViewModel.scrollState)
             ) {
                 ScreenContent(
-                    onNavigateLogsScreenRequest = onNavigateLogsScreenRequest
+                    onNavigateLogsScreenRequest = {
+                        onNavigateRequest(Destination.LOGS)
+                    }
                 )
             }
             PullToRefreshContainer(

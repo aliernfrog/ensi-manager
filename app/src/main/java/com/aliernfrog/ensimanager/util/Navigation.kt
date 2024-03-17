@@ -4,9 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Dashboard
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -48,8 +46,7 @@ enum class Destination(
     SETTINGS(
         route = "settings",
         labelId = R.string.settings,
-        vectorFilled = Icons.Default.Settings,
-        vectorOutlined = Icons.Outlined.Settings
+        showInNavigationBar = false
     ),
 
     API_CONFIG(
