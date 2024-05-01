@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
             EnsiManagerTheme(
                 darkTheme = isDarkThemeEnabled(mainViewModel.prefs.theme),
                 dynamicColors = mainViewModel.prefs.materialYou,
+                pitchBlack = mainViewModel.prefs.pitchBlack,
                 content = content
             )
         }

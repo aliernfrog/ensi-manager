@@ -24,13 +24,21 @@ val supportsMaterialYou = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 @SuppressLint("NewApi")
 @Composable
-fun EnsiManagerTheme(darkTheme: Boolean = isSystemInDarkTheme(), dynamicColors: Boolean = true, content: @Composable () -> Unit) {
+fun EnsiManagerTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColors: Boolean = true,
+    pitchBlack: Boolean = false,
+    content: @Composable () -> Unit)
+{
     val useDynamicColors = supportsMaterialYou && dynamicColors
     val colors = when {
         useDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
         useDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
         darkTheme -> darkColorScheme()
         else -> lightColorScheme()
+    }.let {
+        if (darkTheme && pitchBlack) it.copy(background = Color.Black, surface = Color.Black)
+        else it
     }
 
     val view = LocalView.current

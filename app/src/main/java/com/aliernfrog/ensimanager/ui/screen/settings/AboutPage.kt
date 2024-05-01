@@ -183,13 +183,6 @@ private fun ExperimentalSettings(
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        SwitchRow(
-            title = stringResource(R.string.settings_experimental_showMaterialYouOption),
-            checked = settingsViewModel.showMaterialYouOption,
-            onCheckedChange = {
-                settingsViewModel.showMaterialYouOption = it
-            }
-        )
         ButtonRow(
             title = stringResource(R.string.settings_experimental_checkUpdates)
         ) {
