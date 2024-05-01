@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Api
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -124,7 +125,9 @@ private fun SettingsRootPage(
             )
 
             SettingsPage.entries
-                .filter { it != SettingsPage.ROOT }
+                .filter {
+                    it != SettingsPage.ROOT && !(it == SettingsPage.EXPERIMENTAL && !mainViewModel.prefs.experimentalOptionsEnabled)
+                }
                 .forEach { page ->
                     ButtonRow(
                         title = stringResource(page.title),
@@ -250,6 +253,16 @@ enum class SettingsPage(
                 onNavigateSettingsRequest = null,
                 onNavigateBackRequest = onNavigateBackRequest
             )
+        }
+    ),
+
+    EXPERIMENTAL(
+        id = "experimental",
+        title = R.string.settings_experimental,
+        description = R.string.settings_experimental_description,
+        icon = Icons.Outlined.Science,
+        content = { onNavigateBackRequest, _ ->
+            ExperimentalPage(onNavigateBackRequest = onNavigateBackRequest)
         }
     ),
 

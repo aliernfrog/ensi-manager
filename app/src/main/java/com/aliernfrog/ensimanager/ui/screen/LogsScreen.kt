@@ -11,10 +11,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,20 +38,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -80,19 +79,10 @@ fun LogsScreen(
     onNavigateSettingsRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         dashboardViewModel.fetchLogs()
-    }
-
-    if (pullToRefreshState.isRefreshing) LaunchedEffect(Unit) {
-        dashboardViewModel.fetchLogs()
-    }
-
-    LaunchedEffect(dashboardViewModel.isFetching) {
-        if (dashboardViewModel.isFetching) pullToRefreshState.startRefresh()
-        else pullToRefreshState.endRefresh()
     }
 
     AppScaffold(
@@ -111,15 +101,17 @@ fun LogsScreen(
         topAppBarState = dashboardViewModel.logsTopAppBarState
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-            LogsList(
-                nestedScrollConnection = pullToRefreshState.nestedScrollConnection
-            )
+            PullToRefreshBox(
+                isRefreshing = dashboardViewModel.isFetching,
+                onRefresh = { scope.launch {
+                    dashboardViewModel.fetchLogs()
+                } }
+            ) {
+                LogsList()
+            }
             FloatingButtons(
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
                 scrollBottomButtonModifier = Modifier.align(Alignment.BottomEnd)
-            )
-            PullToRefreshContainer(
-                state = pullToRefreshState
             )
         }
     }
@@ -127,12 +119,11 @@ fun LogsScreen(
 
 @Composable
 private fun LogsList(
-    dashboardViewModel: DashboardViewModel = koinViewModel(),
-    nestedScrollConnection: NestedScrollConnection
+    dashboardViewModel: DashboardViewModel = koinViewModel()
 ) {
     val filtersScrollState = rememberScrollState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection),
+        modifier = Modifier.fillMaxSize(),
         state = dashboardViewModel.logsLazyListState
     ) {
         item {
@@ -144,7 +135,6 @@ private fun LogsList(
                         edgeColor = MaterialTheme.colorScheme.surface,
                         isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
-                    //.height(IntrinsicSize.Max)
                     .horizontalScroll(filtersScrollState)
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -169,9 +159,7 @@ private fun LogsList(
                     )
                 }
                 VerticalDivider(
-                    // TODO use Intrinsic height (for some reason its broken)
                     modifier = Modifier
-                        //.fillMaxHeight()
                         .height(32.dp)
                         .padding(
                             horizontal = 4.dp,
@@ -211,17 +199,17 @@ private fun LogItem(
     isLastItem: Boolean
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
     val color = log.type.getColor()
     val symbolColor = MaterialTheme.colorScheme.contentColorFor(color)
+    var height by remember { mutableStateOf(0.dp) }
     Column {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    .height(height)
                     .width(28.dp)
                     .background(color),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -234,7 +222,13 @@ private fun LogItem(
                 )
             }
             Column(
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier
+                    .onSizeChanged {
+                        density.run {
+                            height = it.height.toDp()
+                        }
+                    }
+                    .padding(horizontal = 4.dp)
             ) {
                 Text(
                     text = log.getTimeStr(context),
