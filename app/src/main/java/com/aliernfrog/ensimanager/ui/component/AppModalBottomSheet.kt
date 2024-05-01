@@ -3,7 +3,6 @@ package com.aliernfrog.ensimanager.ui.component
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -74,17 +73,14 @@ fun BaseModalBottomSheet(
             sheetState.hide()
         } },
         modifier = Modifier
-            .padding(top = insetsViewModel.topPadding*2),
+            .padding(top = insetsViewModel.topPadding),
         sheetState = sheetState,
-        dragHandle = dragHandle,
-        windowInsets = WindowInsets(0.dp)
+        dragHandle = dragHandle
     ) {
         content(
-            // Adding top padding since Modifier.padding causes an offset on the bottom sheet
-            insetsViewModel.topPadding + insetsViewModel.bottomPadding
             // If IME does not sync app content, keyboard will show over the bottom sheet
             // Add IME padding to workaround this
-            + (if (imeSupportsSyncAppContent) 0.dp else insetsViewModel.imePadding)
+            if (imeSupportsSyncAppContent) 0.dp else insetsViewModel.imePadding
         )
     }
 }
