@@ -18,6 +18,7 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     var apiAuthorization by stringPreference(ConfigKey.KEY_API_AUTHORIZATION)
 
     // Experimental (developer) options
+    var experimentalOptionsEnabled by booleanPreference("experimentalOptionsEnabled", false)
     var autoCheckUpdates by booleanPreference(ConfigKey.KEY_APP_AUTO_UPDATES, true)
     var updatesURL by stringPreference(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL)
 }
