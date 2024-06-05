@@ -1,9 +1,7 @@
 package com.aliernfrog.ensimanager.ui.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -14,15 +12,12 @@ import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
@@ -45,21 +40,11 @@ fun DashboardScreen(
     dashboardViewModel: DashboardViewModel = koinViewModel(),
     onNavigateRequest: (Destination) -> Unit
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         dashboardViewModel.fetchStatus()
         dashboardViewModel.fetchLogs()
-    }
-
-    if (pullToRefreshState.isRefreshing) LaunchedEffect(Unit) {
-        dashboardViewModel.fetchStatus()
-        dashboardViewModel.fetchLogs()
-    }
-
-    LaunchedEffect(dashboardViewModel.isFetching) {
-        if (dashboardViewModel.isFetching) pullToRefreshState.startRefresh()
-        else pullToRefreshState.endRefresh()
     }
 
     AppScaffold(
@@ -76,11 +61,16 @@ fun DashboardScreen(
         },
         topAppBarState = dashboardViewModel.topAppBarState
     ) {
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+        PullToRefreshBox(
+            isRefreshing = dashboardViewModel.isFetching,
+            onRefresh = { scope.launch {
+                dashboardViewModel.fetchStatus()
+                dashboardViewModel.fetchLogs()
+            } }
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .nestedScroll(pullToRefreshState.nestedScrollConnection)
                     .verticalScroll(dashboardViewModel.scrollState)
             ) {
                 ScreenContent(
@@ -89,9 +79,6 @@ fun DashboardScreen(
                     }
                 )
             }
-            PullToRefreshContainer(
-                state = pullToRefreshState
-            )
         }
     }
 }
