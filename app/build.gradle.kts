@@ -64,7 +64,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:$composeMaterial3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("io.insert-koin:koin-androidx-compose:3.5.6")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.8.0-beta02")
     implementation("aliernfrog:top-toast-compose:2.0.1-alpha01")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
