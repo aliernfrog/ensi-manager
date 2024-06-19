@@ -210,9 +210,6 @@ private fun LogItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .onSizeChanged { density.run {
-                    height = it.height.toDp()
-                } }
                 //.height(IntrinsicSize.Max)
         ) {
             Column(
@@ -231,7 +228,11 @@ private fun LogItem(
                 )
             }
             Column(
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier
+                    .onSizeChanged { density.run {
+                        height = it.height.toDp()
+                    } }
+                    .padding(horizontal = 4.dp)
             ) {
                 Text(
                     text = log.getTimeStr(context),
