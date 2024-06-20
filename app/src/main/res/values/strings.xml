@@ -23,7 +23,6 @@
     <string name="dashboard_destroy_process">Destroy process</string>
     <string name="dashboard_destroy_process_description">Stops the bot, can be done if something is wrong</string>
     <string name="logs">Logs</string>
-    <string name="logs_description">View logs of the bot</string>
     <string name="logs_couldntFetch">Something went wrong while fetching logs</string>
     <string name="logs_type_log">Debug</string>
     <string name="logs_type_warn">Warning</string>

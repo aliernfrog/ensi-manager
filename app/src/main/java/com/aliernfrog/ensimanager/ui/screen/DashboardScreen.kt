@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,9 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
@@ -44,7 +41,6 @@ fun DashboardScreen(
 
     LaunchedEffect(Unit) {
         dashboardViewModel.fetchStatus()
-        dashboardViewModel.fetchLogs()
     }
 
     AppScaffold(
@@ -65,7 +61,6 @@ fun DashboardScreen(
             isRefreshing = dashboardViewModel.isFetching,
             onRefresh = { scope.launch {
                 dashboardViewModel.fetchStatus()
-                dashboardViewModel.fetchLogs()
             } }
         ) {
             Column(
@@ -73,11 +68,7 @@ fun DashboardScreen(
                     .fillMaxSize()
                     .verticalScroll(dashboardViewModel.scrollState)
             ) {
-                ScreenContent(
-                    onNavigateLogsScreenRequest = {
-                        onNavigateRequest(Destination.LOGS)
-                    }
-                )
+                ScreenContent()
             }
         }
     }
@@ -85,8 +76,7 @@ fun DashboardScreen(
 
 @Composable
 private fun ScreenContent(
-    dashboardViewModel: DashboardViewModel = koinViewModel(),
-    onNavigateLogsScreenRequest: () -> Unit
+    dashboardViewModel: DashboardViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
@@ -103,17 +93,6 @@ private fun ScreenContent(
     }
 
     VerticalSegmentedButtons({
-        ButtonRow(
-            title = stringResource(R.string.logs),
-            description = stringResource(R.string.logs_description),
-            painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            expanded = false,
-            arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
-        ) {
-            onNavigateLogsScreenRequest()
-        }
-    }, {
         ButtonRow(
             title = stringResource(R.string.dashboard_post_addon),
             description = stringResource(R.string.dashboard_post_addon_description),

@@ -2,7 +2,9 @@ package com.aliernfrog.ensimanager.util
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.outlined.Chat
+import androidx.compose.material.icons.automirrored.outlined.Notes
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.runtime.MutableState
@@ -30,17 +32,18 @@ enum class Destination(
         vectorOutlined = Icons.Outlined.Dashboard
     ),
 
-    LOGS(
-        route = "logs",
-        labelId = R.string.logs,
-        showInNavigationBar = false
-    ),
-
     CHAT(
         route = "chat",
         labelId = R.string.chat,
         vectorFilled = Icons.AutoMirrored.Filled.Chat,
         vectorOutlined = Icons.AutoMirrored.Outlined.Chat
+    ),
+
+    LOGS(
+        route = "logs",
+        labelId = R.string.logs,
+        vectorFilled = Icons.AutoMirrored.Filled.Notes,
+        vectorOutlined = Icons.AutoMirrored.Outlined.Notes
     ),
 
     SETTINGS(
