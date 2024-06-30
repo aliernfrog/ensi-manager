@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import com.aliernfrog.ensimanager.data.doRequest
 import com.aliernfrog.ensimanager.util.extension.summary
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
@@ -36,21 +37,21 @@ class DashboardViewModel(
 
     suspend fun fetchStatus() {
         withContext(Dispatchers.IO) {
-            val response = apiViewModel.doRequest(apiViewModel.apiData?.getStatus)
+            val response = apiViewModel.apiData?.getStatus?.doRequest()
             status = response.summary
         }
     }
 
     suspend fun postEnsicordAddon() {
         withContext(Dispatchers.IO) {
-            val response = apiViewModel.doRequest(apiViewModel.apiData?.postEnsicordAddon)
+            val response = apiViewModel.apiData?.postEnsicordAddon?.doRequest()
             handleSuccessResponse(response)
         }
     }
 
     suspend fun destroyProcess() {
         withContext(Dispatchers.IO) {
-            val response = apiViewModel.doRequest(apiViewModel.apiData?.destroyProcess)
+            val response = apiViewModel.apiData?.destroyProcess?.doRequest()
             handleSuccessResponse(response)
         }
     }

@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.enum.ChatFilterType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
@@ -65,7 +64,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        chatViewModel.fetchCurrentList()
+        chatViewModel.fetchCategories()
     }
 
     AppScaffold(
@@ -86,7 +85,7 @@ fun ChatScreen(
             PullToRefreshBox(
                 isRefreshing = chatViewModel.isFetching,
                 onRefresh = { scope.launch {
-                    chatViewModel.fetchCurrentList()
+                    chatViewModel.fetchCategories()
                 } }
             ) {
                 WordsList()
@@ -108,14 +107,14 @@ fun ChatScreen(
 private fun WordsList(
     chatViewModel: ChatViewModel = koinViewModel()
 ) {
-    val list = chatViewModel.currentList
+    val list = chatViewModel.currentCategoryList
     val scope = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = chatViewModel.lazyListState
     ) {
         item {
-            ListControls(chatViewModel, list.size)
+            ListControls(stringsShown = list.size)
         }
         items(list) {
             Word(
@@ -133,7 +132,7 @@ private fun WordsList(
 @Composable
 private fun ListControls(
     chatViewModel: ChatViewModel = koinViewModel(),
-    wordsShown: Int
+    stringsShown: Int
 ) {
     val scope = rememberCoroutineScope()
     TextField(
@@ -160,18 +159,16 @@ private fun ListControls(
     )
 
     SegmentedButtons(
-        options = ChatFilterType.entries.map { stringResource(it.titleId) },
-        selectedIndex = chatViewModel.type.ordinal,
+        options = chatViewModel.categories.map { it.title },
+        selectedIndex = chatViewModel.currentCategoryIndex,
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
-        chatViewModel.type = ChatFilterType.entries[it]
-        scope.launch { chatViewModel.fetchCurrentList() }
+        chatViewModel.currentCategoryIndex = it
+        scope.launch { chatViewModel.fetchCategories() }
     }
 
     Text(
-        text = stringResource(
-            chatViewModel.type.countTextId
-        ).replace("%", wordsShown.toString()),
+        text = stringResource(R.string.chat_shownStrings).replace("%", stringsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
 }
