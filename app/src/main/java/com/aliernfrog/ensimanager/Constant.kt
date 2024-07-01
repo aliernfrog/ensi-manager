@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.Language
 import com.aliernfrog.ensimanager.data.PrefEditItem
 import com.aliernfrog.ensimanager.data.Social
 
-const val TAG = "EnsiManager"
+const val TAG = "EnsiManagerLogs"
 const val githubRepoURL = "https://github.com/aliernfrog/ensi-manager"
 const val experimentalSettingsRequiredClicks = 10
 
