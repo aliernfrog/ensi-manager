@@ -17,6 +17,8 @@
     <string name="setup_saved">Saved configuration</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_couldntFetch">Something went wrong while fetching dashboard data</string>
+    <string name="dashboard_destructive_warning">This action is destructive, do you want to proceed?</string>
+    <string name="dashboard_destructive_proceed">Proceed</string>
     <string name="logs">Logs</string>
     <string name="logs_couldntFetch">Something went wrong while fetching logs</string>
     <string name="logs_type_log">Debug</string>

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiAPIDashboard
+import com.aliernfrog.ensimanager.data.EnsiAPIDashboardAction
 import com.aliernfrog.ensimanager.data.doRequest
 import com.aliernfrog.ensimanager.util.extension.isSuccessful
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
@@ -31,6 +32,8 @@ class DashboardViewModel(
 
     var dashboardData by mutableStateOf<EnsiAPIDashboard?>(null)
         private set
+
+    var pendingDestructiveAction by mutableStateOf<EnsiAPIDashboardAction?>(null)
 
     suspend fun fetchDashboardData() {
         try {

@@ -36,6 +36,7 @@ import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
+import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import com.aliernfrog.ensimanager.util.Destination
@@ -94,6 +95,7 @@ private fun ScreenContent(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
     Card(
         modifier = Modifier.fillMaxWidth().padding(8.dp),
         shape = AppComponentShape
@@ -143,14 +145,31 @@ private fun ScreenContent(
                     .dispatcher(Dispatchers.IO)
                     .build()
             ) }
-        ) { scope.launch {
-            val response = action.endpoint.doRequest()
-            dashboardViewModel.topToastState.toastSummary(response)
-        } }
+        ) {
+            if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
+            else scope.launch {
+                val response = action.endpoint.doRequest()
+                dashboardViewModel.topToastState.toastSummary(response)
+            }
+        }
     } } ?: listOf()
 
     VerticalSegmentedButtons(
         *buttons.toTypedArray(),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
+
+    dashboardViewModel.pendingDestructiveAction?.let {
+        DestructiveActionDialog(
+            action = it,
+            onDismissRequest = {
+                dashboardViewModel.pendingDestructiveAction = null
+            },
+            onConfirm = { scope.launch {
+                val response = it.endpoint.doRequest()
+                dashboardViewModel.topToastState.toastSummary(response)
+                dashboardViewModel.pendingDestructiveAction = null
+            } }
+        )
+    }
 }
