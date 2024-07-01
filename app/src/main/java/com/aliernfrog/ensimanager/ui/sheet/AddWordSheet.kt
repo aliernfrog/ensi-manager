@@ -1,6 +1,7 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
-import androidx.compose.animation.*
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,7 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -37,8 +43,6 @@ fun AddWordSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
-    val type = chatViewModel.type
-    val action = stringResource(type.addWordTitleId)
 
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) try {
@@ -48,13 +52,14 @@ fun AddWordSheet(
     }
 
     AppModalBottomSheet(
-        title = action,
+        title = stringResource(R.string.chat_add)
+            .replace("{CATEGORY}", chatViewModel.currentCategory?.title?.lowercase() ?:  ""),
         sheetState = state
     ) {
         OutlinedTextField(
             value = chatViewModel.addWordInput,
             onValueChange = { chatViewModel.addWordInput = it },
-            placeholder = { Text(stringResource(type.addWordPlaceholderId)) },
+            placeholder = { Text(stringResource(R.string.chat_add_placeholder)) },
             modifier = Modifier
                 .animateContentSize()
                 .fillMaxWidth()
@@ -85,7 +90,7 @@ fun AddWordSheet(
                 } }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Rounded.Done))
-                Text(action)
+                Text(stringResource(R.string.chat_add_confirm))
             }
         }
     }

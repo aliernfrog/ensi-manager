@@ -11,5 +11,6 @@ val viewModelModule = module {
 
     singleOf(::DashboardViewModel)
     singleOf(::ChatViewModel)
+    singleOf(::LogsViewModel)
     singleOf(::SettingsViewModel)
 }

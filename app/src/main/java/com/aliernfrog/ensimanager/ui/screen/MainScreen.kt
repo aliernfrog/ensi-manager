@@ -79,17 +79,20 @@ fun MainScreen(
                     )
                 }
             }
-            composable(Destination.LOGS.route) {
-                LogsScreen(
-                    onNavigateSettingsRequest = onNavigateSettingsRequest,
-                    onNavigateBackRequest = onNavigateBackRequest
-                )
-            }
             composable(Destination.CHAT.route) {
                 APIScreen(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     ChatScreen(
+                        onNavigateSettingsRequest = onNavigateSettingsRequest
+                    )
+                }
+            }
+            composable(Destination.LOGS.route) {
+                APIScreen(
+                    onNavigateSettingsRequest = onNavigateSettingsRequest
+                ) {
+                    LogsScreen(
                         onNavigateSettingsRequest = onNavigateSettingsRequest
                     )
                 }
