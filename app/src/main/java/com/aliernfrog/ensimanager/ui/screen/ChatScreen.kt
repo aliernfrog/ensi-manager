@@ -134,7 +134,6 @@ private fun ListControls(
     chatViewModel: ChatViewModel = koinViewModel(),
     stringsShown: Int
 ) {
-    val scope = rememberCoroutineScope()
     TextField(
         value = chatViewModel.filter,
         onValueChange = { chatViewModel.filter = it },
@@ -164,7 +163,6 @@ private fun ListControls(
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
         chatViewModel.currentCategoryIndex = it
-        scope.launch { chatViewModel.fetchCategories() }
     }
 
     Text(
