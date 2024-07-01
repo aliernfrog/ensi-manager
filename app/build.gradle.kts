@@ -68,5 +68,6 @@ dependencies {
     implementation("aliernfrog:top-toast-compose:2.0.1-alpha01")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-svg:2.6.0")
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
 }

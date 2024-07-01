@@ -10,6 +10,7 @@ data class EnsiAPIDashboard(
 data class EnsiAPIDashboardAction(
     val label: String,
     val description: String?,
+    val icon: String?,
     val destructive: Boolean = false,
     val endpoint: EnsiAPIEndpoint
 )

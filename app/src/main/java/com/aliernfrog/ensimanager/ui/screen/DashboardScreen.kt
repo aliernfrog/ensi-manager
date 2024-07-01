@@ -21,9 +21,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.SvgDecoder
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.doRequest
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
@@ -36,8 +40,10 @@ import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.extension.toastSummary
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import java.nio.ByteBuffer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,6 +92,7 @@ fun DashboardScreen(
 private fun ScreenContent(
     dashboardViewModel: DashboardViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Card(
         modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -126,7 +133,16 @@ private fun ScreenContent(
             title = action.label,
             description = action.description,
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+            contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+            painter = action.icon?.let { rememberAsyncImagePainter(
+                model = ByteBuffer.wrap(it.toByteArray()),
+                imageLoader = ImageLoader.Builder(context)
+                    .components {
+                        add(SvgDecoder.Factory())
+                    }
+                    .dispatcher(Dispatchers.IO)
+                    .build()
+            ) }
         ) { scope.launch {
             val response = action.endpoint.doRequest()
             dashboardViewModel.topToastState.toastSummary(response)
