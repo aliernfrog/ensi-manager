@@ -62,8 +62,7 @@ fun AboutPage(
     val uriHandler = LocalUriHandler.current
     val scope = rememberCoroutineScope()
     val appIcon = remember {
-        context.packageManager.getApplicationIcon(context.packageName)
-            .toBitmap().asImageBitmap()
+        context.packageManager.getApplicationIcon(context.packageName).toBitmap().asImageBitmap()
     }
     val appVersion = remember {
         "${mainViewModel.applicationVersionName} (${mainViewModel.applicationVersionCode})"
