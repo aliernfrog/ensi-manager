@@ -5,11 +5,13 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -46,6 +48,7 @@ import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.form.DividerRow
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
@@ -77,7 +80,8 @@ fun LibsPage(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(settingsViewModel.libraries) { lib ->
+            itemsIndexed(settingsViewModel.libraries) { index, lib ->
+                if (index != 0) DividerRow()
                 ListItem(
                     headlineContent = { Text(lib.name) },
                     supportingContent = lib.description?.let { { Text(it) } },
@@ -89,6 +93,10 @@ fun LibsPage(
                         librarySheetState.show()
                     } }
                 )
+            }
+
+            item {
+                Spacer(Modifier.navigationBarsPadding())
             }
         }
     }
