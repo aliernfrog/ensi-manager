@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Ensi Manager</string>
     <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_clear">Clear</string>

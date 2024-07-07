@@ -22,12 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import com.aliernfrog.ensimanager.R
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import kotlin.math.absoluteValue
@@ -60,7 +62,7 @@ fun ImageDialog(
                     }
                 },
             color = Color.Black.copy(
-                alpha = (viewportHeight.value/offsetY.value.absoluteValue/10)
+                alpha = (viewportHeight.value/offsetY.value.absoluteValue/11)
             )
         ) {
             Box {
@@ -73,7 +75,7 @@ fun ImageDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = null
+                            contentDescription = stringResource(R.string.action_close)
                         )
                     }
                 }
