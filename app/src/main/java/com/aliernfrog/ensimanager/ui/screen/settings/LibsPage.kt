@@ -125,31 +125,31 @@ fun LibsPage(
                     )
                 }
 
-                val chipsScrollState = rememberScrollState()
+                val buttonsScrollState = rememberScrollState()
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                     modifier = Modifier
                         .padding(vertical = 16.dp)
                         .horizontalFadingEdge(
-                            scrollState = chipsScrollState,
+                            scrollState = buttonsScrollState,
                             edgeColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
                             isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                         )
-                        .horizontalScroll(chipsScrollState)
+                        .horizontalScroll(buttonsScrollState)
                         .padding(horizontal = 16.dp)
                 ) {
                     lib.website?.let {
-                        Button(
+                        if (it.contains("://")) Button(
                             onClick = { uriHandler.openUri(it) }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                             Text(stringResource(R.string.settings_about_libs_website))
                         }
                     }
-                    lib.organization?.let { org ->
-                        FilledTonalButton(
+                    lib.organization?.url?.let {
+                        if (it.contains("://")) FilledTonalButton(
                             onClick = {
-                                org.url?.let { uriHandler.openUri(it) }
+                                uriHandler.openUri(it)
                             }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.CorporateFare))
@@ -159,7 +159,9 @@ fun LibsPage(
                     lib.developers.forEach { dev ->
                         OutlinedButton(
                             onClick = {
-                                dev.organisationUrl?.let { uriHandler.openUri(it) }
+                                dev.organisationUrl?.let {
+                                    if (it.contains("://")) uriHandler.openUri(it)
+                                }
                             }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.Engineering))
