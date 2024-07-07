@@ -52,7 +52,7 @@ object SettingsConstant {
         CreditData(
             name = "Infini_",
             githubUsername = "infini0083",
-            description = "Assisting with Ensi & Ensi Manager"
+            description = "Assisting with Ensi Manager & Ensi"
         ),
         CreditData(
             name = "Exi",

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.SettingsConstant
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
@@ -177,8 +178,10 @@ fun AboutPage(
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(
-                        model = data.avatarURL,
+                    Image(
+                        painter = data.avatarURL?.let {
+                            rememberAsyncImagePainter(model = it)
+                        } ?: rememberVectorPainter(Icons.Default.Face),
                         contentDescription = null,
                         modifier = Modifier
                             .padding(end = 18.dp)

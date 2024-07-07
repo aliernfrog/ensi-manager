@@ -1,6 +1,9 @@
 package com.aliernfrog.ensimanager.impl
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.aliernfrog.ensimanager.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,10 +14,10 @@ class CreditData(
     val name: String,
     val githubUsername: String? = null,
     val description: String,
-    val link: String? = githubUsername?.let { "https://github.com/username/$githubUsername" }
+    val link: String? = githubUsername?.let { "https://github.com/$githubUsername" }
 ) {
     private var fetchedAvatar = false
-    var avatarURL: String? = null
+    var avatarURL by mutableStateOf<String?>(null)
 
     suspend fun fetchAvatar() {
         if (fetchedAvatar) return
