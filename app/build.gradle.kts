@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 val composeMaterialVersion = "1.7.0-beta02"
@@ -65,6 +66,7 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("io.insert-koin:koin-androidx-compose:3.5.6")
     implementation("androidx.navigation:navigation-compose:2.8.0-beta02")
+    implementation("com.mikepenz:aboutlibraries-core:11.2.2")
     implementation("aliernfrog:top-toast-compose:2.0.1-alpha01")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
