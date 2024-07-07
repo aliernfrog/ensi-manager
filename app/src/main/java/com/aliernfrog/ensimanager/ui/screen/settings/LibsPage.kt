@@ -136,7 +136,7 @@ fun LibsPage(
                             isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                         )
                         .horizontalScroll(buttonsScrollState)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 8.dp)
                 ) {
                     lib.website?.let {
                         if (it.contains("://")) Button(
