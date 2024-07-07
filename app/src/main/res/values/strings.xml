@@ -57,6 +57,10 @@
     <string name="settings_about_autoCheckUpdates">Check for updates automatically</string>
     <string name="settings_about_autoCheckUpdates_description">Check for Ensi Manager updates automatically on launch</string>
     <string name="settings_about_credits">Credits</string>
+    <string name="settings_about_libs">Libraries</string>
+    <string name="settings_about_libs_description">Libraries used to make Ensi Manager</string>
+    <string name="settings_about_libs_website">Website</string>
+    <string name="settings_about_libs_organization">Organization</string>
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">Not intended for normal usage, might break the app when misused</string>

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Api
 import androidx.compose.material.icons.outlined.Info
@@ -118,7 +119,7 @@ private fun SettingsRootPage(
 
             SettingsPage.entries
                 .filter {
-                    it != SettingsPage.ROOT && !(it == SettingsPage.EXPERIMENTAL && !mainViewModel.prefs.experimentalOptionsEnabled)
+                    it.showInSettingsHome && !(it == SettingsPage.EXPERIMENTAL && !mainViewModel.prefs.experimentalOptionsEnabled)
                 }
                 .forEach { page ->
                     ButtonRow(
@@ -190,6 +191,7 @@ enum class SettingsPage(
     @StringRes val title: Int,
     @StringRes val description: Int,
     val icon: ImageVector,
+    val showInSettingsHome: Boolean = true,
     val content: @Composable (
         onNavigateBackRequest: () -> Unit,
         onNavigateRequest: (SettingsPage) -> Unit
@@ -200,6 +202,7 @@ enum class SettingsPage(
         title = R.string.settings,
         description = R.string.settings,
         icon = Icons.Outlined.Settings,
+        showInSettingsHome = false,
         content = { onNavigateBackRequest, onNavigateRequest ->
             SettingsRootPage(
                 onNavigateBackRequest = onNavigateBackRequest,
@@ -241,13 +244,29 @@ enum class SettingsPage(
         }
     ),
 
+    LIBS(
+        id = "Libs",
+        title = R.string.settings_about_libs,
+        description = R.string.settings_about_libs_description,
+        icon = Icons.Default.Book,
+        showInSettingsHome = false,
+        content = { onNavigateBackRequest, _ ->
+            LibsPage(onNavigateBackRequest = onNavigateBackRequest)
+        }
+    ),
+
     ABOUT(
         id = "about",
         title = R.string.settings_about,
         description = R.string.settings_about,
         icon = Icons.Outlined.Info,
-        content = { onNavigateBackRequest, _ ->
-            AboutPage(onNavigateBackRequest = onNavigateBackRequest)
+        content = { onNavigateBackRequest, onNavigateRequest ->
+            AboutPage(
+                onNavigateLibsRequest = {
+                    onNavigateRequest(LIBS)
+                },
+                onNavigateBackRequest = onNavigateBackRequest
+            )
         }
     )
 }
