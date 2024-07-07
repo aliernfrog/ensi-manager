@@ -29,6 +29,7 @@ class DashboardViewModel(
     val scrollState = ScrollState(0)
 
     val isFetching get() = apiViewModel.fetching
+    var avatarDialogShown by mutableStateOf(false)
 
     var dashboardData by mutableStateOf<EnsiAPIDashboard?>(null)
         private set

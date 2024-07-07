@@ -70,4 +70,5 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("io.coil-kt:coil-svg:2.6.0")
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
+    implementation("net.engawapg.lib:zoomable:1.6.1")
 }
