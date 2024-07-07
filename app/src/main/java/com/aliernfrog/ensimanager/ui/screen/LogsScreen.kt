@@ -81,7 +81,7 @@ fun LogsScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        logsViewModel.fetchLogs()
+        if (logsViewModel.logs.isEmpty()) logsViewModel.fetchLogs()
     }
 
     AppScaffold(

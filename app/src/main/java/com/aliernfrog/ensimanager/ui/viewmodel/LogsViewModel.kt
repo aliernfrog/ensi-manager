@@ -34,7 +34,10 @@ class LogsViewModel(
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val lazyListState = LazyListState()
-    private var logs by mutableStateOf(listOf<EnsiLog>())
+
+    var logs by mutableStateOf(listOf<EnsiLog>())
+        private set
+
     var shownLogTypes = mutableStateListOf(*EnsiLogType.entries.toTypedArray())
     var logsReversed by mutableStateOf(false)
     val shownLogs: List<EnsiLog>
