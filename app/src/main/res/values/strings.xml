@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Ensi Manager</string>
     <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_clear">Clear</string>
@@ -16,12 +17,9 @@
     <string name="setup_migrated_description">Endpoint you used has migrated to: {URL}</string>
     <string name="setup_saved">Saved configuration</string>
     <string name="dashboard">Dashboard</string>
-    <string name="dashboard_status">Status</string>
-    <string name="dashboard_fetching">Fetching..</string>
-    <string name="dashboard_post_addon">Post Ensicord add-on</string>
-    <string name="dashboard_post_addon_description">Updates the Ensicord add-on in GitHub</string>
-    <string name="dashboard_destroy_process">Destroy process</string>
-    <string name="dashboard_destroy_process_description">Stops the bot, can be done if something is wrong</string>
+    <string name="dashboard_couldntFetch">Something went wrong while fetching dashboard data</string>
+    <string name="dashboard_destructive_warning">This action is destructive, do you want to proceed?</string>
+    <string name="dashboard_destructive_proceed">Proceed</string>
     <string name="logs">Logs</string>
     <string name="logs_couldntFetch">Something went wrong while fetching logs</string>
     <string name="logs_type_log">Debug</string>
