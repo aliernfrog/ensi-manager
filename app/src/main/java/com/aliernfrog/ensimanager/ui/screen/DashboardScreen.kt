@@ -6,15 +6,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,13 +36,13 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.doRequest
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
+import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentedButtons
+import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.dialog.ImageDialog
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.extension.toastSummary
@@ -98,12 +101,12 @@ private fun ScreenContent(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
-        shape = AppComponentShape
-    ) {
+    VerticalSegmentor({
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -133,7 +136,31 @@ private fun ScreenContent(
                 )
             }
         }
-    }
+    }, {
+        val info: List<@Composable () -> Unit> = dashboardViewModel.dashboardData?.info?.map { info -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = info.title,
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = info.value ?: "-"
+                )
+            }
+        } } ?: listOf()
+
+        HorizontalSegmentor(
+            *info.toTypedArray(),
+            shape = RectangleShape
+        )
+    }, modifier = Modifier.padding(8.dp))
+
+    Spacer(Modifier.height(16.dp))
 
     val buttons: List<@Composable () -> Unit> = dashboardViewModel.dashboardData?.actions?.map { action -> {
         ButtonRow(
@@ -159,7 +186,7 @@ private fun ScreenContent(
         }
     } } ?: listOf()
 
-    VerticalSegmentedButtons(
+    VerticalSegmentor(
         *buttons.toTypedArray(),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
