@@ -11,14 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -42,12 +39,9 @@ import com.aliernfrog.ensimanager.SettingsConstant
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
-import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -105,11 +99,10 @@ fun AboutPage(
                         )
                     }
                 }
-                UpdateButton(
+                ChangelogButton(
                     updateAvailable = mainViewModel.updateAvailable
-                ) { updateAvailable -> scope.launch {
-                    if (updateAvailable) mainViewModel.updateSheetState.show()
-                    else mainViewModel.checkUpdates(manuallyTriggered = true)
+                ) { scope.launch {
+                    mainViewModel.updateSheetState.show()
                 } }
             }
         }, {
@@ -151,41 +144,17 @@ fun AboutPage(
         ) {
             settingsViewModel.prefs.autoCheckUpdates = it
         }
-
-        FormSection(
-            title = stringResource(R.string.settings_about_changelog),
-            topDivider = true,
-            bottomDivider = false
-        ) {
-            Card(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                shape = AppComponentShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                )
-            ) {
-                MarkdownText(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    markdown = mainViewModel.latestVersionInfo.body,
-                    style = LocalTextStyle.current.copy(
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    linkColor = MaterialTheme.colorScheme.primary,
-                    onLinkClicked = { uriHandler.openUri(it) }
-                )
-            }
-        }
     }
 }
 
 @Composable
-private fun UpdateButton(
+private fun ChangelogButton(
     updateAvailable: Boolean,
-    onClick: (updateAvailable: Boolean) -> Unit
+    onClick: () -> Unit
 ) {
     AnimatedContent(updateAvailable) {
         if (it) ElevatedButton(
-            onClick = { onClick(true) }
+            onClick = { onClick() }
         ) {
             ButtonIcon(
                 rememberVectorPainter(Icons.Default.Update)
@@ -193,12 +162,12 @@ private fun UpdateButton(
             Text(stringResource(R.string.settings_about_update))
         }
         else OutlinedButton(
-            onClick = { onClick(false) }
+            onClick = { onClick() }
         ) {
             ButtonIcon(
-                rememberVectorPainter(Icons.Default.Refresh)
+                rememberVectorPainter(Icons.Default.Description)
             )
-            Text(stringResource(R.string.settings_about_checkUpdates))
+            Text(stringResource(R.string.settings_about_changelog))
         }
     }
 }

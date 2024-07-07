@@ -48,7 +48,7 @@ class MainViewModel(
     var latestVersionInfo by mutableStateOf(ReleaseInfo(
         versionName = applicationVersionName,
         preRelease = applicationIsPreRelease,
-        body = context.getString(R.string.settings_about_changelog_noChangelog),
+        body = context.getString(R.string.updates_noChangelog),
         htmlUrl = githubRepoURL,
         downloadLink = githubRepoURL
     ))
@@ -85,20 +85,24 @@ class MainViewModel(
                         Destination.SETTINGS.hasNotification.value = true
                     }
                 } else {
-                    if (manuallyTriggered) topToastState.showToast(
-                        text = R.string.updates_noUpdates,
-                        icon = Icons.Rounded.Info,
-                        iconTintColor = TopToastColor.ON_SURFACE
-                    )
+                    if (manuallyTriggered) withContext(Dispatchers.Main) {
+                        topToastState.showAndroidToast(
+                            text = R.string.updates_noUpdates,
+                            icon = Icons.Rounded.Info,
+                            iconTintColor = TopToastColor.ON_SURFACE
+                        )
+                    }
                 }
             } catch (_: CancellationException) {
             } catch (e: Exception) {
                 Log.e(TAG, "checkUpdates: ", e)
-                if (manuallyTriggered) topToastState.showToast(
-                    text = R.string.updates_error,
-                    icon = Icons.Rounded.PriorityHigh,
-                    iconTintColor = TopToastColor.ERROR
-                )
+                if (manuallyTriggered) withContext(Dispatchers.Main) {
+                    topToastState.showAndroidToast(
+                        text = R.string.updates_error,
+                        icon = Icons.Rounded.PriorityHigh,
+                        iconTintColor = TopToastColor.ERROR
+                    )
+                }
             }
         }
     }
