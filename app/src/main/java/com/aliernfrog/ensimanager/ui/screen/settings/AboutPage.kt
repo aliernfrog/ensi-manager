@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager.ui.screen.settings
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +17,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -38,6 +40,8 @@ import androidx.core.graphics.drawable.toBitmap
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.SettingsConstant
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
+import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -69,63 +73,82 @@ fun AboutPage(
         title = stringResource(R.string.settings_about),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.aligned(Alignment.CenterHorizontally),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        VerticalSegmentor({
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .padding(vertical = 8.dp)
             ) {
-                Image(
-                    bitmap = appIcon,
-                    contentDescription = stringResource(R.string.app_name),
-                    modifier = Modifier
-                        .padding(end = 12.dp)
-                        .size(72.dp)
-                )
-                Column {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.titleLarge
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        bitmap = appIcon,
+                        contentDescription = stringResource(R.string.app_name),
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(72.dp)
                     )
-                    Text(
-                        text = appVersion,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.clickable {
-                            settingsViewModel.onAboutClick()
-                        }
-                    )
+                    Column {
+                        Text(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = appVersion,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.clickable {
+                                settingsViewModel.onAboutClick()
+                            }
+                        )
+                    }
                 }
+                UpdateButton(
+                    updateAvailable = mainViewModel.updateAvailable
+                ) { updateAvailable -> scope.launch {
+                    if (updateAvailable) mainViewModel.updateSheetState.show()
+                    else mainViewModel.checkUpdates(manuallyTriggered = true)
+                } }
             }
-            UpdateButton(
-                updateAvailable = mainViewModel.updateAvailable
-            ) { updateAvailable -> scope.launch {
-                if (updateAvailable) mainViewModel.updateSheetState.show()
-                else mainViewModel.checkUpdates(manuallyTriggered = true)
-            } }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                SettingsConstant.socials.forEach { social ->
-                    TextButton(
-                        onClick = { uriHandler.openUri(social.url) }
-                    ) {
-                        ButtonIcon(when (val icon = social.icon) {
+        }, {
+            val socialButtons: List<@Composable () -> Unit> = SettingsConstant.socials.map { social -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .clickable {
+                            uriHandler.openUri(social.url)
+                        }
+                        .padding(vertical = 8.dp)
+                ) {
+                    Icon(
+                        painter = when (val icon = social.icon) {
                             is Int -> painterResource(icon)
                             is ImageVector -> rememberVectorPainter(icon)
                             else -> throw IllegalArgumentException("unexpected class for social icon")
-                        })
-                        Text(social.label)
-                    }
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(social.label)
                 }
-            }
-        }
+            } }
+
+            HorizontalSegmentor(
+                *socialButtons.toTypedArray(),
+                shape = RectangleShape
+            )
+        }, modifier = Modifier.padding(horizontal = 16.dp))
 
         SwitchRow(
             title = stringResource(R.string.settings_about_autoCheckUpdates),
             description = stringResource(R.string.settings_about_autoCheckUpdates_description),
-            checked = settingsViewModel.prefs.autoCheckUpdates
+            checked = settingsViewModel.prefs.autoCheckUpdates,
+            modifier = Modifier.padding(top = 8.dp)
         ) {
             settingsViewModel.prefs.autoCheckUpdates = it
         }
