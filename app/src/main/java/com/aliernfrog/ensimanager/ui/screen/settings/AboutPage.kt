@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Update
@@ -20,10 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,11 +38,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import coil.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.SettingsConstant
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
+import com.aliernfrog.ensimanager.ui.component.form.FormHeader
+import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
@@ -143,6 +150,47 @@ fun AboutPage(
             modifier = Modifier.padding(top = 8.dp)
         ) {
             settingsViewModel.prefs.autoCheckUpdates = it
+        }
+
+        FormSection(
+            title = stringResource(R.string.settings_about_credits),
+            topDivider = true,
+            bottomDivider = false
+        ) {
+            LaunchedEffect(Unit) {
+                SettingsConstant.credits.forEach {
+                    it.fetchAvatar()
+                }
+            }
+
+            SettingsConstant.credits.forEach { data ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(56.dp)
+                        .clickable {
+                            data.link?.let { uriHandler.openUri(it) }
+                        }
+                        .padding(
+                            vertical = 8.dp,
+                            horizontal = 18.dp
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AsyncImage(
+                        model = data.avatarURL,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 18.dp)
+                            .size(32.dp)
+                            .clip(CircleShape)
+                    )
+                    FormHeader(
+                        title = data.name,
+                        description = data.description
+                    )
+                }
+            }
         }
     }
 }

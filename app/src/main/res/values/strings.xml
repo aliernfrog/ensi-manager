@@ -56,6 +56,7 @@
     <string name="settings_about_update">Update</string>
     <string name="settings_about_autoCheckUpdates">Check for updates automatically</string>
     <string name="settings_about_autoCheckUpdates_description">Check for Ensi Manager updates automatically on launch</string>
+    <string name="settings_about_credits">Credits</string>
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">Not intended for normal usage, might break the app when misused</string>
@@ -67,6 +68,6 @@
     <string name="updates_preRelease">Pre-release</string>
     <string name="updates_openInGithub">View in GitHub</string>
     <string name="updates_update">Update</string>
-    <string name="updates_checkUpdates">Check for updates</string>
+    <string name="updates_checkUpdates">Check updates</string>
     <string name="updates_noChangelog">Check updates to view changelog</string>
 </resources>
