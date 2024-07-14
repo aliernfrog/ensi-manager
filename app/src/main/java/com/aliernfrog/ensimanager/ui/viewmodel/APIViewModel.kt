@@ -12,9 +12,6 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiAPIData
-import com.aliernfrog.ensimanager.data.EnsiAPIEndpoint
-import com.aliernfrog.ensimanager.data.HTTPResponse
-import com.aliernfrog.ensimanager.util.extension.doRequest
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -24,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 class APIViewModel(
     private val prefs: PreferenceManager,
@@ -32,7 +28,7 @@ class APIViewModel(
     private val gson: Gson,
     context: Context
 ) : ViewModel() {
-    private val userAgent = WebUtil.buildUserAgent(context)
+    val userAgent = WebUtil.buildUserAgent(context)
 
     var apiData by mutableStateOf<EnsiAPIData?>(null)
         private set
@@ -40,7 +36,6 @@ class APIViewModel(
         get() = apiData != null
 
     var fetching by mutableStateOf(false)
-        private set
 
     var error by mutableStateOf<String?>(null)
         private set
@@ -94,21 +89,5 @@ class APIViewModel(
     private fun saveConfig() {
         prefs.apiEndpointsUrl = setupEndpointsURL
         prefs.apiAuthorization = setupAuthorization
-    }
-
-    suspend fun doRequest(
-        endpoint: EnsiAPIEndpoint?,
-        json: JSONObject? = null
-    ): HTTPResponse? {
-        fetching = true
-        return withContext(Dispatchers.IO) {
-            val response = endpoint?.doRequest(
-                json = json,
-                authorization = setupAuthorization,
-                userAgent = userAgent
-            )
-            fetching = false
-            return@withContext response
-        }
     }
 }

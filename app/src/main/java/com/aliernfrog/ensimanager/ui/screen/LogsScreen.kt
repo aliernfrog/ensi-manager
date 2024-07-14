@@ -11,10 +11,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,20 +38,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -67,7 +66,7 @@ import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
-import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
+import com.aliernfrog.ensimanager.ui.viewmodel.LogsViewModel
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
@@ -76,23 +75,13 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsScreen(
-    dashboardViewModel: DashboardViewModel = koinViewModel(),
+    logsViewModel: LogsViewModel = koinViewModel(),
     onNavigateSettingsRequest: () -> Unit,
-    onNavigateBackRequest: () -> Unit
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        dashboardViewModel.fetchLogs()
-    }
-
-    if (pullToRefreshState.isRefreshing) LaunchedEffect(Unit) {
-        dashboardViewModel.fetchLogs()
-    }
-
-    LaunchedEffect(dashboardViewModel.isFetching) {
-        if (dashboardViewModel.isFetching) pullToRefreshState.startRefresh()
-        else pullToRefreshState.endRefresh()
+        if (logsViewModel.logs.isEmpty()) logsViewModel.fetchLogs()
     }
 
     AppScaffold(
@@ -100,7 +89,6 @@ fun LogsScreen(
             AppTopBar(
                 title = stringResource(R.string.logs),
                 scrollBehavior = it,
-                onNavigationClick = onNavigateBackRequest,
                 actions = {
                     SettingsButton(
                         onClick = onNavigateSettingsRequest
@@ -108,18 +96,20 @@ fun LogsScreen(
                 }
             )
         },
-        topAppBarState = dashboardViewModel.logsTopAppBarState
+        topAppBarState = logsViewModel.topAppBarState
     ) {
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-            LogsList(
-                nestedScrollConnection = pullToRefreshState.nestedScrollConnection
-            )
+        Box {
+            PullToRefreshBox(
+                isRefreshing = logsViewModel.isFetching,
+                onRefresh = { scope.launch {
+                    logsViewModel.fetchLogs()
+                } }
+            ) {
+                LogsList()
+            }
             FloatingButtons(
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
                 scrollBottomButtonModifier = Modifier.align(Alignment.BottomEnd)
-            )
-            PullToRefreshContainer(
-                state = pullToRefreshState
             )
         }
     }
@@ -127,13 +117,12 @@ fun LogsScreen(
 
 @Composable
 private fun LogsList(
-    dashboardViewModel: DashboardViewModel = koinViewModel(),
-    nestedScrollConnection: NestedScrollConnection
+    logsViewModel: LogsViewModel = koinViewModel()
 ) {
     val filtersScrollState = rememberScrollState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection),
-        state = dashboardViewModel.logsLazyListState
+        modifier = Modifier.fillMaxSize(),
+        state = logsViewModel.lazyListState
     ) {
         item {
             Row(
@@ -151,7 +140,7 @@ private fun LogsList(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 EnsiLogType.entries.forEach {
-                    val selected = dashboardViewModel.shownLogTypes.contains(it)
+                    val selected = logsViewModel.shownLogTypes.contains(it)
                     FilterChip(
                         selected = selected,
                         label = { Text(stringResource(it.nameId)) },
@@ -163,8 +152,8 @@ private fun LogsList(
                             )
                         } } else { null },
                         onClick = {
-                            if (selected) dashboardViewModel.shownLogTypes.remove(it)
-                            else dashboardViewModel.shownLogTypes.add(it)
+                            if (selected) logsViewModel.shownLogTypes.remove(it)
+                            else logsViewModel.shownLogTypes.add(it)
                         }
                     )
                 }
@@ -180,10 +169,10 @@ private fun LogsList(
                     thickness = 1.dp
                 )
                 InputChip(
-                    selected = dashboardViewModel.logsReversed,
-                    onClick = { dashboardViewModel.logsReversed = !dashboardViewModel.logsReversed },
+                    selected = logsViewModel.logsReversed,
+                    onClick = { logsViewModel.logsReversed = !logsViewModel.logsReversed },
                     label = { Text(stringResource(R.string.logs_reversed)) },
-                    leadingIcon = if (dashboardViewModel.logsReversed) { {
+                    leadingIcon = if (logsViewModel.logsReversed) { {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = null,
@@ -193,10 +182,10 @@ private fun LogsList(
                 )
             }
         }
-        itemsIndexed(dashboardViewModel.shownLogs) { index, item ->
+        itemsIndexed(logsViewModel.shownLogs) { index, item ->
             LogItem(
                 log = item,
-                isLastItem = index == dashboardViewModel.shownLogs.size-1
+                isLastItem = index == logsViewModel.shownLogs.size-1
             )
         }
         item {
@@ -211,17 +200,20 @@ private fun LogItem(
     isLastItem: Boolean
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
     val color = log.type.getColor()
     val symbolColor = MaterialTheme.colorScheme.contentColorFor(color)
+    var height by remember { mutableStateOf(0.dp) }
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Max)
+                //.height(IntrinsicSize.Max)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
+                    //.fillMaxHeight()
+                    .height(height)
                     .width(28.dp)
                     .background(color),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -234,7 +226,11 @@ private fun LogItem(
                 )
             }
             Column(
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier
+                    .onSizeChanged { density.run {
+                        height = it.height.toDp()
+                    } }
+                    .padding(horizontal = 4.dp)
             ) {
                 Text(
                     text = log.getTimeStr(context),
@@ -260,16 +256,16 @@ private fun LogItem(
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    dashboardViewModel: DashboardViewModel = koinViewModel(),
+    logsViewModel: LogsViewModel = koinViewModel(),
     scrollTopButtonModifier: Modifier,
     scrollBottomButtonModifier: Modifier
 ) {
     val scope = rememberCoroutineScope()
     val firstVisibleItemIndex by remember {
-        derivedStateOf { dashboardViewModel.logsLazyListState.firstVisibleItemIndex }
+        derivedStateOf { logsViewModel.lazyListState.firstVisibleItemIndex }
     }
     val layoutInfo by remember {
-        derivedStateOf { dashboardViewModel.logsLazyListState.layoutInfo }
+        derivedStateOf { logsViewModel.lazyListState.layoutInfo }
     }
 
     AnimatedVisibility(
@@ -281,7 +277,7 @@ private fun FloatingButtons(
         FloatingActionButton(
             icon = Icons.Outlined.KeyboardArrowUp
         ) { scope.launch {
-            dashboardViewModel.logsLazyListState.animateScrollToItem(0)
+            logsViewModel.lazyListState.animateScrollToItem(0)
         } }
     }
 
@@ -294,8 +290,8 @@ private fun FloatingButtons(
         FloatingActionButton(
             icon = Icons.Outlined.KeyboardArrowDown
         ) { scope.launch {
-            dashboardViewModel.logsLazyListState.animateScrollToItem(
-                dashboardViewModel.logsLazyListState.layoutInfo.totalItemsCount + 1
+            logsViewModel.lazyListState.animateScrollToItem(
+                logsViewModel.lazyListState.layoutInfo.totalItemsCount + 1
             )
         } }
     }

@@ -5,8 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
 import com.aliernfrog.ensimanager.data.PrefEditItem
 import com.aliernfrog.ensimanager.data.Social
+import com.aliernfrog.ensimanager.impl.CreditData
 
-const val TAG = "EnsiManager"
+const val TAG = "EnsiManagerLogs"
 const val githubRepoURL = "https://github.com/aliernfrog/ensi-manager"
 const val experimentalSettingsRequiredClicks = 10
 
@@ -41,6 +42,36 @@ object SettingsConstant {
             url = "https://aliernfrog.github.io"
         )
     )
+
+    val credits = listOf(
+        CreditData(
+            name = "alieRN",
+            githubUsername = "aliernfrog",
+            description = "Ensi Manager & Ensi developer"
+        ),
+        CreditData(
+            name = "Infini_",
+            githubUsername = "infini0083",
+            description = "Assisting with Ensi Manager & Ensi"
+        ),
+        CreditData(
+            name = "Exi",
+            description = "Assisting with Ensi"
+        ),
+        CreditData(
+            name = "ReVanced Manager",
+            githubUsername = "revanced",
+            description = "Inspiration",
+            link = "https://github.com/revanced/revanced-manager"
+        ),
+        CreditData(
+            name = "Vendetta Manager",
+            githubUsername = "vendetta-mod",
+            description = "Inspiration",
+            link = "https://github.com/vendetta-mod/VendettaManager"
+        )
+    )
+
     val experimentalPrefOptions = listOf(
         PrefEditItem(
             labelResourceId = R.string.settings_experimental_updatesURL,

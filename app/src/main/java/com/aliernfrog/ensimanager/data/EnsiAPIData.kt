@@ -1,16 +1,11 @@
 package com.aliernfrog.ensimanager.data
 
 data class EnsiAPIData(
-    val getStatus: EnsiAPIEndpoint,
+    val getDashboard: EnsiAPIEndpoint,
     val getLogs: EnsiAPIEndpoint,
-    val destroyProcess: EnsiAPIEndpoint,
-    val getWords: EnsiAPIEndpoint,
-    val addWord: EnsiAPIEndpoint,
-    val deleteWord: EnsiAPIEndpoint,
-    val getVerbs: EnsiAPIEndpoint,
-    val addVerb: EnsiAPIEndpoint,
-    val deleteVerb: EnsiAPIEndpoint,
-    val postEnsicordAddon: EnsiAPIEndpoint,
+    val getChatCategories: EnsiAPIEndpoint,
+    val addChatCategory: EnsiAPIEndpoint,
+    val deleteChatCategory: EnsiAPIEndpoint,
 
     /**
      * If this is not null, app will automatically set the endpoints URL to the URL specified here.

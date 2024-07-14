@@ -1,11 +1,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
-val composeMaterialVersion = "1.7.0-alpha04"
-val composeMaterial3Version = "1.3.0-alpha02"
-val composeCompilerVersion = "1.5.10"
+val composeMaterialVersion = "1.7.0-beta02"
+val composeMaterial3Version = "1.3.0-beta02"
+val composeCompilerVersion = "1.5.14"
 
 android {
     namespace = "com.aliernfrog.ensimanager"
@@ -15,8 +16,8 @@ android {
         applicationId = "com.aliernfrog.ensimanager"
         minSdk = 24
         targetSdk = 34
-        versionCode = 110300
-        versionName = "1.10.3"
+        versionCode = 200000
+        versionName = "2.0.0"
         vectorDrawables { useSupportLibrary = true }
     }
 
@@ -54,18 +55,22 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.compose.ui:ui:$composeMaterialVersion")
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
     implementation("androidx.compose.material3:material3:$composeMaterial3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
-    implementation("io.insert-koin:koin-androidx-compose:3.5.3")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("aliernfrog:top-toast-compose:2.0.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.github.jeziellago:compose-markdown:0.4.1")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.6")
+    implementation("androidx.navigation:navigation-compose:2.8.0-beta02")
+    implementation("com.mikepenz:aboutlibraries-core:11.2.2")
+    implementation("aliernfrog:top-toast-compose:2.0.1-alpha01")
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-svg:2.6.0")
+    implementation("com.github.jeziellago:compose-markdown:0.5.0")
+    implementation("net.engawapg.lib:zoomable:1.6.1")
 }
