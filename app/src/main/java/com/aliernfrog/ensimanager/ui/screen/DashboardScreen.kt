@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -87,6 +88,7 @@ fun DashboardScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(dashboardViewModel.scrollState)
+                    .navigationBarsPadding()
             ) {
                 ScreenContent()
             }
@@ -189,7 +191,9 @@ private fun ScreenContent(
 
     VerticalSegmentor(
         *buttons.toTypedArray(),
-        modifier = Modifier.padding(horizontal = 8.dp)
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .padding(bottom = 8.dp)
     )
 
     if (dashboardViewModel.avatarDialogShown) ImageDialog(
