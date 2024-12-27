@@ -17,7 +17,7 @@ import com.mikepenz.aboutlibraries.util.withContext
 
 class SettingsViewModel(
     val prefs: PreferenceManager,
-    private val topToastState: TopToastState,
+    val topToastState: TopToastState,
     context: Context
 ) : ViewModel() {
     private var aboutClickCount by mutableIntStateOf(0)
