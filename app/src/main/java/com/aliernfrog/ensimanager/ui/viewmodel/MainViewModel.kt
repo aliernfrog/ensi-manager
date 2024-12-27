@@ -1,6 +1,7 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
+import com.aliernfrog.ensimanager.BuildConfig
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.ReleaseInfo
@@ -41,9 +43,20 @@ class MainViewModel(
 
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
-    val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
-    val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
+    private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
+    private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
     private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
+    val applicationVersionLabel = "$applicationVersionName (${
+        BuildConfig.GIT_COMMIT.ifBlank { applicationVersionCode.toString() }
+    }${
+        if (BuildConfig.GIT_LOCAL_CHANGES) "*" else ""
+    }${
+        BuildConfig.GIT_BRANCH.let {
+            if (it == applicationVersionName) ""
+            else " - ${it.ifBlank { "local" }}"
+        }
+    })"
+
 
     var latestVersionInfo by mutableStateOf(ReleaseInfo(
         versionName = applicationVersionName,
@@ -56,6 +69,15 @@ class MainViewModel(
 
     var updateAvailable by mutableStateOf(false)
         private set
+
+    val debugInfo: String
+        get() = arrayOf(
+            "Ensi Manager $applicationVersionLabel",
+            "Android API ${Build.VERSION.SDK_INT}",
+            prefs.debugInfoPrefs.joinToString("\n") {
+                "${it.key}: ${it.value}"
+            }
+        ).joinToString("\n")
 
     suspend fun checkUpdates(
         manuallyTriggered: Boolean = false,

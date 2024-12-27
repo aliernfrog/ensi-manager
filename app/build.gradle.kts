@@ -37,6 +37,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 
@@ -45,6 +46,37 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+// Utilities to get git environment information
+// Source: https://github.com/vendetta-mod/VendettaManager/blob/main/app/build.gradle.kts
+fun getCurrentBranch() = exec("git", "symbolic-ref", "--short", "HEAD")
+    ?: exec("git", "describe", "--tags", "--exact-match")
+fun getLatestCommit() = exec("git", "rev-parse", "--short", "HEAD")
+fun hasLocalChanges(): Boolean {
+    val branch = getCurrentBranch()
+    val uncommittedChanges = exec("git", "status", "-s")?.isNotEmpty() ?: false
+    val unpushedChanges = exec("git", "log", "origin/$branch..HEAD")?.isNotBlank() ?: false
+    return uncommittedChanges || unpushedChanges
+}
+
+android.defaultConfig.run {
+    buildConfigField("String", "GIT_BRANCH", "\"${getCurrentBranch()}\"")
+    buildConfigField("String", "GIT_COMMIT", "\"${getLatestCommit()}\"")
+    buildConfigField("boolean", "GIT_LOCAL_CHANGES", "${hasLocalChanges()}")
+}
+
+fun exec(vararg command: String) = try {
+    val process = ProcessBuilder(command.toList())
+        .redirectOutput(ProcessBuilder.Redirect.PIPE)
+        .redirectError(ProcessBuilder.Redirect.PIPE)
+        .start()
+    val stdout = process.inputStream.bufferedReader().readText()
+    val stderr = process.errorStream.bufferedReader().readText()
+    if (stderr.isNotEmpty()) throw Error(stderr)
+    stdout.trim()
+} catch (_: Throwable) {
+    null
 }
 
 dependencies {
