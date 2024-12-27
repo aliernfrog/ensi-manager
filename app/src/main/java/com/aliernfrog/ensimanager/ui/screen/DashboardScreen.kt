@@ -28,10 +28,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.SvgDecoder
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
+import coil3.svg.SvgDecoder
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.doRequest
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
@@ -175,7 +175,7 @@ private fun ScreenContent(
                     .components {
                         add(SvgDecoder.Factory())
                     }
-                    .dispatcher(Dispatchers.IO)
+                    .coroutineContext(Dispatchers.IO)
                     .build()
             ) }
         ) {
