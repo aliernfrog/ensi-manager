@@ -1,6 +1,8 @@
-package com.aliernfrog.ensimanager.data
+package com.aliernfrog.ensimanager.data.api
 
-data class EnsiAPIData(
+import com.aliernfrog.ensimanager.data.EnsiAPIEndpoint
+
+data class APIEndpoints(
     val getDashboard: EnsiAPIEndpoint,
     val getLogs: EnsiAPIEndpoint,
     val getChatCategories: EnsiAPIEndpoint,

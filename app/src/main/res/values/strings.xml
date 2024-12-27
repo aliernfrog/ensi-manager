@@ -8,6 +8,16 @@
     <string name="action_done">Done</string>
     <string name="error">Error</string>
     <string name="error_noBody">Body is blank, response code: %STATUS%</string>
+    <string name="api_profiles">API Profiles</string>
+    <string name="api_profiles_restoreError">Failed to restore saved profiles</string>
+    <string name="api_profiles_empty">No profiles found</string>
+    <string name="api_profiles_migrated">This API has migrated to {URL}</string>
+    <string name="api_profiles_add">Add profile</string>
+    <string name="api_profiles_add_name">Name</string>
+    <string name="api_profiles_add_icon">Icon URL (optional)</string>
+    <string name="api_profiles_add_endpointsURL">Endpoints URL</string>
+    <string name="api_profiles_add_authorization">Authorization (optional)</string>
+    <string name="api_profiles_add_added">Added profile</string>
     <string name="setup">API setup</string>
     <string name="setup_endpoints_url">Endpoints URL</string>
     <string name="setup_endpoints_url_info">A GET request will be done to fetch endpoints</string>

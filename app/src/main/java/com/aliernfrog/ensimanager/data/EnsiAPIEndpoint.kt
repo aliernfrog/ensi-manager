@@ -20,7 +20,7 @@ suspend fun EnsiAPIEndpoint.doRequest(body: JSONObject? = null): HTTPResponse {
         val response = WebUtil.sendRequest(
             toUrl = url,
             method = method,
-            authorization = if (requiresAuth) apiViewModel.setupAuthorization else null,
+            authorization = if (requiresAuth) apiViewModel.legacySetupAuthorization else null,
             json = body,
             userAgent = apiViewModel.userAgent
         )

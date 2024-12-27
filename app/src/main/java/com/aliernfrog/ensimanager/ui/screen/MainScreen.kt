@@ -72,7 +72,7 @@ fun MainScreen(
             }
         ) {
             composable(Destination.DASHBOARD.route) {
-                APIScreen(
+                OldAPIScreen(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     DashboardScreen(
@@ -83,7 +83,7 @@ fun MainScreen(
                 }
             }
             composable(Destination.CHAT.route) {
-                APIScreen(
+                OldAPIScreen(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     ChatScreen(
@@ -92,7 +92,7 @@ fun MainScreen(
                 }
             }
             composable(Destination.LOGS.route) {
-                APIScreen(
+                OldAPIScreen(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     LogsScreen(
