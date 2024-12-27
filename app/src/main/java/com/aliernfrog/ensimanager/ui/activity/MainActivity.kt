@@ -54,9 +54,9 @@ class MainActivity : ComponentActivity() {
         @Composable
         fun AppTheme(content: @Composable () -> Unit) {
             EnsiManagerTheme(
-                darkTheme = isDarkThemeEnabled(mainViewModel.prefs.theme),
-                dynamicColors = mainViewModel.prefs.materialYou,
-                pitchBlack = mainViewModel.prefs.pitchBlack,
+                darkTheme = isDarkThemeEnabled(mainViewModel.prefs.theme.value),
+                dynamicColors = mainViewModel.prefs.materialYou.value,
+                pitchBlack = mainViewModel.prefs.pitchBlack.value,
                 content = content
             )
         }
@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
             mainViewModel.topToastState.setComposeView(view)
             mainViewModel.topToastState.setAppTheme { AppTheme(it) }
 
-            if (mainViewModel.prefs.autoCheckUpdates) mainViewModel.checkUpdates()
+            if (mainViewModel.prefs.autoCheckUpdates.value) mainViewModel.checkUpdates()
         }
     }
 

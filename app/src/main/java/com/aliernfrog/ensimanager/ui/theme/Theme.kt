@@ -50,8 +50,11 @@ fun EnsiManagerTheme(
 
         WindowCompat.setDecorFitsSystemWindows(activity.window, false)
 
-        activity.window.statusBarColor = transparentColor
-        activity.window.navigationBarColor = transparentColor
+        @Suppress("DEPRECATION")
+        transparentColor.let {
+            activity.window.statusBarColor = it
+            activity.window.navigationBarColor = it
+        }
 
         if (Build.VERSION.SDK_INT >= 29) {
             activity.window.isNavigationBarContrastEnforced = false

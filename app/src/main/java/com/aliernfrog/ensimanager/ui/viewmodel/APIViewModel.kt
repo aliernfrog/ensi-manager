@@ -40,8 +40,8 @@ class APIViewModel(
     var error by mutableStateOf<String?>(null)
         private set
 
-    var setupEndpointsURL by mutableStateOf(prefs.apiEndpointsUrl)
-    var setupAuthorization by mutableStateOf(prefs.apiAuthorization)
+    var setupEndpointsURL by mutableStateOf(prefs.apiEndpointsUrl.value)
+    var setupAuthorization by mutableStateOf(prefs.apiAuthorization.value)
     var migratedTo by mutableStateOf<String?>(null)
 
     fun doInitialConnection(onFinish: () -> Unit) {
@@ -87,7 +87,7 @@ class APIViewModel(
     }
 
     private fun saveConfig() {
-        prefs.apiEndpointsUrl = setupEndpointsURL
-        prefs.apiAuthorization = setupAuthorization
+        prefs.apiEndpointsUrl.value = setupEndpointsURL
+        prefs.apiAuthorization.value = setupAuthorization
     }
 }

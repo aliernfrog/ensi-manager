@@ -63,7 +63,7 @@ class MainViewModel(
     ) {
         withContext(Dispatchers.IO) {
             try {
-                val updatesURL = prefs.updatesURL
+                val updatesURL = prefs.updatesURL.value
                 val responseJson = JSONObject(URL(updatesURL).readText())
                 val json = responseJson.getJSONObject(
                     if (applicationIsPreRelease && responseJson.has("preRelease")) "preRelease" else "stable"
