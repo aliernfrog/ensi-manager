@@ -11,11 +11,12 @@
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
+-keep class com.aliernfrog.ensimanager.data.api.APIEndpoints { *; }
+-keep class com.aliernfrog.ensimanager.data.api.APIProfile { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIChatCategory { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboard { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboardInfo { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboardAction { *; }
--keep class com.aliernfrog.ensimanager.data.EnsiAPIData { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIEndpoint { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiLog { *; }
 -keep class com.aliernfrog.ensimanager.enum.EnsiLogType { *; }
