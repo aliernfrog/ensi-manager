@@ -54,13 +54,18 @@ fun AddAPIProfileSheet(
     val scope = rememberCoroutineScope()
 
     var name by rememberSaveable { mutableStateOf("") }
-    var iconModel by rememberSaveable { mutableStateOf("") }
     var endpointsURL by rememberSaveable { mutableStateOf("") }
     var authorization by rememberSaveable { mutableStateOf("") }
     var fetching by rememberSaveable { mutableStateOf(false) }
 
+    val isNameUnique by remember { derivedStateOf {
+        !apiViewModel.apiProfiles.any { it.name == name }
+    } }
+    val isURLUnique by remember { derivedStateOf {
+        !apiViewModel.apiProfiles.any { it.endpointsURL == endpointsURL }
+    } }
     val valid by remember { derivedStateOf {
-        name.isNotEmpty() && endpointsURL.isNotEmpty()
+        name.isNotEmpty() && endpointsURL.isNotEmpty() && isNameUnique && isURLUnique
     } }
 
     AppModalBottomSheet(
@@ -72,18 +77,20 @@ fun AddAPIProfileSheet(
                 label = { Text(stringResource(R.string.api_profiles_add_name)) },
                 value = name,
                 onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                label = { Text(stringResource(R.string.api_profiles_add_icon)) },
-                value = iconModel,
-                onValueChange = { iconModel = it },
+                supportingText = {
+                    if (!isNameUnique) Text(stringResource(R.string.api_profiles_add_name_alreadyExists))
+                },
+                isError = !isNameUnique,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 label = { Text(stringResource(R.string.api_profiles_add_endpointsURL)) },
                 value = endpointsURL,
                 onValueChange = { endpointsURL = it },
+                supportingText = {
+                    if (!isURLUnique) Text(stringResource(R.string.api_profiles_add_endpointsURL_alreadyExists))
+                },
+                isError = !isURLUnique,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -105,9 +112,6 @@ fun AddAPIProfileSheet(
                         if (!valid) return@Button
                         val profile = APIProfile(
                             name = name,
-                            iconModel = iconModel.ifBlank {
-                                "${endpointsURL.split("/").getOrNull(2)}/favicon.png"
-                            },
                             endpointsURL = endpointsURL,
                             authorization = authorization
                         )
@@ -121,7 +125,6 @@ fun AddAPIProfileSheet(
                                 apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_added), androidToast = true)
                                 sheetState.hide()
                                 name = ""
-                                iconModel = ""
                                 endpointsURL = ""
                                 authorization = ""
                             }

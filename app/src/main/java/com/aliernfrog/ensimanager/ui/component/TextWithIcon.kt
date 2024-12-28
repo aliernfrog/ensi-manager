@@ -34,7 +34,7 @@ fun TextWithIcon(
             tint = iconTint,
             modifier = Modifier.size(
                 with(density) {
-                    18.sp.toDp()
+                    24.sp.toDp()
                 }
             )
         )

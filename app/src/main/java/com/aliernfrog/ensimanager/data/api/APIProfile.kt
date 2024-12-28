@@ -5,7 +5,6 @@ import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 
 data class APIProfile(
     val name: String,
-    val iconModel: String,
     val endpointsURL: String,
     val authorization: String
 )

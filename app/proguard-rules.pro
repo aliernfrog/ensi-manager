@@ -12,6 +12,7 @@
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.aliernfrog.ensimanager.data.api.APIEndpoints { *; }
+-keep class com.aliernfrog.ensimanager.data.api.APIMetadata { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APIProfile { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIChatCategory { *; }
 -keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboard { *; }
