@@ -12,6 +12,9 @@
     <string name="api_profiles_restoreError">Failed to restore saved profiles</string>
     <string name="api_profiles_empty">No profiles found</string>
     <string name="api_profiles_migrated">This API has migrated to {URL}</string>
+    <string name="api_profiles_use">Use</string>
+    <string name="api_profiles_edit">Edit</string>
+    <string name="api_profiles_delete">Delete</string>
     <string name="api_profiles_add">Add profile</string>
     <string name="api_profiles_add_name">Name</string>
     <string name="api_profiles_add_icon">Icon URL (optional)</string>

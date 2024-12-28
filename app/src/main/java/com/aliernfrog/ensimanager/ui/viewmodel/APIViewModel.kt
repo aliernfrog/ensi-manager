@@ -19,6 +19,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
 import com.aliernfrog.ensimanager.data.api.APIProfile
+import com.aliernfrog.ensimanager.data.api.APIProfileCache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
@@ -47,7 +48,7 @@ class APIViewModel(
     val fetchingProfiles = mutableStateListOf<String>()
     val profileErrors = mutableStateMapOf<String, String>()
     val profileMigrations = mutableStateMapOf<String, String>()
-    private val cache = mutableStateMapOf<String, Pair<String, String>>()
+    private val cache = mutableStateMapOf<String, APIProfileCache>()
 
     var apiData by mutableStateOf<APIEndpoints?>(null)
         private set
@@ -104,7 +105,11 @@ class APIViewModel(
                         profileMigrations[profile.id] = it
                         return@withContext endpoints
                     }
-                    cache[profile.id] = "endpoints" to response.responseBody.toString()
+                    cache[profile.id] = cache[profile.id]?.copy(
+                        endpoints = endpoints
+                    ) ?: APIProfileCache(
+                        endpoints = endpoints
+                    )
                     profileErrors.remove(profile.id)
                     return@withContext endpoints
                 } else {
@@ -118,6 +123,10 @@ class APIViewModel(
         }
         fetchingProfiles.remove(profile.id)
         return res
+    }
+
+    fun getProfileCache(profile: APIProfile): APIProfileCache? {
+        return cache[profile.id]
     }
 
     fun saveProfiles() {

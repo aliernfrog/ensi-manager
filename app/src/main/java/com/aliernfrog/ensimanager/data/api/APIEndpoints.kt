@@ -3,6 +3,8 @@ package com.aliernfrog.ensimanager.data.api
 import com.aliernfrog.ensimanager.data.EnsiAPIEndpoint
 
 data class APIEndpoints(
+    val summary: String?,
+
     val getDashboard: EnsiAPIEndpoint,
     val getLogs: EnsiAPIEndpoint,
     val getChatCategories: EnsiAPIEndpoint,

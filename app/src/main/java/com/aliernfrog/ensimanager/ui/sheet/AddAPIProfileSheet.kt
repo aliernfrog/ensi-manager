@@ -105,7 +105,9 @@ fun AddAPIProfileSheet(
                         if (!valid) return@Button
                         val profile = APIProfile(
                             name = name,
-                            iconModel = iconModel.ifBlank { "${endpointsURL.split("/").first()}/favicon.png" },
+                            iconModel = iconModel.ifBlank {
+                                "${endpointsURL.split("/").getOrNull(2)}/favicon.png"
+                            },
                             endpointsURL = endpointsURL,
                             authorization = authorization
                         )
