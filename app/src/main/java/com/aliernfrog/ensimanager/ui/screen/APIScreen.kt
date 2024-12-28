@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -142,14 +143,19 @@ fun APIProfilesScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            AsyncImage(
-                                model = if (error != null) Icons.Default.Error else profile.iconModel,
+                            if (error != null) Icon(
+                                imageVector = Icons.Default.Error,
                                 contentDescription = null,
-                                colorFilter = error?.let {
-                                    ColorFilter.tint(MaterialTheme.colorScheme.error)
-                                },
+                                tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .padding(end = 8.dp)
+                            ) else AsyncImage(
+                                model = profile.iconModel,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(50.dp)
                                     .clip(CircleShape)
                                     .padding(end = 8.dp)
                             )
