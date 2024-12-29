@@ -8,9 +8,11 @@ import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
@@ -20,16 +22,19 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.Destination
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsButton(
     modifier: Modifier = Modifier,
     profileSwitcher: Boolean = true,
     enabled: Boolean = true,
-    onClick: () -> Unit
+    onNavigateSettingsRequest: () -> Unit
 ) {
     val apiViewModel = koinViewModel<APIViewModel>()
+    val scope = rememberCoroutineScope()
     val hasNotification = Destination.SETTINGS.hasNotification.value
 
     @Composable
@@ -38,8 +43,11 @@ fun SettingsButton(
             modifier = modifier,
             enabled = enabled,
             onClick = {
-                onClick()
-                Destination.SETTINGS.hasNotification.value = false
+                if (profileSwitcher) scope.launch { apiViewModel.profileSwitcherSheetState.show() }
+                else {
+                    onNavigateSettingsRequest()
+                    Destination.SETTINGS.hasNotification.value = false
+                }
             }
         ) {
             if (hasNotification) BadgedBox(
@@ -54,7 +62,7 @@ fun SettingsButton(
     if (profileSwitcher) VerticalPager(
         state = apiViewModel.profilePagerState,
         beyondViewportPageCount = 1,
-        modifier = Modifier.size(40.dp)
+        modifier = Modifier.size(height = 40.dp, width = 56.dp)
     ) { page ->
         val profile = apiViewModel.availableProfiles.getOrNull(page)
 

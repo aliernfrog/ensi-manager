@@ -46,6 +46,12 @@ enum class Destination(
         vectorOutlined = Icons.AutoMirrored.Outlined.Notes
     ),
 
+    API_PROFILES(
+        route = "apiProfiles",
+        labelId = R.string.api_profiles,
+        showInNavigationBar = false
+    ),
+
     SETTINGS(
         route = "settings",
         labelId = R.string.settings,

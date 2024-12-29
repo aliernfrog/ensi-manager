@@ -93,7 +93,7 @@ fun LogsScreen(
                 scrollBehavior = it,
                 actions = {
                     SettingsButton(
-                        onClick = onNavigateSettingsRequest
+                        onNavigateSettingsRequest = onNavigateSettingsRequest
                     )
                 }
             )

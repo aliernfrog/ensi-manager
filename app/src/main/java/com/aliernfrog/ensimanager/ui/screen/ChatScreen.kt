@@ -76,7 +76,7 @@ fun ChatScreen(
                 scrollBehavior = it,
                 actions = {
                     SettingsButton(
-                        onClick = onNavigateSettingsRequest
+                        onNavigateSettingsRequest = onNavigateSettingsRequest
                     )
                 }
             )

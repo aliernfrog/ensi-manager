@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
+import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
@@ -81,6 +82,7 @@ fun MainScreen(
                     )
                 }
             }
+
             composable(Destination.CHAT.route) {
                 APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
@@ -90,6 +92,7 @@ fun MainScreen(
                     )
                 }
             }
+
             composable(Destination.LOGS.route) {
                 APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
@@ -99,6 +102,14 @@ fun MainScreen(
                     )
                 }
             }
+
+            composable(Destination.API_PROFILES.route) {
+                APIProfilesScreen(
+                    onNavigateSettingsRequest = onNavigateSettingsRequest,
+                    onNavigateBackRequest = onNavigateBackRequest
+                )
+            }
+
             composable(Destination.SETTINGS.route) {
                 SettingsScreen(
                     onNavigateBackRequest = onNavigateBackRequest
@@ -106,6 +117,13 @@ fun MainScreen(
             }
         }
     }
+
+    APIProfileSwitchSheet(
+        onNavigateSettingsRequest = onNavigateSettingsRequest,
+        onNavigateApiProfilesRequest = {
+            navController.navigate(Destination.API_PROFILES.route)
+        }
+    )
 
     UpdateSheet(
         sheetState = mainViewModel.updateSheetState,

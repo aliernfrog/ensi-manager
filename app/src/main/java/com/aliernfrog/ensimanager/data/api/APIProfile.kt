@@ -23,6 +23,9 @@ val APIProfile.cache: APIProfileCache?
         return apiViewModel.getProfileCache(this)
     }
 
+val APIProfile.isAvailable: Boolean
+    get() = cache?.endpoints != null && cache?.endpoints?.migration == null
+
 suspend fun APIProfile.doRequest(endpointSelector: (APIEndpoints) -> APIEndpoint, body: JSONObject? = null): HTTPResponse {
     val apiViewModel = getKoinInstance<APIViewModel>()
     val endpoint = cache?.endpoints?.let {

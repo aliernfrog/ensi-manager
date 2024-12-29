@@ -19,8 +19,8 @@ import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.APIProfileCache
-import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
+import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
@@ -39,6 +39,7 @@ class APIViewModel(
     private val gson: Gson,
     context: Context
 ) : ViewModel() {
+    val profileSwitcherSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
     val profileSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
 
     val userAgent = WebUtil.buildUserAgent(context)
@@ -67,7 +68,7 @@ class APIViewModel(
             }
         }
     val isConnected
-        get() = chosenProfile?.cache?.endpoints != null && chosenProfile?.cache?.endpoints?.migration == null
+        get() = chosenProfile?.isAvailable ?: false
 
     init {
         try {
@@ -88,8 +89,15 @@ class APIViewModel(
                 .collect {
                     availableProfiles.clear()
                     availableProfiles.addAll(apiProfiles.filter {
-                        it.cache?.endpoints != null && it.cache?.endpoints?.migration == null
+                        it.isAvailable
                     })
+                }
+
+            snapshotFlow { profilePagerState.currentPage }
+                .collect { page ->
+                    availableProfiles.getOrNull(page)?.let {
+                        if (it.isAvailable) chosenProfile = it
+                    }
                 }
         }
     }

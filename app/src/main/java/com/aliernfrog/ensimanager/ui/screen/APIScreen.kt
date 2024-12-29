@@ -55,6 +55,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
+import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
@@ -105,7 +106,7 @@ fun APIProfilesScreen(
                     onNavigateSettingsRequest?.let { onClick ->
                         SettingsButton(
                             profileSwitcher = false,
-                            onClick = onClick
+                            onNavigateSettingsRequest = onClick
                         )
                     }
                 }
@@ -176,7 +177,7 @@ private fun ProfileCard(
     val fetching = apiViewModel.fetchingProfiles.contains(profile.id)
     val error = apiViewModel.profileErrors[profile.id]
     val migratedTo = apiViewModel.profileMigrations[profile.id]
-    val clickable = profileCache?.endpoints != null && profileCache.endpoints.migration == null
+    val clickable = profile.isAvailable
 
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 

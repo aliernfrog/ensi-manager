@@ -71,7 +71,7 @@ fun DashboardScreen(
               scrollBehavior = it,
               actions = {
                   SettingsButton(
-                      onClick = { onNavigateRequest(Destination.SETTINGS) }
+                      onNavigateSettingsRequest = { onNavigateRequest(Destination.SETTINGS) }
                   )
               }
           )
