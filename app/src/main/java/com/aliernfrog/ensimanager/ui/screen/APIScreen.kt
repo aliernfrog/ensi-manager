@@ -63,7 +63,7 @@ import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
 import com.aliernfrog.ensimanager.ui.component.form.FormHeader
 import com.aliernfrog.ensimanager.ui.dialog.DeleteConfirmationDialog
-import com.aliernfrog.ensimanager.ui.sheet.AddAPIProfileSheet
+import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
@@ -118,7 +118,7 @@ fun APIProfilesScreen(
                 FloatingActionButton(
                     icon = Icons.Default.Add
                 ) { scope.launch {
-                    apiViewModel.addProfileSheetState.show()
+                    apiViewModel.openProfileSheetToAddNew()
                 } }
             }
         },
@@ -139,7 +139,7 @@ fun APIProfilesScreen(
                     )
                     Button(
                         onClick = { scope.launch {
-                            apiViewModel.addProfileSheetState.show()
+                            apiViewModel.openProfileSheetToAddNew()
                         } }
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.Add))
@@ -161,7 +161,7 @@ fun APIProfilesScreen(
         }
     }
 
-    AddAPIProfileSheet()
+    APIProfileSheet()
 }
 
 @Composable
@@ -172,6 +172,7 @@ private fun ProfileCard(
 ) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
+    val scope = rememberCoroutineScope()
     
     val profileCache = profile.cache
     val fetching = apiViewModel.fetchingProfiles.contains(profile.id)
@@ -284,9 +285,9 @@ private fun ProfileCard(
                 Text(stringResource(R.string.api_profiles_delete))
             }
             Button(
-                onClick = {
-                    /* TODO */
-                }
+                onClick = { scope.launch {
+                    apiViewModel.openProfileSheetToEdit(profile)
+                } }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Edit))
                 Text(stringResource(R.string.api_profiles_edit))

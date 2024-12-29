@@ -174,7 +174,7 @@ fun APIConfigurationScreen(
                         contentDescription = null
                     )
                 },
-                supportingText = { Text(stringResource(R.string.setup_endpoints_url_info)) },
+                supportingText = { Text(stringResource(R.string.api_profiles_add_endpointsURL_info)) },
                 singleLine = true,
                 readOnly = apiViewModel.fetching,
                 modifier = Modifier.fillMaxWidth().padding(8.dp)
@@ -202,7 +202,7 @@ fun APIConfigurationScreen(
                         )
                     }
                 },
-                supportingText = { Text(stringResource(R.string.setup_auth_info)) },
+                supportingText = { Text(stringResource(R.string.api_profiles_add_authorization_info)) },
                 readOnly = apiViewModel.fetching,
                 visualTransformation = if (authHidden) PasswordVisualTransformation() else VisualTransformation.None,
                 modifier = Modifier.fillMaxWidth().padding(8.dp)

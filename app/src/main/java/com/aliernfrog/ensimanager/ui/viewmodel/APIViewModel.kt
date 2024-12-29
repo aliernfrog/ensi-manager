@@ -41,7 +41,7 @@ class APIViewModel(
     private val gson: Gson,
     context: Context
 ) : ViewModel() {
-    val addProfileSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
+    val profileSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
 
     val userAgent = WebUtil.buildUserAgent(context)
     val apiProfiles = mutableStateListOf<APIProfile>()
@@ -49,6 +49,13 @@ class APIViewModel(
     val profileErrors = mutableStateMapOf<String, String>()
     val profileMigrations = mutableStateMapOf<String, String>()
     private val cache = mutableStateMapOf<String, APIProfileCache>()
+
+    var profileSheetEditingProfile by mutableStateOf<APIProfile?>(null)
+        private set
+    var profileSheetName by mutableStateOf("")
+    var profileSheetEndpointsURL by mutableStateOf("")
+    var profileSheetAuthorization by mutableStateOf("")
+    var profileSheetShowAuthorization by mutableStateOf(false)
 
     var apiData by mutableStateOf<APIEndpoints?>(null)
         private set
@@ -129,9 +136,36 @@ class APIViewModel(
         return cache[profile.id]
     }
 
+    fun updateProfile(old: APIProfile, new: APIProfile) {
+        val index = apiProfiles.indexOf(old)
+        apiProfiles[index] = new
+    }
+
     fun saveProfiles() {
         val json = gson.toJson(apiProfiles)
         prefs.apiProfiles.value = json
+    }
+
+    suspend fun openProfileSheetToAddNew() {
+        clearProfileSheetState()
+        profileSheetState.show()
+    }
+
+    suspend fun openProfileSheetToEdit(profile: APIProfile) {
+        clearProfileSheetState()
+        profileSheetEditingProfile = profile
+        profileSheetName = profile.name
+        profileSheetEndpointsURL = profile.endpointsURL
+        profileSheetAuthorization = profile.authorization
+        profileSheetState.show()
+    }
+
+    fun clearProfileSheetState() {
+        profileSheetEditingProfile = null
+        profileSheetName = ""
+        profileSheetEndpointsURL = ""
+        profileSheetAuthorization = ""
+        profileSheetShowAuthorization = false
     }
 
     suspend fun fetchApiData(showToastOnSuccess: Boolean = true) {
