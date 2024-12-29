@@ -99,6 +99,12 @@ class APIViewModel(
                         if (it.isAvailable) chosenProfile = it
                     }
                 }
+
+            snapshotFlow { chosenProfile }
+                .collect {
+                    val index = availableProfiles.indexOf(it)
+                    if (index >= 0 && profilePagerState.targetPage != index) profilePagerState.scrollToPage(index)
+                }
         }
     }
 
