@@ -34,7 +34,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import coil3.svg.SvgDecoder
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.doRequest
+import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
@@ -175,7 +175,7 @@ private fun ScreenContent(
                 model = ByteBuffer.wrap(it.toByteArray()),
                 imageLoader = ImageLoader.Builder(context)
                     .components {
-                        add(SvgDecoder.Factory())
+                        add(SvgDecoder.Factory(scaleToDensity = true))
                     }
                     .coroutineContext(Dispatchers.IO)
                     .build()
@@ -183,7 +183,7 @@ private fun ScreenContent(
         ) {
             if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
             else scope.launch {
-                val response = action.endpoint.doRequest()
+                val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
                 dashboardViewModel.topToastState.toastSummary(response)
             }
         }
@@ -203,14 +203,14 @@ private fun ScreenContent(
         imageModel = dashboardViewModel.dashboardData?.avatar
     )
 
-    dashboardViewModel.pendingDestructiveAction?.let {
+    dashboardViewModel.pendingDestructiveAction?.let { action ->
         DestructiveActionDialog(
-            action = it,
+            action = action,
             onDismissRequest = {
                 dashboardViewModel.pendingDestructiveAction = null
             },
             onConfirm = { scope.launch {
-                val response = it.endpoint.doRequest()
+                val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
                 dashboardViewModel.topToastState.toastSummary(response)
                 dashboardViewModel.pendingDestructiveAction = null
             } }

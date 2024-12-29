@@ -17,7 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
-import com.aliernfrog.ensimanager.ui.dialog.APIMigratedDialog
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
@@ -72,7 +71,7 @@ fun MainScreen(
             }
         ) {
             composable(Destination.DASHBOARD.route) {
-                OldAPIScreen(
+                APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     DashboardScreen(
@@ -83,7 +82,7 @@ fun MainScreen(
                 }
             }
             composable(Destination.CHAT.route) {
-                OldAPIScreen(
+                APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     ChatScreen(
@@ -92,7 +91,7 @@ fun MainScreen(
                 }
             }
             composable(Destination.LOGS.route) {
-                OldAPIScreen(
+                APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     LogsScreen(
@@ -105,16 +104,9 @@ fun MainScreen(
                     onNavigateBackRequest = onNavigateBackRequest
                 )
             }
-            composable(Destination.API_CONFIG.route) {
-                APIConfigurationScreen(
-                    onNavigateSettingsRequest = onNavigateSettingsRequest,
-                    onNavigateBackRequest = onNavigateBackRequest
-                )
-            }
         }
     }
 
-    APIMigratedDialog()
     UpdateSheet(
         sheetState = mainViewModel.updateSheetState,
         latestVersionInfo = mainViewModel.latestVersionInfo,

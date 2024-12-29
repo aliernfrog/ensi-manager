@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiAPIChatCategory
-import com.aliernfrog.ensimanager.data.doRequest
+import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
@@ -38,7 +38,7 @@ class ChatViewModel(
 
     var filter by mutableStateOf("")
     var addWordInput by mutableStateOf("")
-    val isFetching get() = apiViewModel.fetching
+    val isFetching get() = apiViewModel.isChosenProfileFetching
 
     var chosenWord by mutableStateOf("")
     var chosenWordType by mutableStateOf<String?>(null)
@@ -56,7 +56,7 @@ class ChatViewModel(
 
     suspend fun fetchCategories() {
         try {
-            val response = apiViewModel.apiData?.getChatCategories?.doRequest()
+            val response = apiViewModel.chosenProfile?.doRequest({ it.getChatCategories })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
             categories = gson.fromJson(response.responseBody, Array<EnsiAPIChatCategory>::class.java).toList()
         } catch (e: Exception) {
@@ -69,7 +69,7 @@ class ChatViewModel(
         val json = JSONObject()
             .put("category", chosenWordType)
             .put("string", chosenWord)
-        val response = apiViewModel.apiData?.deleteChatCategory?.doRequest(json)
+        val response = apiViewModel.chosenProfile?.doRequest({ it.deleteChatCategory }, json)
         topToastState.toastSummary(response)
         fetchCategories()
     }
@@ -78,7 +78,7 @@ class ChatViewModel(
         val json = JSONObject()
             .put("category", currentCategory?.id)
             .put("string", addWordInput)
-        val response = apiViewModel.apiData?.addChatCategory?.doRequest(json)
+        val response = apiViewModel.chosenProfile?.doRequest({ it.addChatCategory }, json)
         topToastState.toastSummary(response)
         fetchCategories()
     }

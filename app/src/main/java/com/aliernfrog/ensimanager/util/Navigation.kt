@@ -50,11 +50,5 @@ enum class Destination(
         route = "settings",
         labelId = R.string.settings,
         showInNavigationBar = false
-    ),
-
-    API_CONFIG(
-        route = "apiConfig",
-        labelId = R.string.setup,
-        showInNavigationBar = false
     )
 }

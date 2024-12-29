@@ -12,7 +12,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiAPIDashboard
 import com.aliernfrog.ensimanager.data.EnsiAPIDashboardAction
-import com.aliernfrog.ensimanager.data.doRequest
+import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
@@ -28,7 +28,8 @@ class DashboardViewModel(
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
-    val isFetching get() = apiViewModel.fetching
+    val isFetching get() = apiViewModel.isChosenProfileFetching
+    val chosenProfile get() = apiViewModel.chosenProfile
     var avatarDialogShown by mutableStateOf(false)
 
     var dashboardData by mutableStateOf<EnsiAPIDashboard?>(null)
@@ -38,7 +39,7 @@ class DashboardViewModel(
 
     suspend fun fetchDashboardData() {
         try {
-            val response = apiViewModel.apiData?.getDashboard?.doRequest()
+            val response = apiViewModel.chosenProfile?.doRequest({ it.getDashboard })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
             dashboardData = gson.fromJson(response.responseBody, EnsiAPIDashboard::class.java)
         } catch (e: Exception) {

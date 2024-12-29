@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.EnsiLog
-import com.aliernfrog.ensimanager.data.doRequest
+import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.enum.EnsiLogType
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
@@ -48,12 +48,12 @@ class LogsViewModel(
             return@let if (!logsReversed) it.reversed() else it
         }
 
-    val isFetching get() = apiViewModel.fetching
+    val isFetching get() = apiViewModel.isChosenProfileFetching
 
     suspend fun fetchLogs() {
         withContext(Dispatchers.IO) {
             try {
-                val response = apiViewModel.apiData?.getLogs?.doRequest()
+                val response = apiViewModel.chosenProfile?.doRequest({ it.getLogs })
                 if (response?.isSuccessful != true) return@withContext topToastState.toastSummary(response)
                 logs = gson.fromJson(response.responseBody, Array<EnsiLog>::class.java).toList()
                 withContext(Dispatchers.Main) {

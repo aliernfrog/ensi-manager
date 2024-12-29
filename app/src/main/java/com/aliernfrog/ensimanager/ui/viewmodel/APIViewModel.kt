@@ -2,9 +2,6 @@ package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.getValue
@@ -20,16 +17,15 @@ import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.APIProfileCache
+import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
-import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,19 +53,16 @@ class APIViewModel(
     var profileSheetAuthorization by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
 
-    var apiData by mutableStateOf<APIEndpoints?>(null)
-        private set
-    val isReady
-        get() = apiData != null
-
-    var fetching by mutableStateOf(false)
-
-    var error by mutableStateOf<String?>(null)
-        private set
-
-    var legacySetupEndpointsURL by mutableStateOf(prefs.apiEndpointsUrl.value)
-    var legacySetupAuthorization by mutableStateOf(prefs.apiAuthorization.value)
-    var migratedTo by mutableStateOf<String?>(null)
+    var chosenProfile by mutableStateOf<APIProfile?>(null)
+    var isChosenProfileFetching: Boolean
+        get() = chosenProfile?.let { fetchingProfiles.contains(it.id) } ?: false
+        set(value) {
+            chosenProfile?.id?.let {
+                if (value) fetchingProfiles.add(it) else fetchingProfiles.remove(it)
+            }
+        }
+    val isConnected
+        get() = chosenProfile?.cache?.endpoints != null && chosenProfile?.cache?.endpoints?.migration == null
 
     init {
         try {
@@ -85,15 +78,6 @@ class APIViewModel(
             apiProfiles.forEach {
                 fetchAPIEndpoints(it)
             }
-        }
-    }
-
-    fun doInitialConnection(onFinish: () -> Unit) {
-        CoroutineScope(Dispatchers.Main).launch {
-            if (legacySetupEndpointsURL.isNotBlank()) fetchApiData(
-                showToastOnSuccess = false
-            )
-            onFinish()
         }
     }
 
@@ -166,43 +150,5 @@ class APIViewModel(
         profileSheetEndpointsURL = ""
         profileSheetAuthorization = ""
         profileSheetShowAuthorization = false
-    }
-
-    suspend fun fetchApiData(showToastOnSuccess: Boolean = true) {
-        fetching = true
-        withContext(Dispatchers.IO) {
-            try {
-                val response = WebUtil.sendRequest(
-                    toUrl = legacySetupEndpointsURL,
-                    method = "GET",
-                    userAgent = userAgent
-                )
-                val isSuccess = response.error == null && response.statusCode.toString().startsWith("2")
-                if (isSuccess) {
-                    val data = gson.fromJson(response.responseBody, APIEndpoints::class.java)
-                    data.migration?.url?.let { newURL ->
-                        migratedTo = newURL
-                        legacySetupEndpointsURL = newURL
-                        return@withContext fetchApiData(showToastOnSuccess = showToastOnSuccess)
-                    }
-                    apiData = data
-                    saveConfig()
-                    if (showToastOnSuccess) topToastState.showToast(R.string.setup_saved, Icons.Rounded.Check)
-                } else topToastState.showToast(
-                    text = response.error ?: "[${response.statusCode}] ${response.responseBody}",
-                    icon = Icons.Rounded.PriorityHigh,
-                    iconTintColor = TopToastColor.ERROR
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "fetchApiData: ", e)
-                error = e.toString()
-            }
-            fetching = false
-        }
-    }
-
-    private fun saveConfig() {
-        prefs.apiEndpointsUrl.value = legacySetupEndpointsURL
-        prefs.apiAuthorization.value = legacySetupAuthorization
     }
 }

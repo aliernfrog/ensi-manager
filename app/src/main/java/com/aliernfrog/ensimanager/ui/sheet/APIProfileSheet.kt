@@ -116,7 +116,7 @@ fun APIProfileSheet(
             OutlinedTextField(
                 value = apiViewModel.profileSheetAuthorization,
                 onValueChange = { apiViewModel.profileSheetAuthorization = it },
-                label = { Text(stringResource(R.string.setup_auth)) },
+                label = { Text(stringResource(R.string.api_profiles_add_authorization)) },
                 leadingIcon = {
                     Icon(Icons.Default.Key, null)
                 },

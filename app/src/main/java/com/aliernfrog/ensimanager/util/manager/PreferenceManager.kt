@@ -14,12 +14,9 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
 
     // API
     val apiProfiles = stringPreference("apiProfiles", "[]")
-    val apiEndpointsUrl = stringPreference("apiEndpointsUrl", experimental = true, includeInDebugInfo = false)
-    val apiAuthorization = stringPreference("apiAuthorization", experimental = true, includeInDebugInfo = false)
 
     // Experimental (developer) options
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
     val autoCheckUpdates = booleanPreference("autoUpdates", true)
-    val enableProfiles = booleanPreference("enableProfiles", false, experimental = true)
     val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/ensimanager/latest.json", experimental = true, includeInDebugInfo = false)
 }

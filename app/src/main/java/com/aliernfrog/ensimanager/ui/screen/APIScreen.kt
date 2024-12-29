@@ -1,6 +1,5 @@
 package com.aliernfrog.ensimanager.ui.screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -32,6 +31,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -78,14 +78,12 @@ fun APIGate(
     onNavigateSettingsRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    AnimatedContent(targetState = !apiViewModel.isReady) { showAPIConfiguration ->
+    AnimatedContent(targetState = !apiViewModel.isConnected) { showAPIConfiguration ->
         if (showAPIConfiguration) APIProfilesScreen(
             onNavigateSettingsRequest = onNavigateSettingsRequest
         )
         else content()
     }
-
-    BackHandler(apiViewModel.fetching) {}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,11 +100,10 @@ fun APIProfilesScreen(
             AppSmallTopBar(
                 title = stringResource(R.string.api_profiles),
                 scrollBehavior = it,
-                onNavigationClick = if (apiViewModel.fetching) null else onNavigateBackRequest,
+                onNavigationClick = onNavigateBackRequest,
                 actions = {
                     onNavigateSettingsRequest?.let { onClick ->
                         SettingsButton(
-                            enabled = !apiViewModel.fetching,
                             onClick = onClick
                         )
                     }
@@ -178,7 +175,7 @@ private fun ProfileCard(
     val fetching = apiViewModel.fetchingProfiles.contains(profile.id)
     val error = apiViewModel.profileErrors[profile.id]
     val migratedTo = apiViewModel.profileMigrations[profile.id]
-    val clickable = profileCache?.endpoints != null
+    val clickable = profileCache?.endpoints != null && profileCache.endpoints.migration == null
 
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
@@ -201,26 +198,34 @@ private fun ProfileCard(
             .padding(8.dp)
             .clip(AppComponentShape)
             .then(
-                if (clickable) Modifier.clickable { /* TODO */ }
+                if (clickable) Modifier.clickable { apiViewModel.chosenProfile = profile }
                 else Modifier
             ),
         shape = AppComponentShape
     ) {
-        FormHeader(
-            title = profile.name,
-            description = profileCache?.endpoints?.metadata?.name?.let {
-                if (it != profile.name) it else null
-            },
-            iconColorFilter = null,
-            iconSize = 56.dp,
-            painter = profileCache?.endpoints?.metadata?.iconURL?.let {
-                rememberAsyncImagePainter(it)
-            } ?:  rememberVectorPainter(Icons.Default.Api),
-            modifier = Modifier.padding(
+        Row (
+            modifier = Modifier.fillMaxWidth().padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
             )
-        )
+        ) {
+            FormHeader(
+                title = profile.name,
+                description = profileCache?.endpoints?.metadata?.name?.let {
+                    if (it != profile.name) it else null
+                },
+                iconColorFilter = null,
+                iconSize = 56.dp,
+                painter = profileCache?.endpoints?.metadata?.iconURL?.let {
+                    rememberAsyncImagePainter(it)
+                } ?:  rememberVectorPainter(Icons.Default.Api),
+                modifier = Modifier.weight(1f).fillMaxWidth()
+            )
+            RadioButton(
+                selected = apiViewModel.chosenProfile == profile,
+                onClick = { apiViewModel.chosenProfile = profile }
+            )
+        }
 
         AnimatedVisibility(fetching, Modifier.align(Alignment.CenterHorizontally)) {
             CircularProgressIndicator()

@@ -1,5 +1,7 @@
 package com.aliernfrog.ensimanager.data
 
+import com.aliernfrog.ensimanager.data.api.APIEndpoint
+
 data class EnsiAPIDashboard(
     val name: String,
     val avatar: String,
@@ -18,5 +20,5 @@ data class EnsiAPIDashboardAction(
     val description: String?,
     val icon: String?,
     val destructive: Boolean = false,
-    val endpoint: EnsiAPIEndpoint
+    val endpoint: APIEndpoint
 )

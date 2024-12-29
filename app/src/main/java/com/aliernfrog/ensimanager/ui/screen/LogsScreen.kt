@@ -135,7 +135,6 @@ private fun LogsList(
                         edgeColor = MaterialTheme.colorScheme.surface,
                         isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
-                    //.height(IntrinsicSize.Max)
                     .horizontalScroll(filtersScrollState)
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -160,9 +159,7 @@ private fun LogsList(
                     )
                 }
                 VerticalDivider(
-                    // TODO use Intrinsic height (for some reason its broken)
                     modifier = Modifier
-                        //.fillMaxHeight()
                         .height(32.dp)
                         .padding(
                             horizontal = 4.dp,

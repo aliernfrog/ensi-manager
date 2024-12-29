@@ -27,12 +27,6 @@
     <string name="api_profiles_add_authorization">Authorization</string>
     <string name="api_profiles_add_authorization_info">Used in authorization header when needed</string>
     <string name="api_profiles_add_added">Saved profile</string>
-    <string name="setup">API setup</string>
-    <string name="setup_endpoints_url">Endpoints URL</string>
-    <string name="setup_auth">Authorization</string>
-    <string name="setup_migrated">Migrated</string>
-    <string name="setup_migrated_description">Endpoint you used has migrated to: {URL}</string>
-    <string name="setup_saved">Saved configuration</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_couldntFetch">Something went wrong while fetching dashboard data</string>
     <string name="dashboard_destructive_warning">This action is destructive, do you want to proceed?</string>
@@ -66,8 +60,8 @@
     <string name="settings_appearance_materialYou_unavailable">Only available on Android 12 and above</string>
     <string name="settings_appearance_pitchBlack">Pitch black</string>
     <string name="settings_appearance_pitchBlack_description">Pitch black background when dark mode is enabled</string>
-    <string name="settings_api">API configuration</string>
-    <string name="settings_api_description">Configure endpoints and authorization</string>
+    <string name="settings_api">API profiles</string>
+    <string name="settings_api_description">Configure profiles for APIs</string>
     <string name="settings_about">About</string>
     <string name="settings_about_changelog">Changelog</string>
     <string name="settings_about_update">Update</string>
