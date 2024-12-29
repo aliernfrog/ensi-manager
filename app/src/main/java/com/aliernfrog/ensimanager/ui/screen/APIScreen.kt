@@ -29,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -253,15 +254,28 @@ private fun ProfileCard(
             )
         }
 
-        migratedTo?.let {
-            TextWithIcon(
-                text = stringResource(R.string.api_profiles_migrated).replace("{URL}", it),
-                icon = rememberVectorPainter(Icons.Default.MoveUp),
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
+        migratedTo?.let { migratedURL ->
+            Row {
+                TextWithIcon(
+                    text = stringResource(R.string.api_profiles_migrated).replace("{URL}", migratedURL),
+                    icon = rememberVectorPainter(Icons.Default.MoveUp),
+                    modifier = Modifier.weight(1f).fillMaxWidth().padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    )
                 )
-            )
+                ElevatedButton(
+                    onClick = {
+                        val index = apiViewModel.apiProfiles.indexOf(profile)
+                        if (index < 0) return@ElevatedButton
+                        apiViewModel.apiProfiles[index] = profile.copy(
+                            endpointsURL = migratedURL
+                        )
+                    }
+                ) {
+                    Text(stringResource(R.string.api_profiles_migrated_migrate))
+                }
+            }
         }
 
         error?.let {
