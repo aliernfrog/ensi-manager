@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import com.aliernfrog.ensimanager.R
 
 @Suppress("unused") // actually used by GSON
-enum class EnsiLogType(
+enum class APILogType(
     val nameId: Int,
     val symbol: Char,
     val getColor: @Composable () -> Color

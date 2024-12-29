@@ -104,6 +104,7 @@ fun APIProfilesScreen(
                 actions = {
                     onNavigateSettingsRequest?.let { onClick ->
                         SettingsButton(
+                            profileSwitcher = false,
                             onClick = onClick
                         )
                     }

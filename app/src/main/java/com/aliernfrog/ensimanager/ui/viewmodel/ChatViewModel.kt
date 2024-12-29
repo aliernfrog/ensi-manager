@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
-import com.aliernfrog.ensimanager.data.EnsiAPIChatCategory
+import com.aliernfrog.ensimanager.data.api.APIChatCategory
 import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
@@ -43,7 +43,7 @@ class ChatViewModel(
     var chosenWord by mutableStateOf("")
     var chosenWordType by mutableStateOf<String?>(null)
 
-    var categories by mutableStateOf(listOf<EnsiAPIChatCategory>())
+    var categories by mutableStateOf(listOf<APIChatCategory>())
         private set
 
     var currentCategoryIndex by mutableIntStateOf(0)
@@ -58,7 +58,7 @@ class ChatViewModel(
         try {
             val response = apiViewModel.chosenProfile?.doRequest({ it.getChatCategories })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
-            categories = gson.fromJson(response.responseBody, Array<EnsiAPIChatCategory>::class.java).toList()
+            categories = gson.fromJson(response.responseBody, Array<APIChatCategory>::class.java).toList()
         } catch (e: Exception) {
             Log.e(TAG, "fetchCategories: ", e)
             topToastState.showErrorToast(R.string.chat_couldntFetch)

@@ -3,11 +3,11 @@ package com.aliernfrog.ensimanager.util.extension
 import android.content.Context
 import android.text.format.DateUtils
 import androidx.compose.runtime.mutableStateOf
-import com.aliernfrog.ensimanager.data.EnsiLog
+import com.aliernfrog.ensimanager.data.api.APILog
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-fun EnsiLog.getTimeStr(
+fun APILog.getTimeStr(
     context: Context,
     force: Boolean = false
 ): String {

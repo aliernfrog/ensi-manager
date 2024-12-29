@@ -13,11 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.EnsiAPIDashboardAction
+import com.aliernfrog.ensimanager.data.api.APIDashboardAction
 
 @Composable
 fun DestructiveActionDialog(
-    action: EnsiAPIDashboardAction,
+    action: APIDashboardAction,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier

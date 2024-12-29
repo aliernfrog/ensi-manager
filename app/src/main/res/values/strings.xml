@@ -11,6 +11,7 @@
     <string name="dialog_delete_description">Are you sure you want to delete {NAME}?</string>
     <string name="dialog_delete_confirm">Delete</string>
     <string name="api_profiles">API Profiles</string>
+    <string name="api_profiles_switcher">API profiles and settings</string>
     <string name="api_profiles_restoreError">Failed to restore saved profiles</string>
     <string name="api_profiles_empty">No profiles found</string>
     <string name="api_profiles_migrated">This API has migrated to {URL}</string>

@@ -10,17 +10,17 @@
 -dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
-# Application classes that will be serialized/deserialized over Gso
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.aliernfrog.ensimanager.data.api.APIChatCategory { *; }
+-keep class com.aliernfrog.ensimanager.data.api.APIDashboard { *; }
+-keep class com.aliernfrog.ensimanager.data.api.APIDashboardInfo { *; }
+-keep class com.aliernfrog.ensimanager.data.api.APIDashboardAction { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APIEndpoint { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APIEndpoints { *; }
+-keep class com.aliernfrog.ensimanager.data.api.APILog { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APIMetadata { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APIProfile { *; }
--keep class com.aliernfrog.ensimanager.data.EnsiAPIChatCategory { *; }
--keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboard { *; }
--keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboardInfo { *; }
--keep class com.aliernfrog.ensimanager.data.EnsiAPIDashboardAction { *; }
--keep class com.aliernfrog.ensimanager.data.EnsiLog { *; }
--keep class com.aliernfrog.ensimanager.enum.EnsiLogType { *; }
+-keep class com.aliernfrog.ensimanager.enum.APILogType { *; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)

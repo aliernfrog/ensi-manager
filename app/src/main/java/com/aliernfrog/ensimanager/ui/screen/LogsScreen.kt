@@ -61,8 +61,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.EnsiLog
-import com.aliernfrog.ensimanager.enum.EnsiLogType
+import com.aliernfrog.ensimanager.data.api.APILog
+import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
@@ -140,7 +140,7 @@ private fun LogsList(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                EnsiLogType.entries.forEach {
+                APILogType.entries.forEach {
                     val selected = logsViewModel.shownLogTypes.contains(it)
                     FilterChip(
                         selected = selected,
@@ -195,7 +195,7 @@ private fun LogsList(
 
 @Composable
 private fun LogItem(
-    log: EnsiLog,
+    log: APILog,
     isLastItem: Boolean
 ) {
     val context = LocalContext.current

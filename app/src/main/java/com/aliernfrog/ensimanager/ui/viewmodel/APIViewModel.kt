@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,6 +48,9 @@ class APIViewModel(
     val profileMigrations = mutableStateMapOf<String, String>()
     private val cache = mutableStateMapOf<String, APIProfileCache>()
 
+    val availableProfiles = mutableStateListOf<APIProfile>()
+    val profilePagerState = PagerState { availableProfiles.size }
+
     var profileSheetEditingProfile by mutableStateOf<APIProfile?>(null)
         private set
     var profileSheetName by mutableStateOf("")
@@ -78,6 +83,14 @@ class APIViewModel(
             apiProfiles.forEach {
                 fetchAPIEndpoints(it)
             }
+
+            snapshotFlow { apiProfiles.size }
+                .collect {
+                    availableProfiles.clear()
+                    availableProfiles.addAll(apiProfiles.filter {
+                        it.cache?.endpoints != null && it.cache?.endpoints?.migration == null
+                    })
+                }
         }
     }
 
