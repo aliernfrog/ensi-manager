@@ -8,7 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APILog
@@ -22,6 +24,7 @@ import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -38,7 +41,7 @@ class LogsViewModel(
     var logs by mutableStateOf(listOf<APILog>())
         private set
 
-    var shownLogTypes = mutableStateListOf(*APILogType.entries.toTypedArray())
+    val shownLogTypes = mutableStateListOf(*APILogType.entries.toTypedArray())
     var logsReversed by mutableStateOf(false)
     val shownLogs: List<APILog>
         get() = logs.filter {
@@ -49,6 +52,15 @@ class LogsViewModel(
         }
 
     val isFetching get() = apiViewModel.isChosenProfileFetching
+
+    init {
+        viewModelScope.launch {
+            snapshotFlow { apiViewModel.chosenProfile }
+                .collect {
+                    logs = emptyList()
+                }
+        }
+    }
 
     suspend fun fetchLogs() {
         withContext(Dispatchers.IO) {

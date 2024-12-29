@@ -60,7 +60,7 @@ fun DashboardScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(dashboardViewModel.dashboardData) {
         if (dashboardViewModel.dashboardData == null) dashboardViewModel.fetchDashboardData()
     }
 

@@ -65,7 +65,7 @@ fun ChatScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(chatViewModel.categories) {
         if (chatViewModel.categories.isEmpty()) chatViewModel.fetchCategories()
     }
 

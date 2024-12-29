@@ -2,7 +2,6 @@ package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Settings
@@ -59,23 +58,15 @@ fun SettingsButton(
         }
     }
 
-    if (profileSwitcher) VerticalPager(
-        state = apiViewModel.profilePagerState,
-        beyondViewportPageCount = 1,
-        modifier = Modifier.size(height = 40.dp, width = 56.dp)
-    ) { page ->
-        val profile = apiViewModel.availableProfiles.getOrNull(page)
-
-        BadgedIconButton {
-            Image(
-                painter = profile?.cache?.endpoints?.metadata?.iconURL.let { iconURL ->
-                    if (iconURL != null) rememberAsyncImagePainter(iconURL)
-                    else rememberVectorPainter(Icons.Default.Api)
-                },
-                contentDescription = stringResource(R.string.api_profiles_switcher),
-                modifier = Modifier.size(32.dp)
-            )
-        }
+    if (profileSwitcher) BadgedIconButton {
+        Image(
+            painter = apiViewModel.chosenProfile?.cache?.endpoints?.metadata?.iconURL.let { iconURL ->
+                if (iconURL != null) rememberAsyncImagePainter(iconURL)
+                else rememberVectorPainter(Icons.Default.Api)
+            },
+            contentDescription = stringResource(R.string.api_profiles_switcher),
+            modifier = Modifier.size(32.dp)
+        )
     } else BadgedIconButton {
         Icon(
             imageVector = Icons.Default.Settings,

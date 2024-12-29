@@ -7,7 +7,9 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIDashboard
@@ -18,6 +20,7 @@ import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class DashboardViewModel(
@@ -36,6 +39,15 @@ class DashboardViewModel(
         private set
 
     var pendingDestructiveAction by mutableStateOf<APIDashboardAction?>(null)
+
+    init {
+        viewModelScope.launch {
+            snapshotFlow { apiViewModel.chosenProfile }
+                .collect {
+                    dashboardData = null
+                }
+        }
+    }
 
     suspend fun fetchDashboardData() {
         try {

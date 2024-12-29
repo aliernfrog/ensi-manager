@@ -10,8 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIChatCategory
@@ -22,6 +24,7 @@ import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,6 +56,15 @@ class ChatViewModel(
         get() = currentCategory?.data?.filter {
             it.lowercase().contains(filter.lowercase())
         } ?: listOf()
+
+    init {
+        viewModelScope.launch {
+            snapshotFlow { apiViewModel.chosenProfile }
+                .collect {
+                    categories = emptyList()
+                }
+        }
+    }
 
     suspend fun fetchCategories() {
         try {
