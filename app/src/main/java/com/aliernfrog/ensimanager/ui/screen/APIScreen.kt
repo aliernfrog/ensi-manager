@@ -24,11 +24,14 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.MoveUp
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -103,6 +106,15 @@ fun APIProfilesScreen(
                 scrollBehavior = it,
                 onNavigationClick = onNavigateBackRequest,
                 actions = {
+                    IconButton(
+                        onClick = { scope.launch {
+                            apiViewModel.refetchAllProfiles()
+                        } },
+                        enabled = apiViewModel.fetchingProfiles.isEmpty()
+                    ) {
+                        Icon(Icons.Default.Refresh, null)
+                    }
+
                     onNavigateSettingsRequest?.let { onClick ->
                         SettingsButton(
                             profileSwitcher = false,
@@ -223,14 +235,11 @@ private fun ProfileCard(
                 } ?:  rememberVectorPainter(Icons.Default.Api),
                 modifier = Modifier.weight(1f).fillMaxWidth()
             )
-            RadioButton(
+            if (fetching) CircularProgressIndicator()
+            else if (profile.isAvailable) RadioButton(
                 selected = apiViewModel.chosenProfile == profile,
                 onClick = { apiViewModel.chosenProfile = profile }
             )
-        }
-
-        AnimatedVisibility(fetching, Modifier.align(Alignment.CenterHorizontally)) {
-            CircularProgressIndicator()
         }
 
         profileCache?.endpoints?.metadata?.summary?.let {

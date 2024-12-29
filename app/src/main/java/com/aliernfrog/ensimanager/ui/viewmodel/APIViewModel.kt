@@ -76,9 +76,13 @@ class APIViewModel(
         }
 
         viewModelScope.launch {
-            apiProfiles.forEach {
-                fetchAPIEndpoints(it)
-            }
+            refetchAllProfiles()
+        }
+    }
+
+    suspend fun refetchAllProfiles() {
+        apiProfiles.forEach {
+            fetchAPIEndpoints(it)
         }
     }
 
