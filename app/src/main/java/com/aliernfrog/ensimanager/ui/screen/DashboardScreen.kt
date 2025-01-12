@@ -139,62 +139,66 @@ private fun ScreenContent(
             }
         }
     }, {
-        val info: List<@Composable () -> Unit> = dashboardViewModel.dashboardData?.info?.map { info -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .padding(vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = info.title,
-                    style = MaterialTheme.typography.labelLarge
-                )
-                Text(
-                    text = info.value ?: "-"
-                )
-            }
-        } } ?: listOf()
+        dashboardViewModel.dashboardData?.info?.let { data ->
+            val rows: List<@Composable () -> Unit> = data.map { info -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = info.title,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    Text(
+                        text = info.value ?: "-"
+                    )
+                }
+            } }
 
-        HorizontalSegmentor(
-            *info.toTypedArray(),
-            shape = RectangleShape
-        )
+            HorizontalSegmentor(
+                *rows.toTypedArray(),
+                shape = RectangleShape
+            )
+        }
     }, modifier = Modifier.padding(8.dp))
 
     Spacer(Modifier.height(16.dp))
 
-    val buttons: List<@Composable () -> Unit> = dashboardViewModel.dashboardData?.actions?.map { action -> {
-        ButtonRow(
-            title = action.label,
-            description = action.description,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-            painter = action.icon?.let { rememberAsyncImagePainter(
-                model = ByteBuffer.wrap(it.toByteArray()),
-                imageLoader = ImageLoader.Builder(context)
-                    .components {
-                        add(SvgDecoder.Factory(scaleToDensity = true))
-                    }
-                    .coroutineContext(Dispatchers.IO)
-                    .build()
-            ) }
-        ) {
-            if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
-            else scope.launch {
-                val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
-                dashboardViewModel.topToastState.toastSummary(response)
+    dashboardViewModel.dashboardData?.actions?.let { actions ->
+        val buttons: List<@Composable () -> Unit> = actions.map { action -> {
+            ButtonRow(
+                title = action.label,
+                description = action.description,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                painter = action.icon?.let { rememberAsyncImagePainter(
+                    model = ByteBuffer.wrap(it.toByteArray()),
+                    imageLoader = ImageLoader.Builder(context)
+                        .components {
+                            add(SvgDecoder.Factory(scaleToDensity = true))
+                        }
+                        .coroutineContext(Dispatchers.IO)
+                        .build()
+                ) }
+            ) {
+                if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
+                else scope.launch {
+                    val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
+                    dashboardViewModel.topToastState.toastSummary(response)
+                }
             }
-        }
-    } } ?: listOf()
+        } }
 
-    VerticalSegmentor(
-        *buttons.toTypedArray(),
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
-            .padding(bottom = 8.dp)
-    )
+        VerticalSegmentor(
+            *buttons.toTypedArray(),
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .padding(bottom = 8.dp)
+        )
+    }
 
     if (dashboardViewModel.avatarDialogShown) ImageDialog(
         onDismissRequest = {
