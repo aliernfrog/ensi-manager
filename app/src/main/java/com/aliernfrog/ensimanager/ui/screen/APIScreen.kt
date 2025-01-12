@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Api
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
@@ -67,6 +68,8 @@ import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
 import com.aliernfrog.ensimanager.ui.component.form.FormHeader
+import com.aliernfrog.ensimanager.ui.component.form.FormSection
+import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -165,6 +168,21 @@ fun APIProfilesScreen(
             }
 
             item {
+                FormSection(
+                    title = stringResource(R.string.api_profiles_settings),
+                    topDivider = true,
+                    bottomDivider = false
+                ) {
+                    SwitchRow(
+                        title = stringResource(R.string.api_profiles_settings_rememberLast),
+                        description = stringResource(R.string.api_profiles_settings_rememberLast_description),
+                        painter = rememberVectorPainter(Icons.Default.Bookmark),
+                        checked = apiViewModel.prefs.rememberLastAPIProfile.value
+                    ) {
+                        apiViewModel.prefs.rememberLastAPIProfile.value = it
+                    }
+                }
+
                 Spacer(
                     Modifier
                         .navigationBarsPadding()

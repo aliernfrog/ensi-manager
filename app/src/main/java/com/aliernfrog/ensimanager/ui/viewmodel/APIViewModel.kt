@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -77,6 +78,16 @@ class APIViewModel(
 
         viewModelScope.launch {
             refetchAllProfiles()
+
+            if (prefs.rememberLastAPIProfile.value && prefs.lastActiveAPIProfileId.value.isNotEmpty()) {
+                val selected = apiProfiles.find { it.id == prefs.lastActiveAPIProfileId.value } ?: return@launch
+                if (selected.isAvailable) chosenProfile = selected
+            }
+
+            snapshotFlow { chosenProfile }
+                .collect {
+                    prefs.lastActiveAPIProfileId.value = it?.id.toString()
+                }
         }
     }
 

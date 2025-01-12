@@ -13,7 +13,9 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val pitchBlack = booleanPreference("pitchBlack", false)
 
     // API
+    val rememberLastAPIProfile = booleanPreference("rememberLastApiProfile", true)
     val apiProfiles = stringPreference("apiProfiles", "[]")
+    val lastActiveAPIProfileId = stringPreference("lastActiveApiProfileId")
 
     // Experimental (developer) options
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
