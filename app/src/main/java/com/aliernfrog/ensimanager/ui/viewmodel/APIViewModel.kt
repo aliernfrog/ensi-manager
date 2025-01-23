@@ -117,7 +117,6 @@ class APIViewModel(
                     val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it
-                        return@withContext endpoints
                     } ?: {
                         profileMigrations.remove(profile.id)
                     }
