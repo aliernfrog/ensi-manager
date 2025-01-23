@@ -111,6 +111,8 @@ class APIViewModel(
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it
                         return@withContext endpoints
+                    } ?: {
+                        profileMigrations.remove(profile.id)
                     }
                     cache[profile.id] = cache[profile.id]?.copy(
                         endpoints = endpoints
