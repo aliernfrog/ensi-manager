@@ -28,6 +28,9 @@ import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -92,8 +95,12 @@ class APIViewModel(
     }
 
     suspend fun refetchAllProfiles() {
-        apiProfiles.forEach {
-            fetchAPIEndpoints(it)
+        coroutineScope {
+            apiProfiles.map {
+                async {
+                    fetchAPIEndpoints(it)
+                }
+            }.awaitAll()
         }
     }
 
