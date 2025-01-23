@@ -273,13 +273,14 @@ private fun ProfileCard(
         }
 
         migratedTo?.let { migratedURL ->
-            Row {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
                 TextWithIcon(
                     text = stringResource(R.string.api_profiles_migrated).replace("{URL}", migratedURL),
                     icon = rememberVectorPainter(Icons.Default.MoveUp),
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
+                        end = 8.dp
                     )
                 )
                 ElevatedButton(
