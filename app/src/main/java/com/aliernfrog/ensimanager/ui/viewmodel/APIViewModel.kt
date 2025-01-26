@@ -95,7 +95,7 @@ class APIViewModel(
     }
 
     suspend fun refetchAllProfiles() {
-        coroutineScope {
+        return coroutineScope {
             apiProfiles.map {
                 async {
                     fetchAPIEndpoints(it)

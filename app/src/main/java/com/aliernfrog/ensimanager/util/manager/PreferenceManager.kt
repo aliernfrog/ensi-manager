@@ -15,7 +15,7 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // API
     val rememberLastAPIProfile = booleanPreference("rememberLastApiProfile", true)
     val apiProfiles = stringPreference("apiProfiles", "[]")
-    val lastActiveAPIProfileId = stringPreference("lastActiveApiProfileId")
+    val lastActiveAPIProfileId = stringPreference("lastActiveApiProfileId", experimental = true, includeInDebugInfo = false)
 
     // Experimental (developer) options
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
