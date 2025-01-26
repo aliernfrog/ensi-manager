@@ -83,8 +83,8 @@ class APIViewModel(
             refetchAllProfiles()
 
             if (prefs.rememberLastAPIProfile.value && prefs.lastActiveAPIProfileId.value.isNotEmpty()) {
-                val selected = apiProfiles.find { it.id == prefs.lastActiveAPIProfileId.value } ?: return@launch
-                if (selected.isAvailable) chosenProfile = selected
+                val selected = apiProfiles.find { it.id == prefs.lastActiveAPIProfileId.value }
+                if (selected?.isAvailable == true) chosenProfile = selected
             }
 
             snapshotFlow { chosenProfile }
