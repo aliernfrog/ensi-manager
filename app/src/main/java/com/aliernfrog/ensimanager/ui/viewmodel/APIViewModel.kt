@@ -50,6 +50,7 @@ class APIViewModel(
     val profileErrors = mutableStateMapOf<String, String>()
     val profileMigrations = mutableStateMapOf<String, String>()
     private val cache = mutableStateMapOf<String, APIProfileCache>()
+    val onProfileSwitchListeners = mutableListOf<(APIProfile?) -> Unit>()
 
     var profileSheetEditingProfile by mutableStateOf<APIProfile?>(null)
         private set
@@ -58,7 +59,16 @@ class APIViewModel(
     var profileSheetAuthorization by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
 
-    var chosenProfile by mutableStateOf<APIProfile?>(null)
+    private var _chosenProfile by mutableStateOf<APIProfile?>(null)
+    var chosenProfile: APIProfile?
+        get() = _chosenProfile
+        set(value) {
+            _chosenProfile = value
+            onProfileSwitchListeners.forEach {
+                it(value)
+            }
+        }
+
     var isChosenProfileFetching: Boolean
         get() = chosenProfile?.let { fetchingProfiles.contains(it.id) } ?: false
         set(value) {
