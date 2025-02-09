@@ -162,7 +162,7 @@ fun APIProfileSheet(
                                 if (editingProfile != null) apiViewModel.updateProfile(editingProfile, profile)
                                 else apiViewModel.apiProfiles.add(profile)
                                 apiViewModel.saveProfiles()
-                                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_added), androidToast = true)
+                                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
                                 sheetState.hide()
                                 apiViewModel.clearProfileSheetState()
                             }
@@ -175,7 +175,10 @@ fun APIProfileSheet(
                             if (fetching) 0f else 1f
                         )) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.Check))
-                            Text(stringResource(R.string.api_profiles_add))
+                            Text(stringResource(
+                                if (editingProfile != null) R.string.api_profiles_add_save
+                                else R.string.api_profiles_add
+                            ))
                         }
                         if (fetching) CircularProgressIndicator(
                             strokeWidth = 2.dp,
