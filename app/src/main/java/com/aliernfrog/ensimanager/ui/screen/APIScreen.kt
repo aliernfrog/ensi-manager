@@ -290,6 +290,7 @@ private fun ProfileCard(
                         apiViewModel.apiProfiles[index] = profile.copy(
                             endpointsURL = migratedURL
                         )
+                        apiViewModel.saveProfiles()
                     }
                 ) {
                     Text(stringResource(R.string.api_profiles_migrated_migrate))
