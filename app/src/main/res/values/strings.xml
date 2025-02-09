@@ -15,6 +15,7 @@
     <string name="api_profiles_switcher_update">Update available</string>
     <string name="api_profiles_switcher_unavailable">API unavailable, check profile configuration for more info</string>
     <string name="api_profiles_restoreError">Failed to restore saved profiles</string>
+    <string name="api_profiles_migratedFromV2">Migrated from v2</string>
     <string name="api_profiles_empty">No profiles found</string>
     <string name="api_profiles_migrated">This API has migrated to {URL}</string>
     <string name="api_profiles_migrated_migrate">Migrate</string>

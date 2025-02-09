@@ -89,6 +89,20 @@ class APIViewModel(
             topToastState.showErrorToast(R.string.api_profiles_restoreError)
         }
 
+        @Suppress("DEPRECATION")
+        if (prefs.legacyAPIURL.value.isNotBlank()) {
+            apiProfiles.add(APIProfile(
+                name = context.getString(R.string.api_profiles_migratedFromV2),
+                endpointsURL = prefs.legacyAPIURL.value,
+                authorization = prefs.legacyAPIAuth.value
+            ))
+            prefs.legacyAPIURL.resetValue()
+            saveProfiles()
+        }
+
+        @Suppress("DEPRECATION")
+        if (prefs.legacyAPIAuth.value.isNotBlank()) prefs.legacyAPIAuth.resetValue()
+
         viewModelScope.launch {
             refetchAllProfiles()
 
