@@ -46,15 +46,15 @@ enum class Destination(
         vectorOutlined = Icons.AutoMirrored.Outlined.Notes
     ),
 
-    SETTINGS(
-        route = "settings",
-        labelId = R.string.settings,
+    API_PROFILES(
+        route = "apiProfiles",
+        labelId = R.string.api_profiles,
         showInNavigationBar = false
     ),
 
-    API_CONFIG(
-        route = "apiConfig",
-        labelId = R.string.setup,
+    SETTINGS(
+        route = "settings",
+        labelId = R.string.settings,
         showInNavigationBar = false
     )
 }

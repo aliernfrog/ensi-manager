@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -21,32 +23,47 @@ import com.aliernfrog.ensimanager.ui.theme.AppSmallComponentShape
 fun VerticalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
+    title: String? = null,
     shape: Shape = AppComponentShape
 ) {
     val visibleItemIndexes = remember { mutableStateListOf<Int>() }
     val firstVisibleItemIndex = visibleItemIndexes.minOfOrNull { it }
-    Column(
-        modifier = modifier.clip(shape)
-    ) {
-        components.forEachIndexed { index, component ->
-            val isStart = firstVisibleItemIndex == index
-            val visible = visibleItemIndexes.contains(index)
-            val topPadding by animateDpAsState(
-                if (visible && !isStart) 2.dp else 0.dp
+
+    Column {
+        title?.let {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp
+                )
             )
-            Box(
-                modifier = Modifier
-                    .padding(
-                        top = topPadding
-                    )
-                    .clip(AppSmallComponentShape)
-                    .onSizeChanged {
-                        val isVisible = it.height > 0
-                        if (isVisible && !visibleItemIndexes.contains(index)) visibleItemIndexes.add(index)
-                        else if (!isVisible && visibleItemIndexes.contains(index)) visibleItemIndexes.remove(index)
-                    }
-            ) {
-                component()
+        }
+
+        Column(
+            modifier = modifier.clip(shape)
+        ) {
+            components.forEachIndexed { index, component ->
+                val isStart = firstVisibleItemIndex == index
+                val visible = visibleItemIndexes.contains(index)
+                val topPadding by animateDpAsState(
+                    if (visible && !isStart) 2.dp else 0.dp
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(
+                            top = topPadding
+                        )
+                        .clip(AppSmallComponentShape)
+                        .onSizeChanged {
+                            val isVisible = it.height > 0
+                            if (isVisible && !visibleItemIndexes.contains(index)) visibleItemIndexes.add(index)
+                            else if (!isVisible && visibleItemIndexes.contains(index)) visibleItemIndexes.remove(index)
+                        }
+                ) {
+                    component()
+                }
             }
         }
     }

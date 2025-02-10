@@ -1,6 +1,6 @@
-package com.aliernfrog.ensimanager.data
+package com.aliernfrog.ensimanager.data.api
 
-data class EnsiAPIChatCategory(
+data class APIChatCategory(
     val title: String,
     val id: String,
     val data: List<String>

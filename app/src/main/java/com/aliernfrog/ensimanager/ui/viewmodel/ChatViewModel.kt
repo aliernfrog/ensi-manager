@@ -14,11 +14,11 @@ import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
-import com.aliernfrog.ensimanager.data.EnsiAPIChatCategory
-import com.aliernfrog.ensimanager.data.doRequest
-import com.aliernfrog.ensimanager.util.extension.isSuccessful
+import com.aliernfrog.ensimanager.data.api.APIChatCategory
+import com.aliernfrog.ensimanager.data.api.doRequest
+import com.aliernfrog.ensimanager.data.isSuccessful
+import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
-import com.aliernfrog.ensimanager.util.extension.summary
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
@@ -38,12 +38,12 @@ class ChatViewModel(
 
     var filter by mutableStateOf("")
     var addWordInput by mutableStateOf("")
-    val isFetching get() = apiViewModel.fetching
+    val isFetching get() = apiViewModel.isChosenProfileFetching
 
     var chosenWord by mutableStateOf("")
     var chosenWordType by mutableStateOf<String?>(null)
 
-    var categories by mutableStateOf(listOf<EnsiAPIChatCategory>())
+    var categories by mutableStateOf(listOf<APIChatCategory>())
         private set
 
     var currentCategoryIndex by mutableIntStateOf(0)
@@ -54,11 +54,17 @@ class ChatViewModel(
             it.lowercase().contains(filter.lowercase())
         } ?: listOf()
 
+    init {
+        apiViewModel.onProfileSwitchListeners.add {
+            categories = emptyList()
+        }
+    }
+
     suspend fun fetchCategories() {
         try {
-            val response = apiViewModel.apiData?.getChatCategories?.doRequest()
+            val response = apiViewModel.chosenProfile?.doRequest({ it.getChatCategories })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
-            categories = gson.fromJson(response.responseBody, Array<EnsiAPIChatCategory>::class.java).toList()
+            categories = gson.fromJson(response.responseBody, Array<APIChatCategory>::class.java).toList()
         } catch (e: Exception) {
             Log.e(TAG, "fetchCategories: ", e)
             topToastState.showErrorToast(R.string.chat_couldntFetch)
@@ -69,7 +75,7 @@ class ChatViewModel(
         val json = JSONObject()
             .put("category", chosenWordType)
             .put("string", chosenWord)
-        val response = apiViewModel.apiData?.deleteChatCategory?.doRequest(json)
+        val response = apiViewModel.chosenProfile?.doRequest({ it.deleteChatCategory }, json)
         topToastState.toastSummary(response)
         fetchCategories()
     }
@@ -78,7 +84,7 @@ class ChatViewModel(
         val json = JSONObject()
             .put("category", currentCategory?.id)
             .put("string", addWordInput)
-        val response = apiViewModel.apiData?.addChatCategory?.doRequest(json)
+        val response = apiViewModel.chosenProfile?.doRequest({ it.addChatCategory }, json)
         topToastState.toastSummary(response)
         fetchCategories()
     }

@@ -49,10 +49,6 @@ class WebUtil {
             return "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
         }
 
-        fun statusCodeIsSuccess(statusCode: Int): Boolean {
-            return statusCode < 400
-        }
-
         private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {
                 try {

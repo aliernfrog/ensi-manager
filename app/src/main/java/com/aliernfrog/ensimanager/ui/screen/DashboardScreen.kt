@@ -34,7 +34,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import coil3.svg.SvgDecoder
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.doRequest
+import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
@@ -60,7 +60,7 @@ fun DashboardScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(dashboardViewModel.dashboardData) {
         if (dashboardViewModel.dashboardData == null) dashboardViewModel.fetchDashboardData()
     }
 
@@ -71,7 +71,7 @@ fun DashboardScreen(
               scrollBehavior = it,
               actions = {
                   SettingsButton(
-                      onClick = { onNavigateRequest(Destination.SETTINGS) }
+                      onNavigateSettingsRequest = { onNavigateRequest(Destination.SETTINGS) }
                   )
               }
           )
@@ -139,62 +139,66 @@ private fun ScreenContent(
             }
         }
     }, {
-        val info: List<@Composable () -> Unit> = dashboardViewModel.dashboardData?.info?.map { info -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .padding(vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = info.title,
-                    style = MaterialTheme.typography.labelLarge
-                )
-                Text(
-                    text = info.value ?: "-"
-                )
-            }
-        } } ?: listOf()
+        dashboardViewModel.dashboardData?.info?.let { data ->
+            val rows: List<@Composable () -> Unit> = data.map { info -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = info.title,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    Text(
+                        text = info.value ?: "-"
+                    )
+                }
+            } }
 
-        HorizontalSegmentor(
-            *info.toTypedArray(),
-            shape = RectangleShape
-        )
+            HorizontalSegmentor(
+                *rows.toTypedArray(),
+                shape = RectangleShape
+            )
+        }
     }, modifier = Modifier.padding(8.dp))
 
     Spacer(Modifier.height(16.dp))
 
-    val buttons: List<@Composable () -> Unit> = dashboardViewModel.dashboardData?.actions?.map { action -> {
-        ButtonRow(
-            title = action.label,
-            description = action.description,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-            painter = action.icon?.let { rememberAsyncImagePainter(
-                model = ByteBuffer.wrap(it.toByteArray()),
-                imageLoader = ImageLoader.Builder(context)
-                    .components {
-                        add(SvgDecoder.Factory())
-                    }
-                    .coroutineContext(Dispatchers.IO)
-                    .build()
-            ) }
-        ) {
-            if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
-            else scope.launch {
-                val response = action.endpoint.doRequest()
-                dashboardViewModel.topToastState.toastSummary(response)
+    dashboardViewModel.dashboardData?.actions?.let { actions ->
+        val buttons: List<@Composable () -> Unit> = actions.map { action -> {
+            ButtonRow(
+                title = action.label,
+                description = action.description,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                painter = action.icon?.let { rememberAsyncImagePainter(
+                    model = ByteBuffer.wrap(it.toByteArray()),
+                    imageLoader = ImageLoader.Builder(context)
+                        .components {
+                            add(SvgDecoder.Factory(scaleToDensity = true))
+                        }
+                        .coroutineContext(Dispatchers.IO)
+                        .build()
+                ) }
+            ) {
+                if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
+                else scope.launch {
+                    val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
+                    dashboardViewModel.topToastState.toastSummary(response)
+                }
             }
-        }
-    } } ?: listOf()
+        } }
 
-    VerticalSegmentor(
-        *buttons.toTypedArray(),
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
-            .padding(bottom = 8.dp)
-    )
+        VerticalSegmentor(
+            *buttons.toTypedArray(),
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .padding(bottom = 8.dp)
+        )
+    }
 
     if (dashboardViewModel.avatarDialogShown) ImageDialog(
         onDismissRequest = {
@@ -203,14 +207,14 @@ private fun ScreenContent(
         imageModel = dashboardViewModel.dashboardData?.avatar
     )
 
-    dashboardViewModel.pendingDestructiveAction?.let {
+    dashboardViewModel.pendingDestructiveAction?.let { action ->
         DestructiveActionDialog(
-            action = it,
+            action = action,
             onDismissRequest = {
                 dashboardViewModel.pendingDestructiveAction = null
             },
             onConfirm = { scope.launch {
-                val response = it.endpoint.doRequest()
+                val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
                 dashboardViewModel.topToastState.toastSummary(response)
                 dashboardViewModel.pendingDestructiveAction = null
             } }

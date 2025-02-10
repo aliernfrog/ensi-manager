@@ -30,22 +30,15 @@ import com.aliernfrog.ensimanager.ui.component.InsetsObserver
 import com.aliernfrog.ensimanager.ui.screen.MainScreen
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.ensimanager.ui.theme.Theme
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
-import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
-    @Volatile
-    private var isAppReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val splashScreen = installSplashScreen()
-        initializeApi()
-        splashScreen.setKeepOnScreenCondition { !isAppReady }
+        installSplashScreen()
 
         setContent {
             AppContent()
@@ -121,14 +114,6 @@ class MainActivity : ComponentActivity() {
             Theme.LIGHT.ordinal -> false
             Theme.DARK.ordinal -> true
             else -> isSystemInDarkTheme()
-        }
-    }
-
-    private fun initializeApi() {
-        val apiViewModel by inject<APIViewModel>()
-
-        apiViewModel.doInitialConnection {
-            isAppReady = true
         }
     }
 }

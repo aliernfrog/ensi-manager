@@ -17,8 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
-import com.aliernfrog.ensimanager.ui.dialog.APIMigratedDialog
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
+import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
@@ -72,7 +72,7 @@ fun MainScreen(
             }
         ) {
             composable(Destination.DASHBOARD.route) {
-                APIScreen(
+                APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     DashboardScreen(
@@ -82,8 +82,9 @@ fun MainScreen(
                     )
                 }
             }
+
             composable(Destination.CHAT.route) {
-                APIScreen(
+                APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     ChatScreen(
@@ -91,8 +92,9 @@ fun MainScreen(
                     )
                 }
             }
+
             composable(Destination.LOGS.route) {
-                APIScreen(
+                APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
                     LogsScreen(
@@ -100,21 +102,29 @@ fun MainScreen(
                     )
                 }
             }
-            composable(Destination.SETTINGS.route) {
-                SettingsScreen(
+
+            composable(Destination.API_PROFILES.route) {
+                APIProfilesScreen(
+                    onNavigateSettingsRequest = onNavigateSettingsRequest,
                     onNavigateBackRequest = onNavigateBackRequest
                 )
             }
-            composable(Destination.API_CONFIG.route) {
-                APIConfigurationScreen(
-                    onNavigateSettingsRequest = onNavigateSettingsRequest,
+
+            composable(Destination.SETTINGS.route) {
+                SettingsScreen(
                     onNavigateBackRequest = onNavigateBackRequest
                 )
             }
         }
     }
 
-    APIMigratedDialog()
+    APIProfileSwitchSheet(
+        onNavigateSettingsRequest = onNavigateSettingsRequest,
+        onNavigateApiProfilesRequest = {
+            navController.navigate(Destination.API_PROFILES.route)
+        }
+    )
+
     UpdateSheet(
         sheetState = mainViewModel.updateSheetState,
         latestVersionInfo = mainViewModel.latestVersionInfo,

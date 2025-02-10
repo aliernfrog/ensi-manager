@@ -11,11 +11,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
-import com.aliernfrog.ensimanager.data.EnsiLog
-import com.aliernfrog.ensimanager.data.doRequest
-import com.aliernfrog.ensimanager.enum.EnsiLogType
+import com.aliernfrog.ensimanager.data.api.APILog
+import com.aliernfrog.ensimanager.data.api.doRequest
+import com.aliernfrog.ensimanager.data.isSuccessful
+import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.util.extension.getTimeStr
-import com.aliernfrog.ensimanager.util.extension.isSuccessful
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
@@ -35,12 +35,12 @@ class LogsViewModel(
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val lazyListState = LazyListState()
 
-    var logs by mutableStateOf(listOf<EnsiLog>())
+    var logs by mutableStateOf(listOf<APILog>())
         private set
 
-    var shownLogTypes = mutableStateListOf(*EnsiLogType.entries.toTypedArray())
+    val shownLogTypes = mutableStateListOf(*APILogType.entries.toTypedArray())
     var logsReversed by mutableStateOf(false)
-    val shownLogs: List<EnsiLog>
+    val shownLogs: List<APILog>
         get() = logs.filter {
             shownLogTypes.contains(it.type)
         }.let {
@@ -48,14 +48,20 @@ class LogsViewModel(
             return@let if (!logsReversed) it.reversed() else it
         }
 
-    val isFetching get() = apiViewModel.fetching
+    val isFetching get() = apiViewModel.isChosenProfileFetching
+
+    init {
+        apiViewModel.onProfileSwitchListeners.add {
+            logs = emptyList()
+        }
+    }
 
     suspend fun fetchLogs() {
         withContext(Dispatchers.IO) {
             try {
-                val response = apiViewModel.apiData?.getLogs?.doRequest()
+                val response = apiViewModel.chosenProfile?.doRequest({ it.getLogs })
                 if (response?.isSuccessful != true) return@withContext topToastState.toastSummary(response)
-                logs = gson.fromJson(response.responseBody, Array<EnsiLog>::class.java).toList()
+                logs = gson.fromJson(response.responseBody, Array<APILog>::class.java).toList()
                 withContext(Dispatchers.Main) {
                     contextUtils.run { ctx ->
                         logs.forEach {
