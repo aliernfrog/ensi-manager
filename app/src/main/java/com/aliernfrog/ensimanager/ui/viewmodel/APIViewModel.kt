@@ -138,7 +138,9 @@ class APIViewModel(
                     userAgent = userAgent
                 )
                 if (response.isSuccessful) {
-                    val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)
+                    val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)?.copy(
+                        sslPublicKey = response.sslPublicKey
+                    )
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it
                     } ?: {

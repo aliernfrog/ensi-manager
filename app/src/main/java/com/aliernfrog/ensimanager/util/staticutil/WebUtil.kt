@@ -2,12 +2,18 @@ package com.aliernfrog.ensimanager.util.staticutil
 
 import android.content.Context
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import okhttp3.CertificatePinner
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.net.HttpURLConnection
 import java.net.URL
+import java.security.PublicKey
 
 class WebUtil {
     companion object {
@@ -16,25 +22,37 @@ class WebUtil {
             method: String,
             authorization: String? = null,
             json: JSONObject? = null,
+            pinnedPublicKey: String? = null,
             userAgent: String
         ): HTTPResponse {
             return try {
                 val url = URL(toUrl)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = method
-                connection.setRequestProperty("User-Agent", userAgent)
-                if (authorization != null) connection.setRequestProperty("Authorization", authorization)
-                if (json != null) {
-                    connection.doOutput = true
-                    connection.outputStream.use {
-                        it.write(json.toString().toByteArray(Charsets.UTF_8))
+                val client = pinnedPublicKey?.let {
+                    val certificatePinner = CertificatePinner.Builder()
+                        .add(url.host, it).build()
+                    OkHttpClient.Builder().certificatePinner(certificatePinner).build()
+                } ?: OkHttpClient()
+                val request = Request.Builder()
+                    .url(url)
+                    .method(method, json?.let {
+                        json.toString().toRequestBody("application/json".toMediaType())
+                    })
+                    .addHeader("User-Agent", userAgent)
+                    .let {
+                        if (authorization != null) it.addHeader("Authorization", authorization)
+                        else it
                     }
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    val shaKey = response.handshake?.peerCertificates?.firstOrNull()?.let {
+                        getPublicKeyHash(it.publicKey)
+                    }
+                    return HTTPResponse(
+                        statusCode = response.code,
+                        responseBody = response.body?.string(),
+                        sslPublicKey = shaKey
+                    )
                 }
-                val response = getResponseFromConnection(connection)
-                HTTPResponse(
-                    statusCode = connection.responseCode,
-                    responseBody = response
-                )
             } catch (e: Exception) {
                 Log.e(TAG, "sendRequest: ", e)
                 HTTPResponse(
@@ -45,11 +63,13 @@ class WebUtil {
             }
         }
 
-        fun buildUserAgent(context: Context): String {
-            return "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
-        }
+        fun buildUserAgent(context: Context): String =
+            "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
 
-        private fun getResponseFromConnection(connection: HttpURLConnection): String {
+        private fun getPublicKeyHash(publicKey: PublicKey): String =
+            "sha256/"+Base64.encodeToString(publicKey.encoded, Base64.DEFAULT)
+
+        /*private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {
                 try {
                     connection.inputStream.bufferedReader().readText()
@@ -59,6 +79,6 @@ class WebUtil {
             } catch (e: Exception) {
                 ""
             }
-        }
+        }*/
     }
 }

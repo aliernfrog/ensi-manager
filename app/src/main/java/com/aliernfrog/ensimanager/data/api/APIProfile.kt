@@ -11,7 +11,8 @@ import org.json.JSONObject
 data class APIProfile(
     val name: String,
     val endpointsURL: String,
-    val authorization: String
+    val authorization: String,
+    val trustedKey: String? = null
 )
 
 val APIProfile.id: String

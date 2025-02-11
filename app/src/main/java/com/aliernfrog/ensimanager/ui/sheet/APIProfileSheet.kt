@@ -16,10 +16,12 @@ import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -37,14 +39,17 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIProfile
+import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
@@ -61,6 +66,7 @@ fun APIProfileSheet(
     val scope = rememberCoroutineScope()
 
     var fetching by rememberSaveable { mutableStateOf(false) }
+    var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
 
     val editingProfile = apiViewModel.profileSheetEditingProfile
     val isNameUnique = !apiViewModel.apiProfiles.any {
@@ -72,6 +78,24 @@ fun APIProfileSheet(
     val valid by remember { derivedStateOf {
         apiViewModel.profileSheetName.isNotEmpty() && apiViewModel.profileSheetEndpointsURL.isNotEmpty() && isNameUnique && isURLUnique
     } }
+
+    trustNewCertDialogProfile?.let { profile ->
+        val cache = profile.cache ?: return@let
+        TrustNewCertDialog(
+            publicKey = cache.endpoints?.sslPublicKey,
+            onTrust = { scope.launch {
+                val withKey = profile.copy(trustedKey = cache.endpoints?.sslPublicKey)
+                if (editingProfile != null) apiViewModel.updateProfile(editingProfile, withKey)
+                else apiViewModel.apiProfiles.add(withKey)
+                trustNewCertDialogProfile = null
+                apiViewModel.saveProfiles()
+                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
+                sheetState.hide()
+                apiViewModel.clearProfileSheetState()
+            } },
+            onDismissRequest = { trustNewCertDialogProfile = null }
+        )
+    }
 
     AppModalBottomSheet(
         title = editingProfile?.name.let {
@@ -138,6 +162,23 @@ fun APIProfileSheet(
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
 
+            editingProfile?.trustedKey?.let { trustedKey ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.api_profiles_edit_trustedKey),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = trustedKey,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
+
             Crossfade(
                 targetState = valid,
                 modifier = Modifier
@@ -158,14 +199,7 @@ fun APIProfileSheet(
                             apiViewModel.fetchAPIEndpoints(profile)
                             val error = apiViewModel.profileErrors[profile.id]
                             if (error != null) apiViewModel.topToastState.showErrorToast(error, androidToast = true)
-                            else {
-                                if (editingProfile != null) apiViewModel.updateProfile(editingProfile, profile)
-                                else apiViewModel.apiProfiles.add(profile)
-                                apiViewModel.saveProfiles()
-                                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
-                                sheetState.hide()
-                                apiViewModel.clearProfileSheetState()
-                            }
+                            else trustNewCertDialogProfile = profile
                             fetching = false
                         }
                     }
