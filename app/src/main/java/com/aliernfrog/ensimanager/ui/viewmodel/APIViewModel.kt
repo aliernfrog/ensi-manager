@@ -139,7 +139,7 @@ class APIViewModel(
                 )
                 if (response.isSuccessful) {
                     val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)?.copy(
-                        sslPublicKey = response.sslPublicKey
+                        sslPublicKey = response.certSha256
                     )
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it

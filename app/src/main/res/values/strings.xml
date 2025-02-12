@@ -21,7 +21,7 @@
     <string name="api_profiles_migrated_migrate">Migrate</string>
     <string name="api_profiles_edit">Edit</string>
     <string name="api_profiles_edit_title">Editing: {NAME}</string>
-    <string name="api_profiles_edit_trustedKey">Trusted SSL public key</string>
+    <string name="api_profiles_edit_trustedSha256">Trusted SHA-256</string>
     <string name="api_profiles_delete">Delete</string>
     <string name="api_profiles_delete_deleted">Deleted profile: {NAME}</string>
     <string name="api_profiles_add">Add profile</string>
@@ -38,7 +38,7 @@
     <string name="api_profiles_settings_rememberLast">Remember last chosen profile</string>
     <string name="api_profiles_settings_rememberLast_description">Automatically select last chosen profile on app launch</string>
     <string name="api_ssl_trust">Trust</string>
-    <string name="api_ssl_trustNew_text">This endpoint\'s public certificate key is:</string>
+    <string name="api_ssl_trustNew_text">This endpoint\'s certificate SHA-256 is</string>
     <string name="api_ssl_trustNew_q">Trust this certificate?</string>
     <string name="api_ssl_trustNew_notSecure">This endpoint is not secured! This can lead to various issues, including getting your authorization details stolen.\nAdd the endpoint anyway?</string>
     <string name="dashboard">Dashboard</string>

@@ -4,7 +4,7 @@ data class HTTPResponse(
     val statusCode: Int?,
     val responseBody: String?,
     val error: String? = null,
-    val sslPublicKey: String? = null
+    val certSha256: String? = null
 )
 
 val HTTPResponse?.isSuccessful

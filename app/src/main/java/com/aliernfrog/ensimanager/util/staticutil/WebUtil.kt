@@ -13,7 +13,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.net.URL
-import java.security.PublicKey
+import java.security.MessageDigest
 
 class WebUtil {
     companion object {
@@ -22,12 +22,12 @@ class WebUtil {
             method: String,
             authorization: String? = null,
             json: JSONObject? = null,
-            pinnedPublicKey: String? = null,
+            pinnedSha256: String? = null,
             userAgent: String
         ): HTTPResponse {
             return try {
                 val url = URL(toUrl)
-                val client = pinnedPublicKey?.let {
+                val client = pinnedSha256?.let {
                     val certificatePinner = CertificatePinner.Builder()
                         .add(url.host, it).build()
                     OkHttpClient.Builder().certificatePinner(certificatePinner).build()
@@ -44,13 +44,15 @@ class WebUtil {
                     }
                     .build()
                 client.newCall(request).execute().use { response ->
-                    val shaKey = response.handshake?.peerCertificates?.firstOrNull()?.let {
-                        getPublicKeyHash(it.publicKey)
+                    val x509 = response.handshake?.peerCertificates?.firstOrNull()
+                    val hash = x509?.encoded?.let {
+                        MessageDigest.getInstance("SHA-256").digest(it)
                     }
+                    val sha256 = "sha256/"+Base64.encodeToString(hash, Base64.NO_WRAP)
                     return HTTPResponse(
                         statusCode = response.code,
                         responseBody = response.body?.string(),
-                        sslPublicKey = shaKey
+                        certSha256 = sha256
                     )
                 }
             } catch (e: Exception) {
@@ -65,9 +67,6 @@ class WebUtil {
 
         fun buildUserAgent(context: Context): String =
             "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
-
-        private fun getPublicKeyHash(publicKey: PublicKey): String =
-            "sha256/"+Base64.encodeToString(publicKey.encoded, Base64.DEFAULT)
 
         /*private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {

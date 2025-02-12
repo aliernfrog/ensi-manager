@@ -167,7 +167,7 @@ fun APIProfileSheet(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.api_profiles_edit_trustedKey),
+                        text = stringResource(R.string.api_profiles_edit_trustedSha256),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(8.dp)
                     )
