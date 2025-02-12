@@ -189,7 +189,8 @@ fun APIProfileSheet(
                         val profile = APIProfile(
                             name = apiViewModel.profileSheetName,
                             endpointsURL = apiViewModel.profileSheetEndpointsURL,
-                            authorization = apiViewModel.profileSheetAuthorization
+                            authorization = apiViewModel.profileSheetAuthorization,
+                            trustedSha256 = apiViewModel.profileSheetTrustedSha256.ifBlank { null }
                         )
                         scope.launch {
                             fetching = true
