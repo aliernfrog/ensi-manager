@@ -59,6 +59,7 @@ class APIViewModel(
     var profileSheetName by mutableStateOf("")
     var profileSheetEndpointsURL by mutableStateOf("")
     var profileSheetAuthorization by mutableStateOf("")
+    var profileSheetTrustedSha256 by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
 
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
@@ -195,6 +196,7 @@ class APIViewModel(
         profileSheetName = profile.name
         profileSheetEndpointsURL = profile.endpointsURL
         profileSheetAuthorization = profile.authorization
+        profileSheetTrustedSha256 = profile.trustedSha256.orEmpty()
         profileSheetState.show()
     }
 
@@ -203,6 +205,7 @@ class APIViewModel(
         profileSheetName = ""
         profileSheetEndpointsURL = ""
         profileSheetAuthorization = ""
+        profileSheetTrustedSha256 = ""
         profileSheetShowAuthorization = false
     }
 }

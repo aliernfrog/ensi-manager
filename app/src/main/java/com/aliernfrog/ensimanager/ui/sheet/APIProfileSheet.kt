@@ -13,15 +13,14 @@ import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -39,7 +38,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -161,23 +159,22 @@ fun APIProfileSheet(
                 else PasswordVisualTransformation(),
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
-
-            editingProfile?.trustedSha256?.let { trustedKey ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-                ) {
+            OutlinedTextField(
+                value = apiViewModel.profileSheetTrustedSha256,
+                onValueChange = { apiViewModel.profileSheetTrustedSha256 = it },
+                label = { Text(stringResource(R.string.api_profiles_add_sha256)) },
+                leadingIcon = {
+                    Icon(Icons.Default.VerifiedUser, null)
+                },
+                supportingText = {
                     Text(
-                        text = stringResource(R.string.api_profiles_edit_trustedSha256),
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(8.dp)
+                        stringResource(R.string.api_profiles_add_sha256_info) +
+                                if (editingProfile != null) "" else stringResource(R.string.api_profiles_add_sha256_leaveEmpty)
                     )
-                    Text(
-                        text = trustedKey,
-                        fontFamily = FontFamily.Monospace,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-            }
+                },
+                readOnly = fetching,
+                modifier = Modifier.animateContentSize().fillMaxWidth()
+            )
 
             Crossfade(
                 targetState = valid,
