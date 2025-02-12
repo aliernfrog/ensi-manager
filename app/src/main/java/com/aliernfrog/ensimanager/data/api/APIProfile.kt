@@ -39,6 +39,7 @@ suspend fun APIProfile.doRequest(endpointSelector: (APIEndpoints) -> APIEndpoint
             method = endpoint.method,
             authorization = if (endpoint.requiresAuth) authorization else null,
             json = body,
+            pinnedPublicKey = trustedKey,
             userAgent = apiViewModel.userAgent
         )
         apiViewModel.isChosenProfileFetching = false
