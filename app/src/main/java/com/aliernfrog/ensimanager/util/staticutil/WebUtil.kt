@@ -14,6 +14,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.net.URL
 import java.security.MessageDigest
+import java.security.cert.X509Certificate
 
 class WebUtil {
     companion object {
@@ -44,11 +45,13 @@ class WebUtil {
                     }
                     .build()
                 client.newCall(request).execute().use { response ->
-                    val x509 = response.handshake?.peerCertificates?.firstOrNull()
-                    val hash = x509?.encoded?.let {
+                    val x509 = response.handshake?.peerCertificates?.firstOrNull() as? X509Certificate
+                    val hash = x509?.publicKey?.encoded?.let {
                         MessageDigest.getInstance("SHA-256").digest(it)
                     }
-                    val sha256 = "sha256/"+Base64.encodeToString(hash, Base64.NO_WRAP)
+                    val sha256 = hash?.let {
+                        "sha256/" + Base64.encodeToString(it, Base64.NO_WRAP)
+                    }
                     return HTTPResponse(
                         statusCode = response.code,
                         responseBody = response.body?.string(),
