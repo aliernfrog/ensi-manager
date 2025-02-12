@@ -15,9 +15,12 @@ import org.json.JSONObject
 import java.net.URL
 import java.security.MessageDigest
 import java.security.cert.X509Certificate
+import javax.net.ssl.SSLPeerUnverifiedException
 
 class WebUtil {
     companion object {
+        const val SEND_REQUEST_SHA256_UNMATCH_ERROR = "SHA-256 hash does not match!"
+
         fun sendRequest(
             toUrl: String,
             method: String,
@@ -63,7 +66,7 @@ class WebUtil {
                 HTTPResponse(
                     statusCode = null,
                     responseBody = null,
-                    error = e.toString()
+                    error = if (e is SSLPeerUnverifiedException) SEND_REQUEST_SHA256_UNMATCH_ERROR else e.toString()
                 )
             }
         }

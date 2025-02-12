@@ -12,7 +12,7 @@ data class APIProfile(
     val name: String,
     val endpointsURL: String,
     val authorization: String,
-    val trustedKey: String? = null
+    val trustedSha256: String? = null
 )
 
 val APIProfile.id: String
@@ -39,7 +39,7 @@ suspend fun APIProfile.doRequest(endpointSelector: (APIEndpoints) -> APIEndpoint
             method = endpoint.method,
             authorization = if (endpoint.requiresAuth) authorization else null,
             json = body,
-            pinnedSha256 = trustedKey,
+            pinnedSha256 = trustedSha256,
             userAgent = apiViewModel.userAgent
         )
         apiViewModel.isChosenProfileFetching = false

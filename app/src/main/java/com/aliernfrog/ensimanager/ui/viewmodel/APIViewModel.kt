@@ -23,6 +23,7 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.state.TopToastState
@@ -39,6 +40,7 @@ class APIViewModel(
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
     private val gson: Gson,
+    private val contextUtils: ContextUtils,
     context: Context
 ) : ViewModel() {
     val profileSwitcherSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -135,6 +137,7 @@ class APIViewModel(
                 val response = WebUtil.sendRequest(
                     toUrl = profile.endpointsURL,
                     method = "GET",
+                    pinnedSha256 = profile.trustedSha256,
                     userAgent = userAgent
                 )
                 if (response.isSuccessful) {
@@ -154,7 +157,8 @@ class APIViewModel(
                     profileErrors.remove(profile.id)
                     return@withContext endpoints
                 } else {
-                    profileErrors[profile.id] = response.summary
+                    profileErrors[profile.id] = if (response.error != WebUtil.SEND_REQUEST_SHA256_UNMATCH_ERROR) response.summary
+                    else contextUtils.getString(R.string.api_profiles_sha256fail)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "fetchAPIEndpoints: failed to fetch endpoints for ${profile.id}", e)

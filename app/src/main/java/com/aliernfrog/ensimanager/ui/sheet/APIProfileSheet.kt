@@ -84,7 +84,7 @@ fun APIProfileSheet(
         TrustNewCertDialog(
             publicKey = cache.endpoints?.sslPublicKey,
             onTrust = { scope.launch {
-                val withKey = profile.copy(trustedKey = cache.endpoints?.sslPublicKey)
+                val withKey = profile.copy(trustedSha256 = cache.endpoints?.sslPublicKey)
                 if (editingProfile != null) apiViewModel.updateProfile(editingProfile, withKey)
                 else apiViewModel.apiProfiles.add(withKey)
                 trustNewCertDialogProfile = null
@@ -162,7 +162,7 @@ fun APIProfileSheet(
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
 
-            editingProfile?.trustedKey?.let { trustedKey ->
+            editingProfile?.trustedSha256?.let { trustedKey ->
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                 ) {
