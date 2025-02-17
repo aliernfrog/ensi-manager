@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager.ui.sheet
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -102,7 +103,10 @@ fun APIProfileSheet(
         },
         sheetState = sheetState
     ) {
-        Column(Modifier.padding(horizontal = 8.dp)) {
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             OutlinedTextField(
                 value = apiViewModel.profileSheetName,
                 onValueChange = { apiViewModel.profileSheetName = it },
@@ -126,7 +130,7 @@ fun APIProfileSheet(
                 },
                 supportingText = {
                     Text(stringResource(
-                        if (isNameUnique) R.string.api_profiles_add_endpointsURL_info
+                        if (isURLUnique) R.string.api_profiles_add_endpointsURL_info
                         else R.string.api_profiles_add_endpointsURL_alreadyExists
                     ))
                 },
@@ -167,10 +171,7 @@ fun APIProfileSheet(
                     Icon(Icons.Default.VerifiedUser, null)
                 },
                 supportingText = {
-                    Text(
-                        stringResource(R.string.api_profiles_add_sha256_info) +
-                                if (editingProfile != null) "" else stringResource(R.string.api_profiles_add_sha256_leaveEmpty)
-                    )
+                    Text(stringResource(R.string.api_profiles_add_sha256_info))
                 },
                 readOnly = fetching,
                 modifier = Modifier.animateContentSize().fillMaxWidth()
