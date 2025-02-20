@@ -40,7 +40,7 @@ class WebUtil {
                     .url(url)
                     .method(method, json?.let {
                         json.toString().toRequestBody("application/json".toMediaType())
-                    })
+                    } ?: if (method != "GET") "".toRequestBody(null) else null)
                     .addHeader("User-Agent", userAgent)
                     .let {
                         if (authorization != null) it.addHeader("Authorization", authorization)
