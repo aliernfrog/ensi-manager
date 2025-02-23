@@ -29,6 +29,7 @@ class WebUtil {
             pinnedSha256: String? = null,
             userAgent: String
         ): HTTPResponse {
+            val methodUppercase = method.uppercase()
             return try {
                 val url = URL(toUrl)
                 val client = pinnedSha256?.let {
@@ -38,9 +39,9 @@ class WebUtil {
                 } ?: OkHttpClient()
                 val request = Request.Builder()
                     .url(url)
-                    .method(method, json?.let {
+                    .method(methodUppercase, json?.let {
                         json.toString().toRequestBody("application/json".toMediaType())
-                    } ?: if (method != "GET") "".toRequestBody(null) else null)
+                    } ?: if (methodUppercase != "GET") "".toRequestBody(null) else null)
                     .addHeader("User-Agent", userAgent)
                     .let {
                         if (authorization != null) it.addHeader("Authorization", authorization)
