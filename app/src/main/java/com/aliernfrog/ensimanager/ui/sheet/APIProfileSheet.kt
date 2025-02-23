@@ -74,6 +74,7 @@ fun APIProfileSheet(
     val isURLUnique = !apiViewModel.apiProfiles.any {
         it.endpointsURL == apiViewModel.profileSheetEndpointsURL && it.id != editingProfile?.id
     }
+    val isURLHttps = apiViewModel.profileSheetEndpointsURL.startsWith("https://", ignoreCase = true)
     val valid by remember { derivedStateOf {
         apiViewModel.profileSheetName.isNotEmpty() && apiViewModel.profileSheetEndpointsURL.isNotEmpty() && isNameUnique && isURLUnique
     } }
@@ -171,8 +172,11 @@ fun APIProfileSheet(
                     Icon(Icons.Default.VerifiedUser, null)
                 },
                 supportingText = {
-                    Text(stringResource(R.string.api_profiles_add_sha256_info))
+                    Text(stringResource(
+                        if (isURLHttps) R.string.api_profiles_add_sha256_info else R.string.api_profiles_add_sha256_notHttps
+                    ))
                 },
+                enabled = isURLHttps,
                 readOnly = fetching,
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
