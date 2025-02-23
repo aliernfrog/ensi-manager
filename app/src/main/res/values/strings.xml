@@ -20,6 +20,7 @@
     <string name="api_profiles_migrated">This API has migrated to {URL}</string>
     <string name="api_profiles_migrated_migrate">Migrate</string>
     <string name="api_profiles_sha256fail">Previously trusted SHA-256 no longer matches, someone might be trying to impersonate the server!\nIf you are aware of a certificate change, edit and save the profile to trust the new certificate</string>
+    <string name="api_profiles_sha256fail_unsaved">SHA-256 does not match, someone might be trying to impersonate the server!\nLeave SHA-256 field empty to automatically pull from the server</string>
     <string name="api_profiles_edit">Edit</string>
     <string name="api_profiles_edit_title">Editing: {NAME}</string>
     <string name="api_profiles_delete">Delete</string>

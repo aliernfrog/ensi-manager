@@ -135,6 +135,7 @@ class APIViewModel(
         fetchingProfiles.add(profile.id)
         val res = withContext(Dispatchers.IO) {
             try {
+                val isAlreadySaved = apiProfiles.any { it.id == profile.id }
                 val response = WebUtil.sendRequest(
                     toUrl = profile.endpointsURL,
                     method = "GET",
@@ -159,7 +160,9 @@ class APIViewModel(
                     return@withContext endpoints
                 } else {
                     profileErrors[profile.id] = if (response.error != WebUtil.SEND_REQUEST_SHA256_UNMATCH_ERROR) response.summary
-                    else contextUtils.getString(R.string.api_profiles_sha256fail)
+                    else contextUtils.getString(
+                        if (isAlreadySaved) R.string.api_profiles_sha256fail else R.string.api_profiles_sha256fail_unsaved
+                    )
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "fetchAPIEndpoints: failed to fetch endpoints for ${profile.id}", e)
