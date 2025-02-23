@@ -77,9 +77,9 @@ fun APIProfileSheet(
     val isURLUnique = !apiViewModel.apiProfiles.any {
         it.endpointsURL == apiViewModel.profileSheetEndpointsURL && it.id != editingProfile?.id
     }
-    val isURLHttps by remember { derivedStateOf {
+    val isEndpointUnsecure by remember { derivedStateOf {
         apiViewModel.profileSheetEndpointsURL.let {
-            it.contains("://") && it.startsWith("https://", ignoreCase = true)
+            it.contains("://") && !it.startsWith("https://", ignoreCase = true)
         }
     } }
     val valid by remember { derivedStateOf {
@@ -180,16 +180,16 @@ fun APIProfileSheet(
                 },
                 supportingText = {
                     Text(stringResource(
-                        if (isURLHttps) R.string.api_profiles_add_sha256_info else R.string.api_profiles_add_sha256_notHttps
+                        if (isEndpointUnsecure) R.string.api_profiles_add_sha256_notHttps else R.string.api_profiles_add_sha256_info
                     ))
                 },
-                enabled = isURLHttps,
+                enabled = !isEndpointUnsecure,
                 readOnly = fetching,
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
 
             FadeVisibility(
-                visible = apiViewModel.profileSheetEndpointsURL.isNotBlank() && !isURLHttps
+                visible = isEndpointUnsecure
             ) {
                 Card(Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
