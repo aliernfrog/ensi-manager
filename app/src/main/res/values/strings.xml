@@ -44,7 +44,8 @@
     <string name="api_ssl_trust">Trust</string>
     <string name="api_ssl_trustNew_text">This endpoint\'s certificate SHA-256 is</string>
     <string name="api_ssl_trustNew_q">Trust this certificate?</string>
-    <string name="api_ssl_trustNew_notSecure">This endpoint is not secured! This can lead to various issues, including getting your authorization details stolen.\nAdd the endpoint anyway?</string>
+    <string name="api_ssl_trustNew_notSecure">This endpoint is not secured with HTTPS! This can lead to various issues, including getting your authorization details stolen.</string>
+    <string name="api_ssl_trustNew_notSecure_q">Add the endpoint anyway?</string>
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_couldntFetch">Something went wrong while fetching dashboard data</string>
     <string name="dashboard_destructive_warning">This action is destructive, do you want to proceed?</string>

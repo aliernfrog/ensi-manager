@@ -15,9 +15,11 @@ import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,6 +50,7 @@ import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.FadeVisibility
 import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
@@ -74,7 +77,11 @@ fun APIProfileSheet(
     val isURLUnique = !apiViewModel.apiProfiles.any {
         it.endpointsURL == apiViewModel.profileSheetEndpointsURL && it.id != editingProfile?.id
     }
-    val isURLHttps = apiViewModel.profileSheetEndpointsURL.startsWith("https://", ignoreCase = true)
+    val isURLHttps by remember { derivedStateOf {
+        apiViewModel.profileSheetEndpointsURL.let {
+            it.contains("://") && it.startsWith("https://", ignoreCase = true)
+        }
+    } }
     val valid by remember { derivedStateOf {
         apiViewModel.profileSheetName.isNotEmpty() && apiViewModel.profileSheetEndpointsURL.isNotEmpty() && isNameUnique && isURLUnique
     } }
@@ -180,6 +187,26 @@ fun APIProfileSheet(
                 readOnly = fetching,
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
+
+            FadeVisibility(
+                visible = apiViewModel.profileSheetEndpointsURL.isNotBlank() && !isURLHttps
+            ) {
+                Card(Modifier.fillMaxWidth()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp).padding(
+                                horizontal = 16.dp, vertical = 8.dp
+                            )
+                        )
+                        Text(
+                            text = stringResource(R.string.api_ssl_trustNew_notSecure),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                }
+            }
 
             Crossfade(
                 targetState = valid,
