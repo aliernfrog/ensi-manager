@@ -27,11 +27,11 @@ val APIProfile.cache: APIProfileCache?
 val APIProfile.isAvailable: Boolean
     get() = cache?.endpoints != null && cache?.endpoints?.migration == null
 
-suspend fun APIProfile.doRequest(endpointSelector: (APIEndpoints) -> APIEndpoint, body: JSONObject? = null): HTTPResponse {
+suspend fun APIProfile.doRequest(endpointSelector: (APIEndpoints) -> APIEndpoint?, body: JSONObject? = null): HTTPResponse {
     val apiViewModel = getKoinInstance<APIViewModel>()
     val endpoint = cache?.endpoints?.let {
-        endpointSelector(it)
-    } ?: return HTTPResponse(0, "Endpoints data was null", error = "Endpoints data was null")
+        endpointSelector(it) ?: return HTTPResponse(0, "Endpoint is null", error = "Endpoint is null")
+    } ?: return HTTPResponse(0, "Endpoints data is null", error = "Endpoints data is null")
     apiViewModel.isChosenProfileFetching = true
     return withContext(Dispatchers.IO) {
         val response = WebUtil.sendRequest(
