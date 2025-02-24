@@ -193,17 +193,17 @@ fun APIProfileSheet(
                 visible = isEndpointUnsecure
             ) {
                 Card(Modifier.fillMaxWidth()) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Warning,
                             contentDescription = null,
-                            modifier = Modifier.padding(
-                                horizontal = 16.dp, vertical = 8.dp
-                            ).size(32.dp)
+                            modifier = Modifier.padding(end = 16.dp).size(32.dp)
                         )
                         Text(
                             text = stringResource(R.string.api_ssl_trustNew_notSecure),
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
