@@ -2,54 +2,83 @@ package com.aliernfrog.ensimanager.util.staticutil
 
 import android.content.Context
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import okhttp3.CertificatePinner
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.net.HttpURLConnection
 import java.net.URL
+import java.security.MessageDigest
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLPeerUnverifiedException
 
 class WebUtil {
     companion object {
+        const val SEND_REQUEST_SHA256_UNMATCH_ERROR = "SHA-256 hash does not match!"
+
         fun sendRequest(
             toUrl: String,
             method: String,
             authorization: String? = null,
             json: JSONObject? = null,
+            pinnedSha256: String? = null,
             userAgent: String
         ): HTTPResponse {
+            val methodUppercase = method.uppercase()
+            val methodRequiresBody = methodUppercase.let {
+                it != "GET" && it != "HEAD"
+            }
             return try {
                 val url = URL(toUrl)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = method
-                connection.setRequestProperty("User-Agent", userAgent)
-                if (authorization != null) connection.setRequestProperty("Authorization", authorization)
-                if (json != null) {
-                    connection.doOutput = true
-                    connection.outputStream.use {
-                        it.write(json.toString().toByteArray(Charsets.UTF_8))
+                val client = pinnedSha256?.let {
+                    val certificatePinner = CertificatePinner.Builder()
+                        .add(url.host, it).build()
+                    OkHttpClient.Builder().certificatePinner(certificatePinner).build()
+                } ?: OkHttpClient()
+                val request = Request.Builder()
+                    .url(url)
+                    .method(methodUppercase, json?.let {
+                        json.toString().toRequestBody("application/json".toMediaType())
+                    } ?: if (methodRequiresBody) "".toRequestBody(null) else null)
+                    .addHeader("User-Agent", userAgent)
+                    .let {
+                        if (authorization != null) it.addHeader("Authorization", authorization)
+                        else it
                     }
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    val x509 = response.handshake?.peerCertificates?.firstOrNull() as? X509Certificate
+                    val hash = x509?.publicKey?.encoded?.let {
+                        MessageDigest.getInstance("SHA-256").digest(it)
+                    }
+                    val sha256 = hash?.let {
+                        "sha256/" + Base64.encodeToString(it, Base64.NO_WRAP)
+                    }
+                    return HTTPResponse(
+                        statusCode = response.code,
+                        responseBody = response.body?.string(),
+                        certSha256 = sha256
+                    )
                 }
-                val response = getResponseFromConnection(connection)
-                HTTPResponse(
-                    statusCode = connection.responseCode,
-                    responseBody = response
-                )
             } catch (e: Exception) {
                 Log.e(TAG, "sendRequest: ", e)
                 HTTPResponse(
                     statusCode = null,
                     responseBody = null,
-                    error = e.toString()
+                    error = if (e is SSLPeerUnverifiedException) SEND_REQUEST_SHA256_UNMATCH_ERROR else e.toString()
                 )
             }
         }
 
-        fun buildUserAgent(context: Context): String {
-            return "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
-        }
+        fun buildUserAgent(context: Context): String =
+            "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
 
-        private fun getResponseFromConnection(connection: HttpURLConnection): String {
+        /*private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {
                 try {
                     connection.inputStream.bufferedReader().readText()
@@ -59,6 +88,6 @@ class WebUtil {
             } catch (e: Exception) {
                 ""
             }
-        }
+        }*/
     }
 }

@@ -23,6 +23,7 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.state.TopToastState
@@ -39,6 +40,7 @@ class APIViewModel(
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
     private val gson: Gson,
+    private val contextUtils: ContextUtils,
     context: Context
 ) : ViewModel() {
     val profileSwitcherSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -57,6 +59,7 @@ class APIViewModel(
     var profileSheetName by mutableStateOf("")
     var profileSheetEndpointsURL by mutableStateOf("")
     var profileSheetAuthorization by mutableStateOf("")
+    var profileSheetTrustedSha256 by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
 
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
@@ -132,13 +135,17 @@ class APIViewModel(
         fetchingProfiles.add(profile.id)
         val res = withContext(Dispatchers.IO) {
             try {
+                val isAlreadySaved = apiProfiles.any { it.id == profile.id }
                 val response = WebUtil.sendRequest(
                     toUrl = profile.endpointsURL,
                     method = "GET",
+                    pinnedSha256 = profile.trustedSha256,
                     userAgent = userAgent
                 )
                 if (response.isSuccessful) {
-                    val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)
+                    val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)?.copy(
+                        sslPublicKey = response.certSha256
+                    )
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it
                     } ?: {
@@ -152,7 +159,10 @@ class APIViewModel(
                     profileErrors.remove(profile.id)
                     return@withContext endpoints
                 } else {
-                    profileErrors[profile.id] = response.summary
+                    profileErrors[profile.id] = if (response.error != WebUtil.SEND_REQUEST_SHA256_UNMATCH_ERROR) response.summary
+                    else contextUtils.getString(
+                        if (isAlreadySaved) R.string.api_profiles_sha256fail else R.string.api_profiles_sha256fail_unsaved
+                    )
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "fetchAPIEndpoints: failed to fetch endpoints for ${profile.id}", e)
@@ -189,6 +199,7 @@ class APIViewModel(
         profileSheetName = profile.name
         profileSheetEndpointsURL = profile.endpointsURL
         profileSheetAuthorization = profile.authorization
+        profileSheetTrustedSha256 = profile.trustedSha256.orEmpty()
         profileSheetState.show()
     }
 
@@ -197,6 +208,7 @@ class APIViewModel(
         profileSheetName = ""
         profileSheetEndpointsURL = ""
         profileSheetAuthorization = ""
+        profileSheetTrustedSha256 = ""
         profileSheetShowAuthorization = false
     }
 }

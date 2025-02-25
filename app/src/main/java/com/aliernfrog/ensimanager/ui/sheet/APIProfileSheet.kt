@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager.ui.sheet
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,13 +14,17 @@ import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -42,9 +47,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIProfile
+import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.FadeVisibility
+import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
@@ -61,6 +69,7 @@ fun APIProfileSheet(
     val scope = rememberCoroutineScope()
 
     var fetching by rememberSaveable { mutableStateOf(false) }
+    var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
 
     val editingProfile = apiViewModel.profileSheetEditingProfile
     val isNameUnique = !apiViewModel.apiProfiles.any {
@@ -69,9 +78,32 @@ fun APIProfileSheet(
     val isURLUnique = !apiViewModel.apiProfiles.any {
         it.endpointsURL == apiViewModel.profileSheetEndpointsURL && it.id != editingProfile?.id
     }
+    val isEndpointUnsecure by remember { derivedStateOf {
+        apiViewModel.profileSheetEndpointsURL.let {
+            it.contains("://") && !it.startsWith("https://", ignoreCase = true)
+        }
+    } }
     val valid by remember { derivedStateOf {
         apiViewModel.profileSheetName.isNotEmpty() && apiViewModel.profileSheetEndpointsURL.isNotEmpty() && isNameUnique && isURLUnique
     } }
+
+    trustNewCertDialogProfile?.let { profile ->
+        val cache = profile.cache ?: return@let
+        TrustNewCertDialog(
+            publicKey = cache.endpoints?.sslPublicKey,
+            onTrust = { scope.launch {
+                val withKey = profile.copy(trustedSha256 = cache.endpoints?.sslPublicKey)
+                if (editingProfile != null) apiViewModel.updateProfile(editingProfile, withKey)
+                else apiViewModel.apiProfiles.add(withKey)
+                trustNewCertDialogProfile = null
+                apiViewModel.saveProfiles()
+                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
+                sheetState.hide()
+                apiViewModel.clearProfileSheetState()
+            } },
+            onDismissRequest = { trustNewCertDialogProfile = null }
+        )
+    }
 
     AppModalBottomSheet(
         title = editingProfile?.name.let {
@@ -80,7 +112,10 @@ fun APIProfileSheet(
         },
         sheetState = sheetState
     ) {
-        Column(Modifier.padding(horizontal = 8.dp)) {
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             OutlinedTextField(
                 value = apiViewModel.profileSheetName,
                 onValueChange = { apiViewModel.profileSheetName = it },
@@ -104,7 +139,7 @@ fun APIProfileSheet(
                 },
                 supportingText = {
                     Text(stringResource(
-                        if (isNameUnique) R.string.api_profiles_add_endpointsURL_info
+                        if (isURLUnique) R.string.api_profiles_add_endpointsURL_info
                         else R.string.api_profiles_add_endpointsURL_alreadyExists
                     ))
                 },
@@ -137,6 +172,43 @@ fun APIProfileSheet(
                 else PasswordVisualTransformation(),
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
+            OutlinedTextField(
+                value = apiViewModel.profileSheetTrustedSha256,
+                onValueChange = { apiViewModel.profileSheetTrustedSha256 = it },
+                label = { Text(stringResource(R.string.api_profiles_add_sha256)) },
+                leadingIcon = {
+                    Icon(Icons.Default.VerifiedUser, null)
+                },
+                supportingText = {
+                    Text(stringResource(
+                        if (isEndpointUnsecure) R.string.api_profiles_add_sha256_notHttps else R.string.api_profiles_add_sha256_info
+                    ))
+                },
+                enabled = !isEndpointUnsecure,
+                readOnly = fetching,
+                modifier = Modifier.animateContentSize().fillMaxWidth()
+            )
+
+            FadeVisibility(
+                visible = isEndpointUnsecure
+            ) {
+                Card(Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 16.dp).size(32.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.api_ssl_trustNew_notSecure),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
 
             Crossfade(
                 targetState = valid,
@@ -151,21 +223,15 @@ fun APIProfileSheet(
                         val profile = APIProfile(
                             name = apiViewModel.profileSheetName,
                             endpointsURL = apiViewModel.profileSheetEndpointsURL,
-                            authorization = apiViewModel.profileSheetAuthorization
+                            authorization = apiViewModel.profileSheetAuthorization,
+                            trustedSha256 = apiViewModel.profileSheetTrustedSha256.ifBlank { null }
                         )
                         scope.launch {
                             fetching = true
                             apiViewModel.fetchAPIEndpoints(profile)
                             val error = apiViewModel.profileErrors[profile.id]
                             if (error != null) apiViewModel.topToastState.showErrorToast(error, androidToast = true)
-                            else {
-                                if (editingProfile != null) apiViewModel.updateProfile(editingProfile, profile)
-                                else apiViewModel.apiProfiles.add(profile)
-                                apiViewModel.saveProfiles()
-                                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
-                                sheetState.hide()
-                                apiViewModel.clearProfileSheetState()
-                            }
+                            else trustNewCertDialogProfile = profile
                             fetching = false
                         }
                     }
