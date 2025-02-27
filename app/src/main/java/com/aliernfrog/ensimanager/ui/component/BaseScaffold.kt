@@ -71,7 +71,7 @@ fun BaseScaffold(
     val destinations = apiViewModel.chosenProfile?.cache?.endpoints?.let { endpoints ->
         Destination.entries.filter { it.isAvailableInEndpoints?.invoke(endpoints) != false }
     }.orEmpty()
-    val mainDestinations = remember { destinations.filter { it.showInNavigationBar } }
+    val mainDestinations = destinations.filter { it.showInNavigationBar }
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentDestination = destinations.find { it.route == currentRoute }
 
