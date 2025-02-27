@@ -83,11 +83,11 @@ fun MainScreen(
                 }
             }
 
-            composable(Destination.CHAT.route) {
+            composable(Destination.STRINGS.route) {
                 APIGate(
                     onNavigateSettingsRequest = onNavigateSettingsRequest
                 ) {
-                    ChatScreen(
+                    StringsScreen(
                         onNavigateSettingsRequest = onNavigateSettingsRequest
                     )
                 }

@@ -30,15 +30,15 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
+import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddWordSheet(
-    chatViewModel: ChatViewModel = koinViewModel(),
-    state: SheetState = chatViewModel.addWordSheetState
+fun AddStringSheet(
+    stringsViewModel: StringsViewModel = koinViewModel(),
+    state: SheetState = stringsViewModel.addStringSheetState
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
@@ -52,14 +52,14 @@ fun AddWordSheet(
     }
 
     AppModalBottomSheet(
-        title = stringResource(R.string.chat_add)
-            .replace("{CATEGORY}", chatViewModel.currentCategory?.title?.lowercase() ?:  ""),
+        title = stringResource(R.string.strings_add)
+            .replace("{CATEGORY}", stringsViewModel.currentCategory?.title?.lowercase() ?:  ""),
         sheetState = state
     ) {
         OutlinedTextField(
-            value = chatViewModel.addWordInput,
-            onValueChange = { chatViewModel.addWordInput = it },
-            placeholder = { Text(stringResource(R.string.chat_add_placeholder)) },
+            value = stringsViewModel.addStringInput,
+            onValueChange = { stringsViewModel.addStringInput = it },
+            placeholder = { Text(stringResource(R.string.strings_add_placeholder)) },
             modifier = Modifier
                 .animateContentSize()
                 .fillMaxWidth()
@@ -73,9 +73,9 @@ fun AddWordSheet(
                 horizontal = 8.dp
             )
         ) {
-            Crossfade(chatViewModel.addWordInput.isNotBlank()) { enabled ->
+            Crossfade(stringsViewModel.addStringInput.isNotBlank()) { enabled ->
                 OutlinedButton(
-                    onClick = { chatViewModel.addWordInput = "" },
+                    onClick = { stringsViewModel.addStringInput = "" },
                     enabled = enabled
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.Default.Clear))
@@ -85,12 +85,12 @@ fun AddWordSheet(
 
             Button(
                 onClick = { scope.launch {
-                    chatViewModel.addWordFromInput()
+                    stringsViewModel.addStringFromInput()
                     state.hide()
                 } }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Rounded.Done))
-                Text(stringResource(R.string.chat_add_confirm))
+                Text(stringResource(R.string.strings_add_confirm))
             }
         }
     }

@@ -10,7 +10,7 @@ val viewModelModule = module {
     singleOf(::APIViewModel)
 
     singleOf(::DashboardViewModel)
-    singleOf(::ChatViewModel)
+    singleOf(::StringsViewModel)
     singleOf(::LogsViewModel)
     singleOf(::SettingsViewModel)
 }

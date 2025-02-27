@@ -25,7 +25,7 @@ import com.google.gson.Gson
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
-class ChatViewModel(
+class StringsViewModel(
     context: Context,
     private val topToastState: TopToastState,
     private val apiViewModel: APIViewModel,
@@ -33,15 +33,15 @@ class ChatViewModel(
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val lazyListState = LazyListState()
-    val addWordSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
+    val addStringSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
     val wordSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
     var filter by mutableStateOf("")
-    var addWordInput by mutableStateOf("")
+    var addStringInput by mutableStateOf("")
     val isFetching get() = apiViewModel.isChosenProfileFetching
 
-    var chosenWord by mutableStateOf("")
-    var chosenWordType by mutableStateOf<String?>(null)
+    var chosenString by mutableStateOf("")
+    var chosenStringCategory by mutableStateOf<String?>(null)
 
     var categories by mutableStateOf(listOf<APIChatCategory>())
         private set
@@ -60,38 +60,38 @@ class ChatViewModel(
         }
     }
 
-    suspend fun fetchCategories() {
+    suspend fun fetchStrings() {
         try {
-            val response = apiViewModel.chosenProfile?.doRequest({ it.getChatCategories })
+            val response = apiViewModel.chosenProfile?.doRequest({ it.getStrings })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
             categories = gson.fromJson(response.responseBody, Array<APIChatCategory>::class.java).toList()
         } catch (e: Exception) {
-            Log.e(TAG, "fetchCategories: ", e)
-            topToastState.showErrorToast(R.string.chat_couldntFetch)
+            Log.e(TAG, "fetchStrings: ", e)
+            topToastState.showErrorToast(R.string.strings_couldntFetch)
         }
     }
 
     suspend fun deleteChosenWord() {
         val json = JSONObject()
-            .put("category", chosenWordType)
-            .put("string", chosenWord)
-        val response = apiViewModel.chosenProfile?.doRequest({ it.deleteChatCategory }, json)
+            .put("category", chosenStringCategory)
+            .put("string", chosenString)
+        val response = apiViewModel.chosenProfile?.doRequest({ it.deleteString }, json)
         topToastState.toastSummary(response)
-        fetchCategories()
+        fetchStrings()
     }
 
-    suspend fun addWordFromInput() {
+    suspend fun addStringFromInput() {
         val json = JSONObject()
             .put("category", currentCategory?.id)
-            .put("string", addWordInput)
-        val response = apiViewModel.chosenProfile?.doRequest({ it.addChatCategory }, json)
+            .put("string", addStringInput)
+        val response = apiViewModel.chosenProfile?.doRequest({ it.addString }, json)
         topToastState.toastSummary(response)
-        fetchCategories()
+        fetchStrings()
     }
 
-    suspend fun showWordSheet(word: String) {
-        chosenWord = word
-        chosenWordType = currentCategory?.id
+    suspend fun showStringSheet(string: String) {
+        chosenString = string
+        chosenStringCategory = currentCategory?.id
         wordSheetState.show()
     }
 }

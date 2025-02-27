@@ -18,6 +18,7 @@ import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.APIProfileCache
+import com.aliernfrog.ensimanager.data.api.DEPRECATED_ENDPOINTS
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
@@ -34,6 +35,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 class APIViewModel(
@@ -143,9 +145,12 @@ class APIViewModel(
                     userAgent = userAgent
                 )
                 if (response.isSuccessful) {
-                    val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)?.copy(
-                        sslPublicKey = response.certSha256
-                    )
+                    val endpoints = response.responseBody.let { body ->
+                        gson.fromJson(body, APIEndpoints::class.java)?.copy(
+                            sslPublicKey = response.certSha256,
+                            deprecatedEndpoints = findDeprecatedEndpoints(body.orEmpty())
+                        )
+                    }
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it
                     } ?: {
@@ -172,6 +177,15 @@ class APIViewModel(
         }
         fetchingProfiles.remove(profile.id)
         return res
+    }
+
+    private fun findDeprecatedEndpoints(jsonString: String): Map<String, String> = try {
+        val json = JSONObject(jsonString)
+        DEPRECATED_ENDPOINTS.filter { (old, new) ->
+            json.has(old) && !json.has(new)
+        }
+    } catch (_: Exception) {
+        emptyMap()
     }
 
     fun getProfileCache(profile: APIProfile): APIProfileCache? {

@@ -18,27 +18,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.viewmodel.ChatViewModel
+import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WordSheet(
-    chatViewModel: ChatViewModel = koinViewModel(),
-    state: SheetState = chatViewModel.wordSheetState
+fun StringSheet(
+    stringsViewModel: StringsViewModel = koinViewModel(),
+    state: SheetState = stringsViewModel.wordSheetState
 ) {
     val scope = rememberCoroutineScope()
 
     AppModalBottomSheet(sheetState = state) {
         Text(
-            text = chatViewModel.chosenWordType?.replaceFirstChar { it.uppercase() } ?: "",
+            text = stringsViewModel.chosenStringCategory?.replaceFirstChar { it.uppercase() } ?: "",
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         SelectionContainer(Modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = chatViewModel.chosenWord
+                text = stringsViewModel.chosenString
             )
         }
         HorizontalDivider(
@@ -47,13 +47,13 @@ fun WordSheet(
         )
         Button(
             onClick = { scope.launch {
-                chatViewModel.deleteChosenWord()
+                stringsViewModel.deleteChosenWord()
                 state.hide()
             } },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
-            Text(stringResource(R.string.chat_remove))
+            Text(stringResource(R.string.strings_remove))
         }
     }
 }
