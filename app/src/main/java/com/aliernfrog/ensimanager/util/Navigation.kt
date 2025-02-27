@@ -11,6 +11,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.data.api.APIEndpoints
 
 object NavigationConstant {
     val INITIAL_DESTINATION = Destination.DASHBOARD.route
@@ -23,27 +24,37 @@ enum class Destination(
     val vectorOutlined: ImageVector? = null,
     val showInNavigationBar: Boolean = true,
     val showNavigationBar: Boolean = showInNavigationBar,
-    val hasNotification: MutableState<Boolean> = mutableStateOf(false)
+    val hasNotification: MutableState<Boolean> = mutableStateOf(false),
+    val isAvailableInEndpoints: ((APIEndpoints) -> Boolean)? = null
 ) {
     DASHBOARD(
         route = "dashboard",
         labelId = R.string.dashboard,
         vectorFilled = Icons.Default.Dashboard,
-        vectorOutlined = Icons.Outlined.Dashboard
+        vectorOutlined = Icons.Outlined.Dashboard,
+        isAvailableInEndpoints = {
+            it.getDashboard != null
+        }
     ),
 
     CHAT(
         route = "chat",
         labelId = R.string.chat,
         vectorFilled = Icons.AutoMirrored.Filled.Chat,
-        vectorOutlined = Icons.AutoMirrored.Outlined.Chat
+        vectorOutlined = Icons.AutoMirrored.Outlined.Chat,
+        isAvailableInEndpoints = {
+            it.getChatCategories != null
+        }
     ),
 
     LOGS(
         route = "logs",
         labelId = R.string.logs,
         vectorFilled = Icons.AutoMirrored.Filled.Notes,
-        vectorOutlined = Icons.AutoMirrored.Outlined.Notes
+        vectorOutlined = Icons.AutoMirrored.Outlined.Notes,
+        isAvailableInEndpoints = {
+            it.getLogs != null
+        }
     ),
 
     API_PROFILES(

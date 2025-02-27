@@ -48,8 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.data.api.cache
+import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.extension.set
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -59,18 +62,23 @@ fun BaseScaffold(
         paddingValues: PaddingValues
     ) -> Unit
 ) {
+    val apiViewModel = koinViewModel<APIViewModel>()
+
     val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
-    val destinations = remember { Destination.entries.toList() }
+    val destinations = apiViewModel.chosenProfile?.cache?.endpoints?.let { endpoints ->
+        Destination.entries.filter { it.isAvailableInEndpoints?.invoke(endpoints) != false }
+    }.orEmpty()
     val mainDestinations = remember { destinations.filter { it.showInNavigationBar } }
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentDestination = destinations.find { it.route == currentRoute }
 
     val windowSizeClass = calculateWindowSizeClass(context as Activity)
+    val showNavigationBars = currentDestination?.showNavigationBar != false && mainDestinations.isNotEmpty()
     val showNavigationRail: Boolean? = if (mainDestinations.size <= 1) null
-    else currentDestination?.showNavigationBar != false && windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+    else windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
     var sideBarWidth by remember { mutableStateOf(0.dp) }
 
     fun isDestinationSelected(destination: Destination): Boolean {
@@ -97,7 +105,7 @@ fun BaseScaffold(
         bottomBar = {
             if (showNavigationRail == false) BottomBar(
                 destinations = mainDestinations,
-                currentDestination = currentDestination,
+                showNavigationBars = showNavigationBars,
                 isDestinationSelected = ::isDestinationSelected,
                 onNavigateRequest = { changeDestination(it) }
             )
@@ -116,7 +124,7 @@ fun BaseScaffold(
 
     if (showNavigationRail == true) SideBarRail(
         destinations = mainDestinations,
-        currentDestination = currentDestination,
+        showNavigationBars = showNavigationBars,
         isDestinationSelected = ::isDestinationSelected,
         onWidthChange = { sideBarWidth = toDp(it) },
         onNavigateRequest = { changeDestination(it) }
@@ -131,12 +139,12 @@ fun BaseScaffold(
 @Composable
 private fun BottomBar(
     destinations: List<Destination>,
-    currentDestination: Destination?,
+    showNavigationBars: Boolean,
     isDestinationSelected: (Destination) -> Boolean,
     onNavigateRequest: (Destination) -> Unit
 ) {
     AnimatedVisibility(
-        visible = currentDestination?.showNavigationBar != false,
+        visible = showNavigationBars,
         enter = slideInVertically(animationSpec = tween(durationMillis = 150), initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(animationSpec = tween(durationMillis = 150), targetOffsetY = { it }) + fadeOut()
     ) {
@@ -166,13 +174,13 @@ private fun BottomBar(
 @Composable
 private fun SideBarRail(
     destinations: List<Destination>,
-    currentDestination: Destination?,
+    showNavigationBars: Boolean,
     isDestinationSelected: (Destination) -> Boolean,
     onWidthChange: (Int) -> Unit,
     onNavigateRequest: (Destination) -> Unit
 ) {
     AnimatedVisibility(
-        visible = currentDestination?.showNavigationBar != false,
+        visible = showNavigationBars,
         enter = slideInHorizontally(animationSpec = tween(durationMillis = 150), initialOffsetX = { -it }) + fadeIn(),
         exit = slideOutHorizontally(animationSpec = tween(durationMillis = 150), targetOffsetX = { -it }) + fadeOut()
     ) {
