@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import com.aliernfrog.ensimanager.BuildConfig
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
@@ -40,6 +41,7 @@ class MainViewModel(
     val prefs: PreferenceManager
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
+    var navController: NavHostController? = null
 
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
