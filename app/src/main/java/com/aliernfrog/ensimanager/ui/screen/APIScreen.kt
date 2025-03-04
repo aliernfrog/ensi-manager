@@ -274,7 +274,7 @@ private fun ProfileCard(
         }
 
         profileCache?.endpoints?.deprecatedEndpoints?.let {
-            TextWithIcon(
+            if (it.isNotEmpty()) TextWithIcon(
                 text = stringResource(R.string.api_profiles_deprecations)+"\n"+
                         it.map { (old, new) -> "$old -> $new" }.joinToString("\n"),
                 icon = rememberVectorPainter(Icons.Default.Warning),
