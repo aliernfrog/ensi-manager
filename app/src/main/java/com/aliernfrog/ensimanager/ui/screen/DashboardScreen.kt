@@ -182,14 +182,15 @@ private fun ScreenContent(
                         }
                         .coroutineContext(Dispatchers.IO)
                         .build()
-                ) }
-            ) {
-                if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
-                else scope.launch {
-                    val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
-                    dashboardViewModel.topToastState.toastSummary(response)
-                }
-            }
+                ) },
+                onClick = action.endpoint?.let { {
+                    if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
+                    else scope.launch {
+                        val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
+                        dashboardViewModel.topToastState.toastSummary(response)
+                    }
+                } }
+            )
         } }
 
         VerticalSegmentor(

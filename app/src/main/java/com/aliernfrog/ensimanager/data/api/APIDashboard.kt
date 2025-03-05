@@ -18,5 +18,5 @@ data class APIDashboardAction(
     val description: String?,
     val icon: String?,
     val destructive: Boolean = false,
-    val endpoint: APIEndpoint
+    val endpoint: APIEndpoint?
 )
