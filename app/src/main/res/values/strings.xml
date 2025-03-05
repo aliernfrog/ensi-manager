@@ -17,7 +17,7 @@
     <string name="api_profiles_restoreError">Failed to restore saved profiles</string>
     <string name="api_profiles_migratedFromV2">Migrated from v2</string>
     <string name="api_profiles_empty">No profiles found</string>
-    <string name="api_profiles_deprecations">Following endpoints are deprecated and needs to be renamed:</string>
+    <string name="api_profiles_deprecations">Following endpoints are deprecated and need to be renamed:</string>
     <string name="api_profiles_migrated">This API has migrated to {URL}</string>
     <string name="api_profiles_migrated_migrate">Migrate</string>
     <string name="api_profiles_sha256fail">Previously trusted SHA-256 no longer matches, someone might be trying to impersonate the server!\nIf you are aware of a certificate change, edit and save the profile to trust the new certificate</string>
