@@ -34,7 +34,7 @@ fun FormRow(
     iconColorFilter: ColorFilter? = ColorFilter.tint(contentColor),
     iconSize: Dp = 24.dp,
     interactionSource: MutableInteractionSource? = null,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     content: @Composable () -> Unit
 ) {
     Row(
@@ -43,11 +43,13 @@ fun FormRow(
             .fillMaxWidth()
             .clip(shape)
             .background(containerColor)
-            .clickableWithColor(
-                color = contentColor,
-                interactionSource = interactionSource,
-                onClick = onClick
-            )
+            .let {
+                if (onClick != null) it.clickableWithColor(
+                    color = contentColor,
+                    interactionSource = interactionSource,
+                    onClick = onClick
+                ) else it
+            }
             .padding(end = 9.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

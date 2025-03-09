@@ -18,10 +18,16 @@ import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.APIProfileCache
+import com.aliernfrog.ensimanager.data.api.DEPRECATED_ENDPOINTS
+import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
+import com.aliernfrog.ensimanager.di.getKoinInstance
+import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.NavigationConstant
+import com.aliernfrog.ensimanager.util.extension.set
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
@@ -34,6 +40,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 class APIViewModel(
@@ -67,6 +74,15 @@ class APIViewModel(
         get() = _chosenProfile
         set(value) {
             _chosenProfile = value
+            value?.cache?.availableDestinations?.let { availableDestinations ->
+                val mainViewModel = getKoinInstance<MainViewModel>()
+                val currentRoute = mainViewModel.navController?.currentDestination?.route
+                val currentDestination = Destination.entries.find { it.route == currentRoute }
+                val isScreenAvailable = availableDestinations.contains(currentDestination)
+                if (!isScreenAvailable) availableDestinations.firstOrNull()?.let {
+                    mainViewModel.navController?.set(it)
+                } ?: mainViewModel.navController?.set(NavigationConstant.INITIAL_DESTINATION)
+            }
             onProfileSwitchListeners.forEach {
                 it(value)
             }
@@ -143,18 +159,28 @@ class APIViewModel(
                     userAgent = userAgent
                 )
                 if (response.isSuccessful) {
-                    val endpoints = gson.fromJson(response.responseBody, APIEndpoints::class.java)?.copy(
-                        sslPublicKey = response.certSha256
-                    )
+                    val endpoints = response.responseBody.let { body ->
+                        gson.fromJson(body, APIEndpoints::class.java)?.copy(
+                            sslPublicKey = response.certSha256,
+                            deprecatedEndpoints = findDeprecatedEndpoints(body.orEmpty())
+                        )
+                    }
+                    val availableDestinations = Destination.entries.filter { dest ->
+                        endpoints?.let {
+                            dest.isAvailableInEndpoints?.invoke(it) != false
+                        } == true
+                    }
                     endpoints?.migration?.url?.let {
                         profileMigrations[profile.id] = it
                     } ?: {
                         profileMigrations.remove(profile.id)
                     }
                     cache[profile.id] = cache[profile.id]?.copy(
-                        endpoints = endpoints
+                        endpoints = endpoints,
+                        availableDestinations = availableDestinations
                     ) ?: APIProfileCache(
-                        endpoints = endpoints
+                        endpoints = endpoints,
+                        availableDestinations = availableDestinations
                     )
                     profileErrors.remove(profile.id)
                     return@withContext endpoints
@@ -172,6 +198,15 @@ class APIViewModel(
         }
         fetchingProfiles.remove(profile.id)
         return res
+    }
+
+    private fun findDeprecatedEndpoints(jsonString: String): Map<String, String> = try {
+        val json = JSONObject(jsonString)
+        DEPRECATED_ENDPOINTS.filter { (old, new) ->
+            json.has(old) && !json.has(new)
+        }
+    } catch (_: Exception) {
+        emptyMap()
     }
 
     fun getProfileCache(profile: APIProfile): APIProfileCache? {

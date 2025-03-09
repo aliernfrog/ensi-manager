@@ -16,5 +16,12 @@ fun NavController.popBackStackSafe(onNoBackStack: () -> Unit = {}) {
  * Navigates to given [destination] and removes previous destinations from back stack.
  */
 fun NavController.set(destination: Destination) {
-    navigate(destination.route) { popUpTo(0) }
+    set(destination.route)
+}
+
+/**
+ * Navigates to given [route] and removes previous destinations from back stack.
+ */
+fun NavController.set(route: String) {
+    navigate(route) { popUpTo(0) }
 }

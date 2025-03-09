@@ -35,7 +35,7 @@ fun ButtonRow(
         else contentColorFor(containerColor),
     iconColorFilter: ColorFilter? = ColorFilter.tint(contentColor),
     iconSize: Dp = 24.dp,
-    onClick: () -> Unit
+    onClick: (() -> Unit)?
 ) {
     val animatedRotation = animateFloatAsState(arrowRotation)
     FormRow(

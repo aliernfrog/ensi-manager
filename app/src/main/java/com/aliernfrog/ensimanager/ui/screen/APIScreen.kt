@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -265,6 +266,18 @@ private fun ProfileCard(
             TextWithIcon(
                 text = it,
                 icon = rememberVectorPainter(Icons.AutoMirrored.Filled.SpeakerNotes),
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp
+                )
+            )
+        }
+
+        profileCache?.endpoints?.deprecatedEndpoints?.let {
+            if (it.isNotEmpty()) TextWithIcon(
+                text = stringResource(R.string.api_profiles_deprecations)+"\n"+
+                        it.map { (old, new) -> "$old -> $new" }.joinToString("\n"),
+                icon = rememberVectorPainter(Icons.Default.Warning),
                 modifier = Modifier.padding(
                     horizontal = 16.dp,
                     vertical = 8.dp

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 
 @Composable
-fun Word(word: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun StringsScreenElement(string: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Row(
         modifier = modifier.fillMaxWidth()
             .padding(8.dp)
@@ -25,6 +25,6 @@ fun Word(word: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(word, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(string, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
