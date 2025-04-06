@@ -22,7 +22,7 @@ fun SecurityPage(
     apiViewModel: APIViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
-    val dataEncrypted = apiViewModel.dataEncryptionEnabled
+    val encryptionEnabled = apiViewModel.dataEncryptionEnabled
 
     SettingsPageContainer(
         title = stringResource(R.string.settings_security),
@@ -31,7 +31,7 @@ fun SecurityPage(
         SwitchRow(
             title = stringResource(R.string.settings_security_encryption),
             description = stringResource(R.string.settings_security_encryption_description),
-            checked = dataEncrypted,
+            checked = encryptionEnabled,
             shape = AppComponentShape,
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -43,7 +43,7 @@ fun SecurityPage(
         ButtonRow(
             title = stringResource(R.string.settings_security_changePassword),
             painter = rememberVectorPainter(Icons.Default.Password),
-            enabled = dataEncrypted
+            enabled = encryptionEnabled
         ) {
             apiViewModel.showEncryptionDialog = true
         }
@@ -51,7 +51,7 @@ fun SecurityPage(
         SwitchRow(
             title = stringResource(R.string.settings_security_biometrics),
             painter = rememberVectorPainter(Icons.Default.Fingerprint),
-            enabled = dataEncrypted,
+            enabled = encryptionEnabled,
             checked = false //TODO
         ) {
             /* TODO */

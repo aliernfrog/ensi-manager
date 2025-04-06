@@ -76,7 +76,7 @@ class APIViewModel(
     private var encryptedData: EncryptedData? = null
     private var encryptionPassword: String? = null
     val dataEncryptionEnabled: Boolean
-        get() = encryptedData != null
+        get() = encryptedData != null || encryptionPassword != null
     val dataDecrypted: Boolean
         get() = !dataEncryptionEnabled || encryptionPassword != null
 
@@ -266,7 +266,7 @@ class APIViewModel(
     fun saveProfiles() {
         encryptionPassword.let { password ->
             var json = gson.toJson(apiProfiles)
-            if (dataEncryptionEnabled && password != null) {
+            if (password != null) {
                 val encrypted = CryptoUtil.encrypt(json, password)
                 json = gson.toJson(encrypted)
             }
