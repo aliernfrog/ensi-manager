@@ -55,7 +55,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -364,7 +363,6 @@ private fun ProfileCard(
     }
 }
 
-@Preview
 @Composable
 fun EncryptionCard(
     modifier: Modifier = Modifier
@@ -378,7 +376,8 @@ fun EncryptionCard(
             ) {
                 Text(stringResource(R.string.api_profiles_encrypt_do))
             }
-        }
+        },
+        modifier = modifier
     ) {
         Text(stringResource(R.string.api_profiles_encrypt_description))
     }
