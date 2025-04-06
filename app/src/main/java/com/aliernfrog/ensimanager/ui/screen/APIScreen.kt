@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EnhancedEncryption
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
@@ -145,6 +146,14 @@ fun APIProfilesScreen(
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     ) {
         LazyColumn(Modifier.fillMaxSize()) {
+            if (apiViewModel.dataEncryptionEnabled && !apiViewModel.dataDecrypted) item {
+                DecryptionCard(
+                    onDecryptRequest = {
+                        apiViewModel.showDecryptionDialog = true
+                    }
+                )
+            }
+
             if (apiViewModel.apiProfiles.isEmpty()) item {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -166,7 +175,7 @@ fun APIProfilesScreen(
                         Text(stringResource(R.string.api_profiles_add))
                     }
                 }
-            } else if (!apiViewModel.dataEncrypted && !apiViewModel.prefs.encryptionSuggestionDismissed.value) item {
+            } else if (!apiViewModel.dataEncryptionEnabled && !apiViewModel.prefs.encryptionSuggestionDismissed.value) item {
                 EncryptionCard(
                     onDismissRequest = {
                         apiViewModel.prefs.encryptionSuggestionDismissed.value = true
@@ -399,5 +408,27 @@ fun EncryptionCard(
         modifier = modifier
     ) {
         Text(stringResource(R.string.api_profiles_encrypt_description))
+    }
+}
+
+@Composable
+fun DecryptionCard(
+    onDecryptRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CardWithActions(
+        title = stringResource(R.string.api_crypto_decrypt),
+        icon = rememberVectorPainter(Icons.Default.LockOpen),
+        buttons = {
+            Button(
+                onClick = onDecryptRequest
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
+                Text(stringResource(R.string.api_crypto_decrypt_do))
+            }
+        },
+        modifier = modifier
+    ) {
+        Text(stringResource(R.string.api_crypto_decrypt_description))
     }
 }

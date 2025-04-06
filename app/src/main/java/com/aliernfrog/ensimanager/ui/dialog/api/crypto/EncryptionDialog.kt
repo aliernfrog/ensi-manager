@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.dialog.api
+package com.aliernfrog.ensimanager.ui.dialog.api.crypto
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +32,7 @@ import com.aliernfrog.ensimanager.R
 @Composable
 fun EncryptionDialog(
     onDismissRequest: () -> Unit,
-    onEncryptRequest: (password: String) -> Unit,
+    onEncryptRequest: (password: String) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -45,8 +45,8 @@ fun EncryptionDialog(
             Button(
                 onClick = {
                     encrypting = true
-                    onEncryptRequest(password)
-                    onDismissRequest()
+                    if (onEncryptRequest(password)) onDismissRequest()
+                    encrypting = false
                 },
                 enabled = !encrypting
             ) {

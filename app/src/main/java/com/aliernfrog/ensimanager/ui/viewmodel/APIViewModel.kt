@@ -31,6 +31,8 @@ import com.aliernfrog.ensimanager.util.extension.set
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
+import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
+import com.aliernfrog.ensimanager.util.staticutil.EncryptedData
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
@@ -69,8 +71,14 @@ class APIViewModel(
     var profileSheetTrustedSha256 by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
 
-    var dataEncrypted by mutableStateOf(false)
     var showEncryptionDialog by mutableStateOf(false)
+    var showDecryptionDialog by mutableStateOf(false)
+    private var encryptedData: EncryptedData? = null
+    private var encryptionPassword: String? = null
+    val dataEncryptionEnabled: Boolean
+        get() = encryptedData != null
+    val dataDecrypted: Boolean
+        get() = !dataEncryptionEnabled || encryptionPassword != null
 
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
     var chosenProfile: APIProfile?
@@ -102,14 +110,7 @@ class APIViewModel(
         get() = chosenProfile?.isAvailable ?: false
 
     init {
-        try {
-            apiProfiles.addAll(
-                gson.fromJson(prefs.apiProfiles.value, Array<APIProfile>::class.java)
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load API profiles", e)
-            topToastState.showErrorToast(R.string.api_profiles_restoreError)
-        }
+        loadAPIProfiles()
 
         @Suppress("DEPRECATION")
         if (prefs.legacyAPIURL.value.isNotBlank()) {
@@ -138,6 +139,43 @@ class APIViewModel(
                     prefs.lastActiveAPIProfileId.value = it?.id.toString()
                 }
         }
+    }
+
+    private fun loadAPIProfiles() {
+        val profilesData = prefs.apiProfiles.value
+        if (profilesData.isBlank()) return
+        try {
+            apiProfiles.addAll(
+                gson.fromJson(profilesData, Array<APIProfile>::class.java)
+            )
+        } catch (_: Exception) {
+            try {
+                // Might be encrypted, ask user for password if so
+                encryptedData = gson.fromJson(profilesData, EncryptedData::class.java)
+                showDecryptionDialog = true
+            } catch (e: Exception) {
+                // Broken data
+                Log.e(TAG, "Failed to load API profiles", e)
+                topToastState.showErrorToast(R.string.api_profiles_restoreError)
+            }
+        }
+    }
+
+    fun decryptAPIProfilesAndLoad(password: String): Array<APIProfile>? {
+        try {
+            encryptedData?.let {
+                val decrypted = CryptoUtil.decrypt(it, password)
+                val array = gson.fromJson(decrypted, Array<APIProfile>::class.java)
+                encryptionPassword = password
+                apiProfiles.addAll(array)
+                return array
+            }
+        } catch (e: Exception) {
+            // The password is wrong, or the data is broken. Ask for a password again
+            topToastState.showErrorToast(R.string.api_crypto_decrypt_fail, androidToast = true)
+            showDecryptionDialog = true
+        }
+        return null
     }
 
     suspend fun refetchAllProfiles() {
@@ -212,6 +250,10 @@ class APIViewModel(
         emptyMap()
     }
 
+    fun setEncryptionPassword(password: String) {
+        encryptionPassword = password
+    }
+
     fun getProfileCache(profile: APIProfile): APIProfileCache? {
         return cache[profile.id]
     }
@@ -222,8 +264,14 @@ class APIViewModel(
     }
 
     fun saveProfiles() {
-        val json = gson.toJson(apiProfiles)
-        prefs.apiProfiles.value = json
+        encryptionPassword.let { password ->
+            var json = gson.toJson(apiProfiles)
+            if (dataEncryptionEnabled && password != null) {
+                val encrypted = CryptoUtil.encrypt(json, password)
+                json = gson.toJson(encrypted)
+            }
+            prefs.apiProfiles.value = json
+        }
     }
 
     suspend fun openProfileSheetToAddNew() {

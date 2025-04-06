@@ -53,7 +53,7 @@ import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.component.FadeVisibility
 import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
-import com.aliernfrog.ensimanager.ui.dialog.api.togglePasswordVisibilityText
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.togglePasswordVisibilityText
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast

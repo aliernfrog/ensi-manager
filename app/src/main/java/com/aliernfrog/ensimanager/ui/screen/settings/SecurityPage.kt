@@ -22,7 +22,7 @@ fun SecurityPage(
     apiViewModel: APIViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
-    val dataEncrypted = apiViewModel.dataEncrypted
+    val dataEncrypted = apiViewModel.dataEncryptionEnabled
 
     SettingsPageContainer(
         title = stringResource(R.string.settings_security),
@@ -45,7 +45,7 @@ fun SecurityPage(
             painter = rememberVectorPainter(Icons.Default.Password),
             enabled = dataEncrypted
         ) {
-            /* TODO */
+            apiViewModel.showEncryptionDialog = true
         }
 
         SwitchRow(

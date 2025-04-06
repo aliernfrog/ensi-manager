@@ -48,6 +48,10 @@
     <string name="api_profiles_settings">Settings</string>
     <string name="api_profiles_settings_rememberLast">Remember last chosen profile</string>
     <string name="api_profiles_settings_rememberLast_description">Automatically select last chosen profile on app launch</string>
+    <string name="api_crypto_decrypt">Decrypt Ensi Manager</string>
+    <string name="api_crypto_decrypt_description">Your profiles are encrypted, decrypt to access them</string>
+    <string name="api_crypto_decrypt_do">Decrypt</string>
+    <string name="api_crypto_decrypt_fail">Failed to decrypt data, wrong password?</string>
     <string name="api_ssl_trust">Trust</string>
     <string name="api_ssl_trustNew_text">This profile\'s certificate SHA-256 is</string>
     <string name="api_ssl_trustNew_q">Trust this certificate?</string>

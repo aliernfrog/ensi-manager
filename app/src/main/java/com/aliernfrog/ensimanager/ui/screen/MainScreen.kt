@@ -18,7 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
-import com.aliernfrog.ensimanager.ui.dialog.api.EncryptionDialog
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.DecryptionDialog
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.EncryptionDialog
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
@@ -129,8 +130,16 @@ fun MainScreen(
 
     if (apiViewModel.showEncryptionDialog) EncryptionDialog(
         onDismissRequest = { apiViewModel.showEncryptionDialog = false },
-        onEncryptRequest = {
-            /* TODO */
+        onEncryptRequest = { scope.launch {
+            apiViewModel.setEncryptionPassword(it)
+            apiViewModel.saveProfiles()
+        }; true }
+    )
+
+    if (apiViewModel.showDecryptionDialog) DecryptionDialog(
+        onDismissRequest = { apiViewModel.showDecryptionDialog = false },
+        onDecryptRequest = {
+            apiViewModel.decryptAPIProfilesAndLoad(it) != null
         }
     )
 
