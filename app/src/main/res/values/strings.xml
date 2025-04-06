@@ -39,6 +39,9 @@
     <string name="api_profiles_add_sha256_info">If this does not match with the one provided by server, requests will be aborted\nLeave empty to automatically pull from the server</string>
     <string name="api_profiles_add_sha256_notHttps">Only available for HTTPS profiles</string>
     <string name="api_profiles_add_saved">Saved profile</string>
+    <string name="api_profiles_encrypt">Encrypt Ensi Manager</string>
+    <string name="api_profiles_encrypt_description">Encrypt your profiles and authorization details to improve security</string>
+    <string name="api_profiles_encrypt_do">Encrypt</string>
     <string name="api_profiles_settings">Settings</string>
     <string name="api_profiles_settings_rememberLast">Remember last chosen profile</string>
     <string name="api_profiles_settings_rememberLast_description">Automatically select last chosen profile on app launch</string>

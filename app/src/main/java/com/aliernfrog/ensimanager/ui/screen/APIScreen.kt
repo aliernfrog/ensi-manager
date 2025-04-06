@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EnhancedEncryption
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Refresh
@@ -54,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -65,6 +67,7 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.CardWithActions
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
@@ -162,6 +165,8 @@ fun APIProfilesScreen(
                         Text(stringResource(R.string.api_profiles_add))
                     }
                 }
+            } else item {
+                EncryptionCard(Modifier.fillMaxWidth().padding(8.dp))
             }
 
             items(apiViewModel.apiProfiles) { profile ->
@@ -356,5 +361,25 @@ private fun ProfileCard(
                 Text(stringResource(R.string.api_profiles_edit))
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun EncryptionCard(
+    modifier: Modifier = Modifier
+) {
+    CardWithActions(
+        title = stringResource(R.string.api_profiles_encrypt),
+        icon = rememberVectorPainter(Icons.Default.EnhancedEncryption),
+        buttons = {
+            Button(
+                onClick = { /* TODO */ }
+            ) {
+                Text(stringResource(R.string.api_profiles_encrypt_do))
+            }
+        }
+    ) {
+        Text(stringResource(R.string.api_profiles_encrypt_description))
     }
 }
