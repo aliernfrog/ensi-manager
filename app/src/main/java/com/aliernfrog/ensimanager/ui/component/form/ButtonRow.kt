@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -25,6 +26,7 @@ fun ButtonRow(
     modifier: Modifier = Modifier,
     description: String? = null,
     painter: Painter? = null,
+    enabled: Boolean = true,
     expanded: Boolean? = null,
     arrowRotation: Float = if (expanded == true) 0f else 180f,
     trailingComponent: @Composable (() -> Unit)? = null,
@@ -40,7 +42,9 @@ fun ButtonRow(
     val animatedRotation = animateFloatAsState(arrowRotation)
     FormRow(
         title = title,
-        modifier = modifier,
+        modifier = modifier.alpha(
+            if (enabled) 1f else 0.7f
+        ),
         description = description,
         painter = painter,
         shape = shape,
@@ -48,7 +52,7 @@ fun ButtonRow(
         contentColor = contentColor,
         iconColorFilter = iconColorFilter,
         iconSize = iconSize,
-        onClick = onClick
+        onClick = if (enabled) onClick else null
     ) {
         expanded?.let {
             Icon(

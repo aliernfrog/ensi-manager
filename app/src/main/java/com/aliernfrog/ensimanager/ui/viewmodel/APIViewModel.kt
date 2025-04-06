@@ -69,6 +69,9 @@ class APIViewModel(
     var profileSheetTrustedSha256 by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
 
+    var dataEncrypted by mutableStateOf(false)
+    var showEncryptionDialog by mutableStateOf(false)
+
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
     var chosenProfile: APIProfile?
         get() = _chosenProfile

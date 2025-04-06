@@ -18,9 +18,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
+import com.aliernfrog.ensimanager.ui.dialog.api.EncryptionDialog
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
+import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
@@ -31,7 +33,8 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    apiViewModel: APIViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -123,6 +126,13 @@ fun MainScreen(
             }
         }
     }
+
+    if (apiViewModel.showEncryptionDialog) EncryptionDialog(
+        onDismissRequest = { apiViewModel.showEncryptionDialog = false },
+        onEncryptRequest = {
+            /* TODO */
+        }
+    )
 
     APIProfileSwitchSheet(
         onNavigateSettingsRequest = onNavigateSettingsRequest,

@@ -24,5 +24,6 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // Experimental (developer) options
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
     val autoCheckUpdates = booleanPreference("autoUpdates", true)
+    val encryptionSuggestionDismissed = booleanPreference("encryptionSuggestionDismissed", false, experimental = true, includeInDebugInfo = false)
     val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/ensimanager/latest.json", experimental = true, includeInDebugInfo = false)
 }

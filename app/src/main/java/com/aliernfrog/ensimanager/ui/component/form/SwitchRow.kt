@@ -39,9 +39,9 @@ fun SwitchRow(
             if (enabled) it else it.copy(alpha = 0.7f)
         },
         interactionSource = interactionSource,
-        onClick = {
-            if (enabled) onCheckedChange(!checked)
-        }
+        onClick = if (enabled) { {
+            onCheckedChange(!checked)
+        } } else null
     ) {
         Switch(
             checked = checked,

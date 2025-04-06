@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Api
@@ -40,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -164,8 +166,16 @@ fun APIProfilesScreen(
                         Text(stringResource(R.string.api_profiles_add))
                     }
                 }
-            } else item {
-                EncryptionCard(Modifier.fillMaxWidth().padding(8.dp))
+            } else if (!apiViewModel.dataEncrypted && !apiViewModel.prefs.encryptionSuggestionDismissed.value) item {
+                EncryptionCard(
+                    onDismissRequest = {
+                        apiViewModel.prefs.encryptionSuggestionDismissed.value = true
+                    },
+                    onEncryptRequest = {
+                        apiViewModel.showEncryptionDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                )
             }
 
             items(apiViewModel.apiProfiles) { profile ->
@@ -365,15 +375,24 @@ private fun ProfileCard(
 
 @Composable
 fun EncryptionCard(
+    onDismissRequest: () -> Unit,
+    onEncryptRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     CardWithActions(
         title = stringResource(R.string.api_profiles_encrypt),
         icon = rememberVectorPainter(Icons.Default.EnhancedEncryption),
         buttons = {
-            Button(
-                onClick = { /* TODO */ }
+            TextButton(
+                onClick = onDismissRequest
             ) {
+                Text(stringResource(R.string.action_dismiss))
+            }
+
+            Button(
+                onClick = onEncryptRequest
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
                 Text(stringResource(R.string.api_profiles_encrypt_do))
             }
         },
