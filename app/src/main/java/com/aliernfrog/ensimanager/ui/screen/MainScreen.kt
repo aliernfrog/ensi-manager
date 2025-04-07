@@ -138,7 +138,7 @@ fun MainScreen(
         onDismissRequest = { apiViewModel.showEncryptionDialog = false },
         onEncryptRequest = { password, onFinish ->
             scope.launch {
-                apiViewModel.setEncryptionPassword(password)
+                apiViewModel.changeEncryptionPassword(password)
                 apiViewModel.saveProfiles()
                 apiViewModel.showEncryptionDialog = false
                 apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)

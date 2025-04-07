@@ -51,7 +51,7 @@ fun SecurityPage(
             modifier = Modifier.padding(16.dp)
         ) {
             if (encryptionEnabled) {
-                apiViewModel.setEncryptionPassword(null)
+                apiViewModel.changeEncryptionPassword(null)
                 apiViewModel.saveProfiles()
             }
             else apiViewModel.showEncryptionDialog = true

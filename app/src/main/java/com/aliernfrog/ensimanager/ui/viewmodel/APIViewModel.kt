@@ -251,7 +251,7 @@ class APIViewModel(
         emptyMap()
     }
 
-    fun setEncryptionPassword(password: String?) {
+    fun changeEncryptionPassword(password: String?) {
         encryptionPassword = password
         if (password == null) encryptedData = null
     }
