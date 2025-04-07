@@ -150,11 +150,10 @@ fun APIProfilesScreen(
                 DecryptionCard(
                     onDecryptRequest = {
                         apiViewModel.showDecryptionDialog = true
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
                 )
-            }
-
-            if (apiViewModel.apiProfiles.isEmpty()) item {
+            } else if (apiViewModel.apiProfiles.isEmpty()) item {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -389,7 +388,7 @@ fun EncryptionCard(
     modifier: Modifier = Modifier
 ) {
     CardWithActions(
-        title = stringResource(R.string.api_profiles_encrypt),
+        title = stringResource(R.string.api_crypto_encrypt),
         icon = rememberVectorPainter(Icons.Default.EnhancedEncryption),
         buttons = {
             TextButton(
@@ -402,12 +401,12 @@ fun EncryptionCard(
                 onClick = onEncryptRequest
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
-                Text(stringResource(R.string.api_profiles_encrypt_do))
+                Text(stringResource(R.string.api_crypto_encrypt_do))
             }
         },
         modifier = modifier
     ) {
-        Text(stringResource(R.string.api_profiles_encrypt_description))
+        Text(stringResource(R.string.api_crypto_encrypt_description))
     }
 }
 

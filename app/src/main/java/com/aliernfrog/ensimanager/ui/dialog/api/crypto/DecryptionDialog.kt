@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
@@ -32,7 +32,7 @@ import com.aliernfrog.ensimanager.R
 @Composable
 fun DecryptionDialog(
     onDismissRequest: () -> Unit,
-    onDecryptRequest: (password: String) -> Boolean,
+    onDecryptRequest: (password: String, onFinish: () -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -45,8 +45,9 @@ fun DecryptionDialog(
             Button(
                 onClick = {
                     decrypting = true
-                    if (onDecryptRequest(password)) onDismissRequest()
-                    decrypting = false
+                    onDecryptRequest(password) {
+                        decrypting = false
+                    }
                 },
                 enabled = !decrypting
             ) {
@@ -74,7 +75,7 @@ fun DecryptionDialog(
         },
         icon = {
             Icon(
-                imageVector = Icons.Default.Lock,
+                imageVector = Icons.Default.LockOpen,
                 contentDescription = null
             )
         },

@@ -155,19 +155,20 @@ class APIViewModel(
                 showDecryptionDialog = true
             } catch (e: Exception) {
                 // Broken data
-                Log.e(TAG, "Failed to load API profiles", e)
+                Log.e(TAG, "Failed to restore saved profiles", e)
                 topToastState.showErrorToast(R.string.api_profiles_restoreError)
             }
         }
     }
 
-    fun decryptAPIProfilesAndLoad(password: String): Array<APIProfile>? {
+    suspend fun decryptAPIProfilesAndLoad(password: String): Array<APIProfile>? {
         try {
             encryptedData?.let {
                 val decrypted = CryptoUtil.decrypt(it, password)
                 val array = gson.fromJson(decrypted, Array<APIProfile>::class.java)
                 encryptionPassword = password
                 apiProfiles.addAll(array)
+                refetchAllProfiles()
                 return array
             }
         } catch (e: Exception) {

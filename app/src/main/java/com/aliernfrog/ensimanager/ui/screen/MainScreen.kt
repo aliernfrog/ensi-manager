@@ -130,16 +130,24 @@ fun MainScreen(
 
     if (apiViewModel.showEncryptionDialog) EncryptionDialog(
         onDismissRequest = { apiViewModel.showEncryptionDialog = false },
-        onEncryptRequest = { scope.launch {
-            apiViewModel.setEncryptionPassword(it)
-            apiViewModel.saveProfiles()
-        }; true }
+        onEncryptRequest = { password, onFinish ->
+            scope.launch {
+                apiViewModel.setEncryptionPassword(password)
+                apiViewModel.saveProfiles()
+                apiViewModel.showEncryptionDialog = false
+                onFinish()
+            }
+        }
     )
 
     if (apiViewModel.showDecryptionDialog) DecryptionDialog(
         onDismissRequest = { apiViewModel.showDecryptionDialog = false },
-        onDecryptRequest = {
-            apiViewModel.decryptAPIProfilesAndLoad(it) != null
+        onDecryptRequest = { password, onFinish ->
+            scope.launch {
+                val profiles = apiViewModel.decryptAPIProfilesAndLoad(password)
+                if (profiles != null) apiViewModel.showDecryptionDialog = false
+                onFinish()
+            }
         }
     )
 

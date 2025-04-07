@@ -16,10 +16,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Api
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material.icons.outlined.Settings
@@ -235,7 +235,7 @@ enum class SettingsPage(
         id = "security",
         title = R.string.settings_security,
         description = R.string.settings_security_description,
-        icon = Icons.Default.Lock,
+        icon = Icons.Outlined.Lock,
         content = { onNavigateBackRequest, _ ->
             SecurityPage(onNavigateBackRequest = onNavigateBackRequest)
         }

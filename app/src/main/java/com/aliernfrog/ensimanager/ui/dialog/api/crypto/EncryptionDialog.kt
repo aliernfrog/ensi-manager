@@ -1,8 +1,12 @@
 package com.aliernfrog.ensimanager.ui.dialog.api.crypto
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.rounded.Visibility
@@ -16,8 +20,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,12 +38,17 @@ import com.aliernfrog.ensimanager.R
 @Composable
 fun EncryptionDialog(
     onDismissRequest: () -> Unit,
-    onEncryptRequest: (password: String) -> Boolean,
+    onEncryptRequest: (password: String, onFinish: () -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
+    var confirmationPassword by rememberSaveable { mutableStateOf("") }
     var encrypting by rememberSaveable { mutableStateOf(false) }
+
+    val passwordMatches by remember { derivedStateOf {
+        password == confirmationPassword
+    } }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -45,14 +56,15 @@ fun EncryptionDialog(
             Button(
                 onClick = {
                     encrypting = true
-                    if (onEncryptRequest(password)) onDismissRequest()
-                    encrypting = false
+                    onEncryptRequest(password) {
+                        encrypting = false
+                    }
                 },
                 enabled = !encrypting
             ) {
                 Box {
                     Text(
-                        text = stringResource(R.string.api_profiles_encrypt_do),
+                        text = stringResource(R.string.api_crypto_encrypt_do),
                         modifier = Modifier.alpha(if (encrypting) 0f else 1f)
                     )
                     if (encrypting) CircularProgressIndicator(
@@ -79,26 +91,49 @@ fun EncryptionDialog(
           )
         },
         title = {
-            Text(stringResource(R.string.api_profiles_encrypt_setPassword))
+            Text(stringResource(R.string.api_crypto_encrypt_setPassword))
         },
         text = {
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                enabled = !encrypting,
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = {
-                        showPassword = !showPassword
-                    }) {
-                        Icon(
-                            imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
-                            contentDescription = togglePasswordVisibilityText(passwordVisible = showPassword)
-                        )
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    enabled = !encrypting,
+                    modifier = Modifier.fillMaxWidth(),
+                    label = {
+                        Text(stringResource(R.string.api_crypto_encrypt_password))
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            showPassword = !showPassword
+                        }) {
+                            Icon(
+                                imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                                contentDescription = togglePasswordVisibilityText(passwordVisible = showPassword)
+                            )
+                        }
                     }
-                }
-            )
+                )
+
+                OutlinedTextField(
+                    value = confirmationPassword,
+                    onValueChange = { confirmationPassword = it },
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    enabled = !encrypting,
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = !passwordMatches && confirmationPassword.isNotEmpty(),
+                    label = {
+                        Text(stringResource(R.string.api_crypto_encrypt_confirmationPassword))
+                    },
+                    supportingText = if (!passwordMatches && confirmationPassword.isNotEmpty()) { {
+                        Text(stringResource(R.string.api_crypto_encrypt_confirmationPassword_fail))
+                    } } else null
+                )
+            }
         },
         modifier = modifier
     )
