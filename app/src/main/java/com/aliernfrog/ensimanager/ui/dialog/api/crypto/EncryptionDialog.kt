@@ -60,7 +60,7 @@ fun EncryptionDialog(
                         encrypting = false
                     }
                 },
-                enabled = !encrypting
+                enabled = !encrypting && passwordMatches
             ) {
                 Box {
                     Text(
