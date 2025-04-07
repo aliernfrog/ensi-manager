@@ -1,6 +1,8 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
 import android.util.Base64
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
@@ -62,8 +64,13 @@ object CryptoUtil {
     }
 }
 
+@Keep
 data class EncryptedData(
+    // TODO remove SerializedName annotations, they are for migration from broken proguard versions.
+    @SerializedName("data", alternate = ["a"])
     val data: String,
+    @SerializedName("iv", alternate = ["b"])
     val iv: String,
+    @SerializedName("salt", alternate = ["c"])
     val salt: String
 )
