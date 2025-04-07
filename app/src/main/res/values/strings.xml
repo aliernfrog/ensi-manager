@@ -99,6 +99,7 @@
     <string name="settings_security_description">Improve security by encrypting Ensi Manager</string>
     <string name="settings_security_encryption">Encrypt profiles</string>
     <string name="settings_security_encryption_description">Encrypt your profiles and authorization details to improve security</string>
+    <string name="settings_security_decryptFirst">Decrypt Ensi Manager to access security settings</string>
     <string name="settings_security_changePassword">Change password</string>
     <string name="settings_security_biometrics">Use biometrics</string>
     <string name="settings_about">About</string>

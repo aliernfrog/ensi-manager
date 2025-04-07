@@ -251,8 +251,9 @@ class APIViewModel(
         emptyMap()
     }
 
-    fun setEncryptionPassword(password: String) {
+    fun setEncryptionPassword(password: String?) {
         encryptionPassword = password
+        if (password == null) encryptedData = null
     }
 
     fun getProfileCache(profile: APIProfile): APIProfileCache? {

@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.ui.component.FadeVisibility
+import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -24,26 +26,41 @@ fun SecurityPage(
 ) {
     val encryptionEnabled = apiViewModel.dataEncryptionEnabled
 
+    val optionsEnabled = encryptionEnabled && apiViewModel.dataDecrypted
+
     SettingsPageContainer(
         title = stringResource(R.string.settings_security),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
+        FadeVisibility(!apiViewModel.dataDecrypted) {
+            DecryptionCard(
+                onDecryptRequest = { apiViewModel.showDecryptionDialog = true },
+                modifier = Modifier.padding(16.dp),
+                description = stringResource(R.string.settings_security_decryptFirst)
+            )
+        }
+
         SwitchRow(
             title = stringResource(R.string.settings_security_encryption),
             description = stringResource(R.string.settings_security_encryption_description),
             checked = encryptionEnabled,
+            enabled = optionsEnabled || !encryptionEnabled,
             shape = AppComponentShape,
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.padding(16.dp)
         ) {
-            apiViewModel.showEncryptionDialog = true
+            if (encryptionEnabled) {
+                apiViewModel.setEncryptionPassword(null)
+                apiViewModel.saveProfiles()
+            }
+            else apiViewModel.showEncryptionDialog = true
         }
 
         ButtonRow(
             title = stringResource(R.string.settings_security_changePassword),
             painter = rememberVectorPainter(Icons.Default.Password),
-            enabled = encryptionEnabled
+            enabled = optionsEnabled
         ) {
             apiViewModel.showEncryptionDialog = true
         }
@@ -51,7 +68,7 @@ fun SecurityPage(
         SwitchRow(
             title = stringResource(R.string.settings_security_biometrics),
             painter = rememberVectorPainter(Icons.Default.Fingerprint),
-            enabled = encryptionEnabled,
+            enabled = optionsEnabled,
             checked = false //TODO
         ) {
             /* TODO */

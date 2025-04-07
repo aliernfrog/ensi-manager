@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EnhancedEncryption
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
@@ -73,6 +72,7 @@ import com.aliernfrog.ensimanager.ui.component.CardWithActions
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
+import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.form.FormHeader
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
@@ -407,27 +407,5 @@ fun EncryptionCard(
         modifier = modifier
     ) {
         Text(stringResource(R.string.api_crypto_encrypt_description))
-    }
-}
-
-@Composable
-fun DecryptionCard(
-    onDecryptRequest: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    CardWithActions(
-        title = stringResource(R.string.api_crypto_decrypt),
-        icon = rememberVectorPainter(Icons.Default.LockOpen),
-        buttons = {
-            Button(
-                onClick = onDecryptRequest
-            ) {
-                ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
-                Text(stringResource(R.string.api_crypto_decrypt_do))
-            }
-        },
-        modifier = modifier
-    ) {
-        Text(stringResource(R.string.api_crypto_decrypt_description))
     }
 }
