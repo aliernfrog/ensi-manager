@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.DecryptionDialog
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.EncryptionDialog
@@ -28,6 +29,7 @@ import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.extension.popBackStackSafe
+import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,7 +56,11 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = NavigationConstant.INITIAL_DESTINATION,
-            modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+                .consumeWindowInsets(it)
+                .imePadding(),
             enterTransition = {
                 scaleIn(
                     animationSpec = tween(delayMillis = 100),
@@ -135,6 +141,7 @@ fun MainScreen(
                 apiViewModel.setEncryptionPassword(password)
                 apiViewModel.saveProfiles()
                 apiViewModel.showEncryptionDialog = false
+                apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)
                 onFinish()
             }
         }
@@ -145,7 +152,10 @@ fun MainScreen(
         onDecryptRequest = { password, onFinish ->
             scope.launch {
                 val profiles = apiViewModel.decryptAPIProfilesAndLoad(password)
-                if (profiles != null) apiViewModel.showDecryptionDialog = false
+                if (profiles != null) {
+                    apiViewModel.showDecryptionDialog = false
+                    apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                }
                 onFinish()
             }
         }
