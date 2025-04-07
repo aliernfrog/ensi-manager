@@ -73,8 +73,8 @@ class APIViewModel(
 
     var showEncryptionDialog by mutableStateOf(false)
     var showDecryptionDialog by mutableStateOf(false)
-    private var encryptedData: EncryptedData? = null
-    private var encryptionPassword: String? = null
+    private var encryptedData by mutableStateOf<EncryptedData?>(null)
+    private var encryptionPassword by mutableStateOf<String?>(null)
     val dataEncryptionEnabled: Boolean
         get() = encryptedData != null || encryptionPassword != null
     val dataDecrypted: Boolean
