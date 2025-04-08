@@ -138,29 +138,29 @@ fun ExperimentalPage(
             }
             ButtonRow(
                 title = "Biometric unlock supported: ${apiViewModel.biometricUnlockSupported}",
-                onClick = null
-            )
+                enabled = false,
+            ) {}
             ButtonRow(
                 title = "Biometric unlock available: ${apiViewModel.biometricUnlockAvailable}",
-                onClick = null
-            )
+                enabled = false
+            ) {}
             ButtonRow(
                 title = "Biometric unlock enabled: ${apiViewModel.biometricUnlockEnabled}",
-                onClick = null
-            )
+                enabled = false
+            ) {}
         }
 
         FormSection(title = "Encryption") {
             ButtonRow(
                 title = "Password wrapped key",
                 description = apiViewModel.encryptedData?.passwordWrappedKey ?: "null",
-                onClick = null
-            )
+                enabled = false
+            ) {}
             ButtonRow(
                 title = "Biometric wrapped key",
                 description = apiViewModel.encryptedData?.biometricWrappedKey ?: "null",
-                onClick = null
-            )
+                enabled = false
+            ) {}
         }
 
         FormSection(title = "Prefs", bottomDivider = false) {
