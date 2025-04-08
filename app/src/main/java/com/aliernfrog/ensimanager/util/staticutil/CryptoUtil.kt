@@ -36,14 +36,14 @@ object CryptoUtil {
         cipher.init(Cipher.ENCRYPT_MODE, masterKey, IvParameterSpec(iv))
         val encryptedBytes = cipher.doFinal(string.toByteArray(Charsets.UTF_8))
         val passwordSalt = generateSalt()
-        val passwordWrappedKey = encryptKey(masterKey, deriveKey(password, passwordSalt))
+        val passwordWrappedKey = encryptPasswordKey(masterKey, deriveKey(password, passwordSalt))
         return EncryptedData(
             data = Base64.encodeToString(encryptedBytes, Base64.DEFAULT),
             iv = Base64.encodeToString(iv, Base64.DEFAULT),
             salt = Base64.encodeToString(passwordSalt, Base64.DEFAULT),
             passwordWrappedKey = Base64.encodeToString(passwordWrappedKey, Base64.DEFAULT),
             biometricWrappedKey = if (withBiometrics) getBiometricKey()?.let {
-                Base64.encodeToString(encryptKey(masterKey, it), Base64.DEFAULT)
+                Base64.encodeToString(encryptBiometricKey(masterKey, it), Base64.DEFAULT)
             } else null
         )
     }
@@ -64,13 +64,13 @@ object CryptoUtil {
             salt = reference.salt,
             passwordWrappedKey = reference.passwordWrappedKey,
             biometricWrappedKey = if (withBiometrics) getBiometricKey()?.let {
-                Base64.encodeToString(encryptKey(masterKey, it), Base64.DEFAULT)
+                Base64.encodeToString(encryptBiometricKey(masterKey, it), Base64.DEFAULT)
             } ?: reference.biometricWrappedKey else reference.biometricWrappedKey
         )
     }
 
     fun decryptWithPassword(encryptedData: EncryptedData, password: String): DecryptResult {
-        val masterKey = decryptKey(
+        val masterKey = decryptPasswordKey(
             Base64.decode(encryptedData.passwordWrappedKey, Base64.DEFAULT),
             deriveKey(password, Base64.decode(encryptedData.salt, Base64.DEFAULT))
         )
@@ -80,7 +80,7 @@ object CryptoUtil {
 
     fun decryptWithBiometrics(encryptedData: EncryptedData): DecryptResult? {
         return getBiometricKey()?.let {
-            val masterKey = decryptKey(
+            val masterKey = decryptBiometricKey(
                 Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
                 it
             )
@@ -111,13 +111,26 @@ object CryptoUtil {
         return SecretKeySpec(key.encoded, SECRET_KEY_ALGORITHM)
     }
 
-    private fun encryptKey(keyToEncrypt: SecretKey, encryptionKey: SecretKey): ByteArray {
+    private fun encryptPasswordKey(keyToEncrypt: SecretKey, encryptionKey: SecretKey): ByteArray {
+        val cipher = Cipher.getInstance(ALGORITHM)
+        cipher.init(Cipher.ENCRYPT_MODE, encryptionKey, IvParameterSpec(ByteArray(SALT_LENGTH)))
+        return cipher.doFinal(keyToEncrypt.encoded)
+    }
+
+    private fun decryptPasswordKey(encryptedKey: ByteArray, decryptionKey: SecretKey): SecretKey {
+        val cipher = Cipher.getInstance(ALGORITHM)
+        cipher.init(Cipher.DECRYPT_MODE, decryptionKey, IvParameterSpec(ByteArray(16)))
+        val decryptedKey = cipher.doFinal(encryptedKey)
+        return SecretKeySpec(decryptedKey, "AES")
+    }
+
+    private fun encryptBiometricKey(keyToEncrypt: SecretKey, encryptionKey: SecretKey): ByteArray {
         val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         cipher.init(Cipher.ENCRYPT_MODE, encryptionKey)
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
-    private fun decryptKey(encryptedKey: ByteArray, decryptionKey: SecretKey): SecretKey {
+    private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: SecretKey): SecretKey {
         val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
         val decryptedKey = cipher.doFinal(encryptedKey)
