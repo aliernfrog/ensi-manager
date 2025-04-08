@@ -110,13 +110,13 @@ object CryptoUtil {
     }
 
     private fun wrapKey(keyToWrap: SecretKey, wrappingKey: SecretKey): ByteArray {
-        val cipher = Cipher.getInstance("RSA", "SunJCE")
+        val cipher = Cipher.getInstance("RSA")
         cipher.init(Cipher.WRAP_MODE, wrappingKey)
         return cipher.wrap(keyToWrap)
     }
 
     private fun unwrapKey(wrappedKey: ByteArray, unwrappingKey: SecretKey): SecretKey? {
-        val cipher = Cipher.getInstance("RSA", "SunJCE")
+        val cipher = Cipher.getInstance("RSA")
         cipher.init(Cipher.UNWRAP_MODE, unwrappingKey)
         return cipher.unwrap(wrappedKey, SECRET_KEY_ALGORITHM, Cipher.SECRET_KEY) as? SecretKey
     }
