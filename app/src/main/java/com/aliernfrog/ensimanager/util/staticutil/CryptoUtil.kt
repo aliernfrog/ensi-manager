@@ -24,9 +24,8 @@ object CryptoUtil {
     private const val ITERATION_COUNT = 65536
     private const val KEY_LENGTH = 256
 
-    private const val ANDROID_KEY_STORE = "AndroidKeyStore"
     private const val BIOMETRIC_KEY_ALIAS = "ensimanager_biometric_key"
-    private val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
+    private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
 
     fun encryptWithPassword(string: String, password: String, withBiometrics: Boolean): EncryptedData {
         val masterKey = generateMasterKey()
@@ -111,13 +110,13 @@ object CryptoUtil {
     }
 
     private fun wrapKey(keyToWrap: SecretKey, wrappingKey: SecretKey): ByteArray {
-        val cipher = Cipher.getInstance("RSA", ANDROID_KEY_STORE)
+        val cipher = Cipher.getInstance("RSA", "SunJCE")
         cipher.init(Cipher.WRAP_MODE, wrappingKey)
         return cipher.wrap(keyToWrap)
     }
 
     private fun unwrapKey(wrappedKey: ByteArray, unwrappingKey: SecretKey): SecretKey? {
-        val cipher = Cipher.getInstance("RSA", ANDROID_KEY_STORE)
+        val cipher = Cipher.getInstance("RSA", "SunJCE")
         cipher.init(Cipher.UNWRAP_MODE, unwrappingKey)
         return cipher.unwrap(wrappedKey, SECRET_KEY_ALGORITHM, Cipher.SECRET_KEY) as? SecretKey
     }
@@ -139,7 +138,7 @@ object CryptoUtil {
     fun generateBiometricKey() {
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES,
-            ANDROID_KEY_STORE
+            "AndroidKeyStore"
         )
 
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(
