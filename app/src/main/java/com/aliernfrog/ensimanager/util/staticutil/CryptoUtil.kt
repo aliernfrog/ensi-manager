@@ -6,6 +6,7 @@ import android.util.Base64
 import android.util.Log
 import androidx.annotation.Keep
 import com.aliernfrog.ensimanager.TAG
+import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.security.spec.ECGenParameterSpec
@@ -137,7 +138,7 @@ object CryptoUtil {
     }
 
     fun generateBiometricKey() {
-        val keyGenerator = KeyGenerator.getInstance(
+        val keyGenerator = KeyPairGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_EC,
             "AndroidKeyStore"
         )
@@ -151,8 +152,8 @@ object CryptoUtil {
             .setInvalidatedByBiometricEnrollment(true)
             .build()
 
-        keyGenerator.init(keyGenParameterSpec)
-        keyGenerator.generateKey()
+        keyGenerator.initialize(keyGenParameterSpec)
+        keyGenerator.generateKeyPair()
     }
 
     fun hasBiometricKey(): Boolean = keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)
