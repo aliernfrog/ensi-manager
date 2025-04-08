@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
+import android.annotation.SuppressLint
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
@@ -108,14 +109,16 @@ object CryptoUtil {
         return SecretKeySpec(key.encoded, SECRET_KEY_ALGORITHM)
     }
 
+    @SuppressLint("GetInstance")
     private fun wrapKey(keyToWrap: SecretKey, wrappingKey: SecretKey): ByteArray {
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding", ANDROID_KEY_STORE)
+        val cipher = Cipher.getInstance("AES", ANDROID_KEY_STORE)
         cipher.init(Cipher.WRAP_MODE, wrappingKey)
         return cipher.wrap(keyToWrap)
     }
 
+    @SuppressLint("GetInstance")
     private fun unwrapKey(wrappedKey: ByteArray, unwrappingKey: SecretKey): SecretKey? {
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding", ANDROID_KEY_STORE)
+        val cipher = Cipher.getInstance("AES", ANDROID_KEY_STORE)
         cipher.init(Cipher.UNWRAP_MODE, unwrappingKey)
         return cipher.unwrap(wrappedKey, SECRET_KEY_ALGORITHM, Cipher.SECRET_KEY) as? SecretKey
     }
