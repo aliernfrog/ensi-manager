@@ -3,6 +3,7 @@ package com.aliernfrog.ensimanager.ui.activity
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -25,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.FragmentActivity
 import com.aliernfrog.ensimanager.ui.component.InsetsObserver
 import com.aliernfrog.ensimanager.ui.screen.MainScreen
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
@@ -34,7 +34,7 @@ import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
 import org.koin.androidx.compose.koinViewModel
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
