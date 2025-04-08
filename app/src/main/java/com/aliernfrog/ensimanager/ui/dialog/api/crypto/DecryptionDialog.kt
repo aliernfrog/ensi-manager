@@ -1,8 +1,13 @@
 package com.aliernfrog.ensimanager.ui.dialog.api.crypto
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.rounded.Visibility
@@ -16,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,11 +39,16 @@ import com.aliernfrog.ensimanager.R
 fun DecryptionDialog(
     onDismissRequest: () -> Unit,
     onDecryptRequest: (password: String, onFinish: () -> Unit) -> Unit,
+    onBiometricUnlockRequest: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by rememberSaveable { mutableStateOf(false) }
     var decrypting by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        onBiometricUnlockRequest?.invoke()
+    }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -83,23 +94,42 @@ fun DecryptionDialog(
             Text(stringResource(R.string.api_crypto_decrypt))
         },
         text = {
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                enabled = !decrypting,
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = {
-                        showPassword = !showPassword
-                    }) {
-                        Icon(
-                            imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
-                            contentDescription = togglePasswordVisibilityText(passwordVisible = showPassword)
-                        )
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    enabled = !decrypting,
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            showPassword = !showPassword
+                        }) {
+                            Icon(
+                                imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                                contentDescription = togglePasswordVisibilityText(passwordVisible = showPassword)
+                            )
+                        }
                     }
+                )
+
+                onBiometricUnlockRequest?.let {
+                    Text(
+                        text = stringResource(R.string.settings_security_biometrics),
+                        modifier = Modifier
+                            .alpha(if (decrypting) 0.7f else 1f)
+                            .let {
+                                if (decrypting) it
+                                else it.clickable {
+                                    onBiometricUnlockRequest()
+                                }
+                            }
+                    )
                 }
-            )
+            }
         },
         modifier = modifier
     )

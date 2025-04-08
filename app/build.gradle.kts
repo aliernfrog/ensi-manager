@@ -85,6 +85,7 @@ fun exec(vararg command: String) = try {
 
 dependencies {
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.biometrics)
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.ktx)
     implementation(libs.androidx.navigation)

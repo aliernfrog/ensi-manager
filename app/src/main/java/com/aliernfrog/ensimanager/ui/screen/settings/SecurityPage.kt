@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
@@ -17,6 +18,9 @@ import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
+import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.extension.showSuccessToast
+import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -24,6 +28,8 @@ fun SecurityPage(
     apiViewModel: APIViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val encryptionEnabled = apiViewModel.dataEncryptionEnabled
 
     val optionsEnabled = encryptionEnabled && apiViewModel.dataDecrypted
@@ -50,10 +56,7 @@ fun SecurityPage(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.padding(16.dp)
         ) {
-            if (encryptionEnabled) {
-                apiViewModel.changeEncryptionPassword(null)
-                apiViewModel.saveProfiles()
-            }
+            if (encryptionEnabled) apiViewModel.changeEncryptionPasswordAndSave(null)
             else apiViewModel.showEncryptionDialog = true
         }
 
@@ -67,11 +70,29 @@ fun SecurityPage(
 
         SwitchRow(
             title = stringResource(R.string.settings_security_biometrics),
+            description = stringResource(
+                if (apiViewModel.biometricUnlockSupported) R.string.settings_security_biometrics_description
+                else R.string.settings_security_biometrics_unsupported
+            ),
             painter = rememberVectorPainter(Icons.Default.Fingerprint),
-            enabled = optionsEnabled,
-            checked = false //TODO
+            enabled = optionsEnabled && apiViewModel.biometricUnlockSupported,
+            checked = apiViewModel.biometricUnlockEnabled,
         ) {
-            /* TODO */
+            if (it) apiViewModel.showBiometricPrompt(
+                context = context,
+                onSuccess = {
+                    if (!CryptoUtil.hasBiometricKey()) CryptoUtil.generateBiometricKey()
+                    apiViewModel.biometricUnlockEnabled = true
+                    apiViewModel.saveProfiles()
+                    apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabled)
+                },
+                onFail = {
+                    apiViewModel.topToastState.showErrorToast()
+                }
+            ) else {
+                apiViewModel.biometricUnlockEnabled = false
+                apiViewModel.saveProfiles()
+            }
         }
     }
 }

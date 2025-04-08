@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -29,6 +30,7 @@ import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.extension.popBackStackSafe
+import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -39,6 +41,7 @@ fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     apiViewModel: APIViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
     val onNavigateSettingsRequest = {
@@ -138,8 +141,7 @@ fun MainScreen(
         onDismissRequest = { apiViewModel.showEncryptionDialog = false },
         onEncryptRequest = { password, onFinish ->
             scope.launch {
-                apiViewModel.changeEncryptionPassword(password)
-                apiViewModel.saveProfiles()
+                apiViewModel.changeEncryptionPasswordAndSave(password)
                 apiViewModel.showEncryptionDialog = false
                 apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)
                 onFinish()
@@ -158,7 +160,18 @@ fun MainScreen(
                 }
                 onFinish()
             }
-        }
+        },
+        onBiometricUnlockRequest = if (apiViewModel.biometricUnlockAvailable) { {
+            apiViewModel.showBiometricPrompt(
+                context = context,
+                onSuccess = { scope.launch {
+                    apiViewModel.decryptAPIProfilesWithBiometricsAndLoad()
+                } },
+                onFail = {
+                    mainViewModel.topToastState.showErrorToast()
+                }
+            )
+        } } else null
     )
 
     APIProfileSwitchSheet(

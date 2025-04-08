@@ -16,10 +16,14 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val rememberLastAPIProfile = booleanPreference("rememberLastApiProfile", true)
     val apiProfiles = stringPreference("apiProfiles", "[]")
     val lastActiveAPIProfileId = stringPreference("lastActiveApiProfileId", experimental = true, includeInDebugInfo = false)
+
     @Deprecated("This should only be used for migration purposes")
     val legacyAPIURL = stringPreference("apiEndpointsUrl", experimental = true, includeInDebugInfo = false)
     @Deprecated("This should only be used for migration purposes")
     val legacyAPIAuth = stringPreference("apiAuthorization", experimental = true, includeInDebugInfo = false)
+
+    // Security options
+    val biometricUnlockEnabled = booleanPreference("biometricUnlockEnabled", false)
 
     // Experimental (developer) options
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
