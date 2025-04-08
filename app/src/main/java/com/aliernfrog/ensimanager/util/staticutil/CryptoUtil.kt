@@ -46,7 +46,8 @@ object CryptoUtil {
     fun reencryptWithKey(
         string: String,
         masterKey: SecretKey,
-        reference: EncryptedData
+        reference: EncryptedData,
+        withBiometrics: Boolean
     ): EncryptedData {
         val iv = Base64.decode(reference.iv, Base64.DEFAULT)
         val cipher = Cipher.getInstance(ALGORITHM)
@@ -57,7 +58,9 @@ object CryptoUtil {
             iv = Base64.encodeToString(iv, Base64.DEFAULT),
             salt = reference.salt,
             passwordWrappedKey = reference.passwordWrappedKey,
-            biometricWrappedKey = reference.biometricWrappedKey
+            biometricWrappedKey = if (withBiometrics) getBiometricKey()?.let {
+                Base64.encodeToString(wrapKey(masterKey, it), Base64.DEFAULT)
+            } else reference.biometricWrappedKey
         )
     }
 
