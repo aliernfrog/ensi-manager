@@ -153,6 +153,10 @@ object CryptoUtil {
 
     fun hasBiometricKey(): Boolean = keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)
 
+    fun deleteBiometricKey() {
+        if (hasBiometricKey()) keyStore.deleteEntry(BIOMETRIC_KEY_ALIAS)
+    }
+
     private fun getBiometricKey(): SecretKey? {
         return try {
             if (!hasBiometricKey()) generateBiometricKey()

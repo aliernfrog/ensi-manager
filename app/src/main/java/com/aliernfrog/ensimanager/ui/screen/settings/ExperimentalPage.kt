@@ -15,8 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,8 +31,10 @@ import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
+import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.manager.base.BasePreferenceManager
+import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
 import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -39,6 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ExperimentalPage(
     mainViewModel: MainViewModel = koinViewModel(),
+    apiViewModel: APIViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -91,6 +97,43 @@ fun ExperimentalPage(
                 scope.launch {
                     mainViewModel.updateSheetState.show()
                 }
+            }
+        }
+
+        FormSection(title = "Biometrics") {
+            var hasBiometricKey by remember { mutableStateOf(CryptoUtil.hasBiometricKey()) }
+            ButtonRow(
+                title = "Has biometric key: $hasBiometricKey",
+                description = "Tap to update"
+            ) {
+                hasBiometricKey = CryptoUtil.hasBiometricKey()
+            }
+            ButtonRow(
+                title = "Generate biometric key"
+            ) {
+                CryptoUtil.generateBiometricKey()
+                hasBiometricKey = CryptoUtil.hasBiometricKey()
+                mainViewModel.topToastState.showToast("Biometric key generated")
+            }
+            ButtonRow(
+                title = "Delete biometric key"
+            ) {
+                CryptoUtil.deleteBiometricKey()
+                hasBiometricKey = CryptoUtil.hasBiometricKey()
+                mainViewModel.topToastState.showToast("Biometric key deleted")
+            }
+            ButtonRow(
+                title = "Show biometric prompt"
+            ) {
+                apiViewModel.showBiometricPrompt(
+                    context = context,
+                    onSuccess = {
+                        mainViewModel.topToastState.showToast("Biometric prompt succeeded")
+                    },
+                    onFail = {
+                        mainViewModel.topToastState.showToast("Biometric prompt failed")
+                    }
+                )
             }
         }
 
