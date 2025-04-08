@@ -116,16 +116,14 @@ fun DecryptionDialog(
                     }
                 )
 
-                onBiometricUnlockRequest?.let {
+                onBiometricUnlockRequest?.let { onClick ->
                     Text(
                         text = stringResource(R.string.settings_security_biometrics),
                         modifier = Modifier
                             .alpha(if (decrypting) 0.7f else 1f)
                             .let {
                                 if (decrypting) it
-                                else it.clickable {
-                                    onBiometricUnlockRequest()
-                                }
+                                else it.clickable(onClick = onClick)
                             }
                     )
                 }
