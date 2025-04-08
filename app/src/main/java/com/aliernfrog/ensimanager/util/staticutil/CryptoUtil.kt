@@ -84,7 +84,7 @@ object CryptoUtil {
         return getBiometricKey()?.let {
             val masterKey = decryptBiometricKey(
                 Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
-                it.private
+                it.public
             )
             val data = decrypt(encryptedData, masterKey)
             DecryptResult(data, masterKey)
