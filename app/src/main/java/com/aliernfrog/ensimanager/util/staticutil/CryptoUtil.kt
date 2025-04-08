@@ -6,8 +6,10 @@ import android.util.Base64
 import android.util.Log
 import androidx.annotation.Keep
 import com.aliernfrog.ensimanager.TAG
+import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
+import java.security.PrivateKey
 import java.security.SecureRandom
 import java.security.spec.ECGenParameterSpec
 import javax.crypto.Cipher
@@ -43,7 +45,7 @@ object CryptoUtil {
             salt = Base64.encodeToString(passwordSalt, Base64.DEFAULT),
             passwordWrappedKey = Base64.encodeToString(passwordWrappedKey, Base64.DEFAULT),
             biometricWrappedKey = if (withBiometrics) getBiometricKey()?.let {
-                Base64.encodeToString(encryptBiometricKey(masterKey, it), Base64.DEFAULT)
+                Base64.encodeToString(encryptBiometricKey(masterKey, it.public), Base64.DEFAULT)
             } else null
         )
     }
@@ -64,7 +66,7 @@ object CryptoUtil {
             salt = reference.salt,
             passwordWrappedKey = reference.passwordWrappedKey,
             biometricWrappedKey = if (withBiometrics) getBiometricKey()?.let {
-                Base64.encodeToString(encryptBiometricKey(masterKey, it), Base64.DEFAULT)
+                Base64.encodeToString(encryptBiometricKey(masterKey, it.public), Base64.DEFAULT)
             } ?: reference.biometricWrappedKey else reference.biometricWrappedKey
         )
     }
@@ -82,7 +84,7 @@ object CryptoUtil {
         return getBiometricKey()?.let {
             val masterKey = decryptBiometricKey(
                 Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
-                it
+                it.private
             )
             val data = decrypt(encryptedData, masterKey)
             DecryptResult(data, masterKey)
@@ -124,15 +126,15 @@ object CryptoUtil {
         return SecretKeySpec(decryptedKey, "AES")
     }
 
-    private fun encryptBiometricKey(keyToEncrypt: SecretKey, encryptionKey: SecretKey): ByteArray {
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, encryptionKey)
+    private fun encryptBiometricKey(keyToEncrypt: SecretKey, encryptionKey: java.security.Key): ByteArray {
+        val cipher = Cipher.getInstance("RSA/CBC/PKCS1Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, encryptionKey, IvParameterSpec(ByteArray(16)))
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
-    private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: SecretKey): SecretKey {
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
+    private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
+        val cipher = Cipher.getInstance("RSA/CBC/PKCS1Padding")
+        cipher.init(Cipher.DECRYPT_MODE, decryptionKey, IvParameterSpec(ByteArray(16)))
         val decryptedKey = cipher.doFinal(encryptedKey)
         return SecretKeySpec(decryptedKey, SECRET_KEY_ALGORITHM)
     }
@@ -152,7 +154,7 @@ object CryptoUtil {
     }
 
     fun generateBiometricKey() {
-        val keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
+        val keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
 
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(
             BIOMETRIC_KEY_ALIAS,
@@ -173,10 +175,12 @@ object CryptoUtil {
         if (hasBiometricKey()) keyStore.deleteEntry(BIOMETRIC_KEY_ALIAS)
     }
 
-    private fun getBiometricKey(): SecretKey? {
+    private fun getBiometricKey(): KeyPair? {
         return try {
             if (!hasBiometricKey()) generateBiometricKey()
-            keyStore.getKey(BIOMETRIC_KEY_ALIAS, null) as? SecretKey
+            keyStore.getKey(BIOMETRIC_KEY_ALIAS, null)?.let {
+                KeyPair(keyStore.getCertificate(BIOMETRIC_KEY_ALIAS).publicKey, it as PrivateKey)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "getBiometricKey: failed to get biometric key", e)
             null
