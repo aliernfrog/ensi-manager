@@ -127,14 +127,14 @@ object CryptoUtil {
     }
 
     private fun encryptBiometricKey(keyToEncrypt: SecretKey, encryptionKey: java.security.Key): ByteArray {
-        val cipher = Cipher.getInstance("RSA/CBC/PKCS1Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, encryptionKey, IvParameterSpec(ByteArray(16)))
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, encryptionKey)
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
     private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
-        val cipher = Cipher.getInstance("RSA/CBC/PKCS1Padding")
-        cipher.init(Cipher.DECRYPT_MODE, decryptionKey, IvParameterSpec(ByteArray(16)))
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
         val decryptedKey = cipher.doFinal(encryptedKey)
         return SecretKeySpec(decryptedKey, SECRET_KEY_ALGORITHM)
     }
