@@ -127,6 +127,7 @@ fun ExperimentalPage(
             ) {
                 apiViewModel.showBiometricPrompt(
                     context = context,
+                    forDecryption = false,
                     onSuccess = {
                         mainViewModel.topToastState.showToast("Biometric prompt succeeded")
                     },

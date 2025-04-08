@@ -80,6 +80,7 @@ fun SecurityPage(
         ) {
             if (it) apiViewModel.showBiometricPrompt(
                 context = context,
+                forDecryption = false,
                 onSuccess = {
                     if (!CryptoUtil.hasBiometricKey()) CryptoUtil.generateBiometricKey()
                     apiViewModel.biometricUnlockEnabled = true

@@ -57,6 +57,7 @@
     <string name="api_crypto_decrypt_description">Your profiles are encrypted, decrypt to access them</string>
     <string name="api_crypto_decrypt_do">Decrypt</string>
     <string name="api_crypto_decrypt_biometrics">Use biometrics</string>
+    <string name="api_crypto_decrypt_biometrics_prompt">Decrypt data</string>
     <string name="api_crypto_decrypt_biometrics_description">Use biometric data to decrypt Ensi Manager</string>
     <string name="api_crypto_decrypt_fail">Failed to decrypt data, wrong password?</string>
     <string name="api_crypto_decrypt_fail_biometrics">Failed to decrypt data, try password?</string>
@@ -110,6 +111,7 @@
     <string name="settings_security_biometrics">Use biometrics</string>
     <string name="settings_security_biometrics_description">Quickly decrypt without entering your password</string>
     <string name="settings_security_biometrics_unsupported">Not supported on your device</string>
+    <string name="settings_security_biometrics_prompt">Enable biometric unlock</string>
     <string name="settings_security_biometrics_enabled">Biometric unlock enabled</string>
     <string name="settings_about">About</string>
     <string name="settings_about_changelog">Changelog</string>

@@ -164,6 +164,7 @@ fun MainScreen(
         onBiometricUnlockRequest = if (apiViewModel.biometricUnlockAvailable) { {
             apiViewModel.showBiometricPrompt(
                 context = context,
+                forDecryption = true,
                 onSuccess = { scope.launch {
                     apiViewModel.decryptAPIProfilesWithBiometricsAndLoad()
                 } },

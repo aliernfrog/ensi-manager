@@ -313,11 +313,16 @@ class APIViewModel(
 
     fun showBiometricPrompt(
         context: Context,
+        forDecryption: Boolean,
         onSuccess: () -> Unit,
         onFail: () -> Unit
     ) {
         BiometricUtil.authenticate(
             activity = context as FragmentActivity,
+            title = context.getString(
+                if (forDecryption) R.string.api_crypto_decrypt_biometrics_prompt
+                else R.string.settings_security_biometrics_prompt
+            ),
             description = context.getString(R.string.api_crypto_decrypt_biometrics_description),
             onSuccess = { _ -> onSuccess() },
             onError = { _, _ -> onFail() },
