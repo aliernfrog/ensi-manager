@@ -318,7 +318,6 @@ class APIViewModel(
     ) {
         BiometricUtil.authenticate(
             activity = context as FragmentActivity,
-            title = context.getString(R.string.app_name),
             description = context.getString(R.string.api_crypto_decrypt_biometrics_description),
             onSuccess = { _ -> onSuccess() },
             onError = { _, _ -> onFail() },

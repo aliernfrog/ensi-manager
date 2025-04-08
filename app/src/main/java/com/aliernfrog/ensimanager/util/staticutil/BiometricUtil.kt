@@ -20,7 +20,6 @@ object BiometricUtil {
 
     fun authenticate(
         activity: FragmentActivity,
-        title: String,
         description: String,
         onSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,
         onError: (Int, CharSequence) -> Unit,
@@ -49,7 +48,6 @@ object BiometricUtil {
             })
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(title)
             .setDescription(description)
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
             .build()
