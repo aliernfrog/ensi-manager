@@ -1,10 +1,11 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
-import android.annotation.SuppressLint
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.Keep
+import com.aliernfrog.ensimanager.TAG
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -63,7 +64,7 @@ object CryptoUtil {
             passwordWrappedKey = reference.passwordWrappedKey,
             biometricWrappedKey = if (withBiometrics) getBiometricKey()?.let {
                 Base64.encodeToString(wrapKey(masterKey, it), Base64.DEFAULT)
-            } else reference.biometricWrappedKey
+            } ?: reference.biometricWrappedKey else reference.biometricWrappedKey
         )
     }
 
@@ -109,16 +110,14 @@ object CryptoUtil {
         return SecretKeySpec(key.encoded, SECRET_KEY_ALGORITHM)
     }
 
-    @SuppressLint("GetInstance")
     private fun wrapKey(keyToWrap: SecretKey, wrappingKey: SecretKey): ByteArray {
-        val cipher = Cipher.getInstance("AES", ANDROID_KEY_STORE)
+        val cipher = Cipher.getInstance("RSA", ANDROID_KEY_STORE)
         cipher.init(Cipher.WRAP_MODE, wrappingKey)
         return cipher.wrap(keyToWrap)
     }
 
-    @SuppressLint("GetInstance")
     private fun unwrapKey(wrappedKey: ByteArray, unwrappingKey: SecretKey): SecretKey? {
-        val cipher = Cipher.getInstance("AES", ANDROID_KEY_STORE)
+        val cipher = Cipher.getInstance("RSA", ANDROID_KEY_STORE)
         cipher.init(Cipher.UNWRAP_MODE, unwrappingKey)
         return cipher.unwrap(wrappedKey, SECRET_KEY_ALGORITHM, Cipher.SECRET_KEY) as? SecretKey
     }
@@ -160,9 +159,11 @@ object CryptoUtil {
     fun hasBiometricKey(): Boolean = keyStore.containsAlias(BIOMETRIC_KEY_ALIAS)
 
     private fun getBiometricKey(): SecretKey? {
-        return if (hasBiometricKey()) {
+        return try {
+            if (!hasBiometricKey()) generateBiometricKey()
             keyStore.getKey(BIOMETRIC_KEY_ALIAS, null) as? SecretKey
-        } else {
+        } catch (e: Exception) {
+            Log.e(TAG, "getBiometricKey: failed to get biometric key", e)
             null
         }
     }
