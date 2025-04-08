@@ -302,7 +302,6 @@ class APIViewModel(
                 if (newPassword != null) {
                     val encrypted = CryptoUtil.encryptWithPassword(json, newPassword, withBiometrics = biometricUnlockEnabled)
                     json = gson.toJson(encrypted)
-                    newEncryptionPassword = null
                 } else if (encryptionMasterKey != null && encryptedData != null) {
                     val encrypted = CryptoUtil.reencryptWithKey(json, encryptionMasterKey!!, encryptedData!!)
                     json = gson.toJson(encrypted)
