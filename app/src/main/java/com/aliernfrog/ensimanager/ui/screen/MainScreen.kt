@@ -167,7 +167,11 @@ fun MainScreen(
                 context = context,
                 forDecryption = true,
                 onSuccess = { scope.launch {
-                    apiViewModel.decryptAPIProfilesWithBiometricsAndLoad(it.cryptoObject?.cipher)
+                    val profiles = apiViewModel.decryptAPIProfilesWithBiometricsAndLoad(it.cryptoObject?.cipher)
+                    if (profiles != null) {
+                        apiViewModel.showDecryptionDialog = false
+                        apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                    }
                 } },
                 onFail = {
                     Log.d(TAG, "MainScreen: biometric unlock failed")
