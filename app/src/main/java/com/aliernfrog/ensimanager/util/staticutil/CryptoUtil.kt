@@ -28,6 +28,7 @@ object CryptoUtil {
     private const val ITERATION_COUNT = 65536
     private const val KEY_LENGTH = 256
 
+    private const val ANDROID_KEY_STORE = "AndroidKeyStoreBCWorkaround"
     private const val BIOMETRIC_KEY_ALIAS = "ensimanager_biometric_key"
     private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
 
@@ -129,13 +130,13 @@ object CryptoUtil {
     }
 
     private fun encryptBiometricKey(keyToEncrypt: SecretKey, encryptionKey: java.security.Key): ByteArray {
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStore")
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", ANDROID_KEY_STORE)
         cipher.init(Cipher.ENCRYPT_MODE, encryptionKey)
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
     private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStore")
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", ANDROID_KEY_STORE)
         cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
         val decryptedKey = cipher.doFinal(encryptedKey)
         return SecretKeySpec(decryptedKey, SECRET_KEY_ALGORITHM)
@@ -156,7 +157,7 @@ object CryptoUtil {
     }
 
     fun generateBiometricKey() {
-        val keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
+        val keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE)
 
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(
             BIOMETRIC_KEY_ALIAS,
