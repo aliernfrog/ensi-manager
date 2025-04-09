@@ -82,6 +82,8 @@ object CryptoUtil {
 
     fun decryptWithBiometrics(encryptedData: EncryptedData): DecryptResult? {
         return getBiometricKey()?.let {
+            // TODO remove log
+            Log.d(TAG, "decryptWithBiometrics: ${it.private}")
             val masterKey = decryptBiometricKey(
                 Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
                 it.private
