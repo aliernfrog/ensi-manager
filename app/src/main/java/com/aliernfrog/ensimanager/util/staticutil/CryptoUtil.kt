@@ -130,13 +130,13 @@ object CryptoUtil {
     }
 
     private fun encryptBiometricKey(keyToEncrypt: SecretKey, encryptionKey: java.security.Key): ByteArray {
-        val cipher = Cipher.getInstance("RSA/ECB/OAEPPadding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
+        val cipher = Cipher.getInstance("RSA/ECB/NoPadding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
         cipher.init(Cipher.ENCRYPT_MODE, encryptionKey)
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
     private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
-        val cipher = Cipher.getInstance("RSA/ECB/OAEPPadding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
+        val cipher = Cipher.getInstance("RSA/ECB/NoPadding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
         cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
         val decryptedKey = cipher.doFinal(encryptedKey)
         return SecretKeySpec(decryptedKey, SECRET_KEY_ALGORITHM)
@@ -164,7 +164,7 @@ object CryptoUtil {
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setAlgorithmParameterSpec(RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4))
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             .setUserAuthenticationRequired(true)
             .setInvalidatedByBiometricEnrollment(true)
             .build()
