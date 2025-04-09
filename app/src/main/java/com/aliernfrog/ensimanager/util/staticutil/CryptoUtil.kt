@@ -81,11 +81,12 @@ object CryptoUtil {
         return DecryptResult(data, masterKey)
     }
 
-    fun decryptWithBiometrics(encryptedData: EncryptedData): DecryptResult? {
+    fun decryptWithBiometrics(cipher: Cipher, encryptedData: EncryptedData): DecryptResult? {
         return getBiometricKey()?.let {
             // TODO remove log
             Log.d(TAG, "decryptWithBiometrics: ${it.private}")
             val masterKey = decryptBiometricKey(
+                cipher,
                 Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
                 it.private
             )
@@ -135,8 +136,8 @@ object CryptoUtil {
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
-    private fun decryptBiometricKey(encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
+    private fun decryptBiometricKey(cipher: Cipher, encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
+        //val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
         cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
         val decryptedKey = cipher.doFinal(encryptedKey)
         return SecretKeySpec(decryptedKey, SECRET_KEY_ALGORITHM)

@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.biometric.BiometricPrompt
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.getValue
@@ -45,6 +46,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import javax.crypto.Cipher
 import javax.crypto.SecretKey
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -193,10 +195,10 @@ class APIViewModel(
         return null
     }
 
-    suspend fun decryptAPIProfilesWithBiometricsAndLoad(): Array<APIProfile>? {
+    suspend fun decryptAPIProfilesWithBiometricsAndLoad(cipher: Cipher): Array<APIProfile>? {
         try {
             encryptedData?.let {
-                val decryptResult = CryptoUtil.decryptWithBiometrics(it)!!
+                val decryptResult = CryptoUtil.decryptWithBiometrics(cipher, it)!!
                 // TODO remove below logs
                 Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: masterKey: ${decryptResult.masterKey}")
                 Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: decryptedData: ${decryptResult.decryptedData}")
@@ -321,7 +323,7 @@ class APIViewModel(
     fun showBiometricPrompt(
         context: Context,
         forDecryption: Boolean,
-        onSuccess: () -> Unit,
+        onSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,
         onFail: () -> Unit
     ) {
         BiometricUtil.authenticate(
@@ -331,7 +333,7 @@ class APIViewModel(
                 else R.string.settings_security_biometrics_prompt
             ),
             description = context.getString(R.string.api_crypto_decrypt_biometrics_description),
-            onSuccess = { _ -> onSuccess() },
+            onSuccess = onSuccess,
             onError = { _, _ -> onFail() },
             onFail = onFail
         )
