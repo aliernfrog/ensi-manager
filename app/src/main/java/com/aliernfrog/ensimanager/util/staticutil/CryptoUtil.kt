@@ -29,7 +29,7 @@ object CryptoUtil {
     private const val KEY_LENGTH = 256
 
     private const val BIOMETRIC_KEY_ALIAS = "ensimanager_biometric_key"
-    private const val BIOMETRIC_KEY_ENCRYPTION_PROVIDER = "AndroidKeyStoreBCWorkaround"
+    private const val BIOMETRIC_KEY_ENCRYPTION_PROVIDER = "AndroidKeyStore"
     private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
 
     fun encryptWithPassword(string: String, password: String, withBiometrics: Boolean): EncryptedData {
