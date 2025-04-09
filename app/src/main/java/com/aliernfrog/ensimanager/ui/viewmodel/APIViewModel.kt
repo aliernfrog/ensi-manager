@@ -176,16 +176,18 @@ class APIViewModel(
         try {
             encryptedData?.let {
                 val decryptResult = CryptoUtil.decryptWithPassword(it, password)
+                Log.d(TAG, "decryptAPIProfilesAndLoad: masterKey: ${decryptResult.masterKey}")
+                Log.d(TAG, "decryptAPIProfilesAndLoad: decryptedData: ${decryptResult.decryptedData}")
                 val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
                 encryptionMasterKey = decryptResult.masterKey
                 apiProfiles.addAll(array)
                 refetchAllProfiles()
                 return array
             }
-        } catch (_: Exception) {
-            // The password is wrong, or the data is broken. Ask for a password again
+        } catch (e: Exception) {
             topToastState.showErrorToast(R.string.api_crypto_decrypt_fail, androidToast = true)
             showDecryptionDialog = true
+            Log.e(TAG, "decryptAPIProfilesAndLoad: failed to decrypt API profiles", e)
         }
         return null
     }
@@ -194,16 +196,19 @@ class APIViewModel(
         try {
             encryptedData?.let {
                 val decryptResult = CryptoUtil.decryptWithBiometrics(it)!!
+                Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: masterKey: ${decryptResult.masterKey}")
+                Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: decryptedData: ${decryptResult.decryptedData}")
                 val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
                 encryptionMasterKey = decryptResult.masterKey
                 apiProfiles.addAll(array)
                 refetchAllProfiles()
                 return array
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             // The data is most likely broken, ask for password just in case
             topToastState.showErrorToast(R.string.api_crypto_decrypt_fail_biometrics, androidToast = true)
             showDecryptionDialog = true
+            Log.e(TAG, "decryptAPIProfilesWithBiometricsAndLoad: failed to decrypt API profiles", e)
         }
         return null
     }

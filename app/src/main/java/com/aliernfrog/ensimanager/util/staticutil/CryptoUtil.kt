@@ -84,7 +84,7 @@ object CryptoUtil {
         return getBiometricKey()?.let {
             val masterKey = decryptBiometricKey(
                 Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
-                it.public
+                it.private
             )
             val data = decrypt(encryptedData, masterKey)
             DecryptResult(data, masterKey)
@@ -178,8 +178,9 @@ object CryptoUtil {
     private fun getBiometricKey(): KeyPair? {
         return try {
             if (!hasBiometricKey()) generateBiometricKey()
-            keyStore.getKey(BIOMETRIC_KEY_ALIAS, null)?.let {
-                KeyPair(keyStore.getCertificate(BIOMETRIC_KEY_ALIAS).publicKey, it as PrivateKey)
+            keyStore.getKey(BIOMETRIC_KEY_ALIAS, null)?.let { privateKey ->
+                val publicKey = keyStore.getCertificate(BIOMETRIC_KEY_ALIAS).publicKey
+                KeyPair(publicKey, privateKey as PrivateKey)
             }
         } catch (e: Exception) {
             Log.e(TAG, "getBiometricKey: failed to get biometric key", e)
