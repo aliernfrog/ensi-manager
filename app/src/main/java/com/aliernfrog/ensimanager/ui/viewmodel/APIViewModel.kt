@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -81,10 +82,12 @@ class APIViewModel(
     var encryptedData by mutableStateOf<EncryptedData?>(null)
     private var newEncryptionPassword by mutableStateOf<String?>(null)
     private var encryptionMasterKey by mutableStateOf<SecretKey?>(null)
-    val dataEncryptionEnabled: Boolean
-        get() = encryptedData != null || newEncryptionPassword != null
-    val dataDecrypted: Boolean
-        get() = !dataEncryptionEnabled || encryptionMasterKey != null
+    val dataEncryptionEnabled by derivedStateOf {
+        encryptedData != null || newEncryptionPassword != null
+    }
+    val dataDecrypted by derivedStateOf {
+        !dataEncryptionEnabled || encryptionMasterKey != null || newEncryptionPassword != null
+    }
 
     val biometricUnlockSupported = BiometricUtil.canAuthenticate(context)
     var biometricUnlockAvailable by mutableStateOf(false)
