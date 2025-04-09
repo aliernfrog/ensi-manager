@@ -178,9 +178,6 @@ class APIViewModel(
         try {
             encryptedData?.let {
                 val decryptResult = CryptoUtil.decryptWithPassword(it, password)
-                // TODO remove below logs
-                Log.d(TAG, "decryptAPIProfilesAndLoad: masterKey: ${decryptResult.masterKey}")
-                Log.d(TAG, "decryptAPIProfilesAndLoad: decryptedData: ${decryptResult.decryptedData}")
                 val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
                 encryptionMasterKey = decryptResult.masterKey
                 apiProfiles.addAll(array)
@@ -198,10 +195,7 @@ class APIViewModel(
     suspend fun decryptAPIProfilesWithBiometricsAndLoad(cipher: Cipher?): Array<APIProfile>? {
         try {
             encryptedData?.let {
-                val decryptResult = CryptoUtil.decryptWithBiometrics(cipher!!, it)!!
-                // TODO remove below logs
-                Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: masterKey: ${decryptResult.masterKey}")
-                Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: decryptedData: ${decryptResult.decryptedData}")
+                val decryptResult = CryptoUtil.decryptWithBiometrics(cipher!!, it)
                 val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
                 encryptionMasterKey = decryptResult.masterKey
                 apiProfiles.addAll(array)

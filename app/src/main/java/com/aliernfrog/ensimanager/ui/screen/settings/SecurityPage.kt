@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.screen.settings
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fingerprint
@@ -12,13 +13,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.ui.component.FadeVisibility
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
 import org.koin.androidx.compose.koinViewModel
@@ -88,7 +89,7 @@ fun SecurityPage(
                     apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabled)
                 },
                 onFail = {
-                    apiViewModel.topToastState.showErrorToast()
+                    Log.d(TAG, "SecurityPage: biometric unlock failed")
                 }
             ) else {
                 apiViewModel.biometricUnlockEnabled = false

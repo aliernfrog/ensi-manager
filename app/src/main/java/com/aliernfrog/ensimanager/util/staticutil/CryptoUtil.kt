@@ -1,6 +1,5 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
-import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
@@ -82,18 +81,13 @@ object CryptoUtil {
         return DecryptResult(data, masterKey)
     }
 
-    fun decryptWithBiometrics(cipher: Cipher, encryptedData: EncryptedData): DecryptResult? {
-        return getBiometricKey()?.let {
-            // TODO remove log
-            Log.d(TAG, "decryptWithBiometrics: ${it.private}")
-            val masterKey = decryptBiometricKey(
-                cipher,
-                Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT),
-                it.private
-            )
-            val data = decrypt(encryptedData, masterKey)
-            DecryptResult(data, masterKey)
-        }
+    fun decryptWithBiometrics(cipher: Cipher, encryptedData: EncryptedData): DecryptResult {
+        val masterKey = decryptBiometricKey(
+            cipher,
+            Base64.decode(encryptedData.biometricWrappedKey, Base64.DEFAULT)
+        )
+        val data = decrypt(encryptedData, masterKey)
+        return DecryptResult(data, masterKey)
     }
 
     private fun decrypt(encryptedData: EncryptedData, secretKey: SecretKey): String {
@@ -137,9 +131,7 @@ object CryptoUtil {
         return cipher.doFinal(keyToEncrypt.encoded)
     }
 
-    private fun decryptBiometricKey(cipher: Cipher, encryptedKey: ByteArray, decryptionKey: java.security.Key): SecretKey {
-        //val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
-        cipher.init(Cipher.DECRYPT_MODE, decryptionKey)
+    private fun decryptBiometricKey(cipher: Cipher, encryptedKey: ByteArray): SecretKey {
         val decryptedKey = cipher.doFinal(encryptedKey)
         return SecretKeySpec(decryptedKey, SECRET_KEY_ALGORITHM)
     }
@@ -175,11 +167,7 @@ object CryptoUtil {
             .setAlgorithmParameterSpec(RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4))
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
             .setUserAuthenticationRequired(true)
-
             .setInvalidatedByBiometricEnrollment(true)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            keyGenParameterSpecBuilder.setUserAuthenticationParameters(1, KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL)
 
         keyGenerator.initialize(keyGenParameterSpecBuilder.build())
         keyGenerator.generateKeyPair()
