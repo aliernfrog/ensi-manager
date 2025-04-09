@@ -195,10 +195,10 @@ class APIViewModel(
         return null
     }
 
-    suspend fun decryptAPIProfilesWithBiometricsAndLoad(cipher: Cipher): Array<APIProfile>? {
+    suspend fun decryptAPIProfilesWithBiometricsAndLoad(cipher: Cipher?): Array<APIProfile>? {
         try {
             encryptedData?.let {
-                val decryptResult = CryptoUtil.decryptWithBiometrics(cipher, it)!!
+                val decryptResult = CryptoUtil.decryptWithBiometrics(cipher!!, it)!!
                 // TODO remove below logs
                 Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: masterKey: ${decryptResult.masterKey}")
                 Log.d(TAG, "decryptAPIProfilesWithBiometricsAndLoad: decryptedData: ${decryptResult.decryptedData}")

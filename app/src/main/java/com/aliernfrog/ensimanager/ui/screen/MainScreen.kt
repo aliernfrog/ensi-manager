@@ -166,7 +166,7 @@ fun MainScreen(
                 context = context,
                 forDecryption = true,
                 onSuccess = { scope.launch {
-                    apiViewModel.decryptAPIProfilesWithBiometricsAndLoad()
+                    apiViewModel.decryptAPIProfilesWithBiometricsAndLoad(it.cryptoObject?.cipher)
                 } },
                 onFail = {
                     mainViewModel.topToastState.showErrorToast()
