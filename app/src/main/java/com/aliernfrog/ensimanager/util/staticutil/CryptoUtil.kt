@@ -157,6 +157,13 @@ object CryptoUtil {
         return iv
     }
 
+    fun initalizeBiometricCipher(): Cipher {
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", BIOMETRIC_KEY_ENCRYPTION_PROVIDER)
+        val key = getBiometricKey()!!
+        cipher.init(Cipher.DECRYPT_MODE, key.private)
+        return cipher
+    }
+
     fun generateBiometricKey() {
         val keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
 

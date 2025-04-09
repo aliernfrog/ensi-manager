@@ -54,6 +54,9 @@ object BiometricUtil {
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
             .build()
 
-        biometricPrompt.authenticate(promptInfo)
+        val cipher = CryptoUtil.initalizeBiometricCipher()
+        val cryptoObject = BiometricPrompt.CryptoObject(cipher)
+
+        biometricPrompt.authenticate(promptInfo, cryptoObject)
     }
 }
