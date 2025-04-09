@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.util.staticutil
 
+import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
@@ -167,17 +168,20 @@ object CryptoUtil {
     fun generateBiometricKey() {
         val keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
 
-        val keyGenParameterSpec = KeyGenParameterSpec.Builder(
+        val keyGenParameterSpecBuilder = KeyGenParameterSpec.Builder(
             BIOMETRIC_KEY_ALIAS,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setAlgorithmParameterSpec(RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4))
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
             .setUserAuthenticationRequired(true)
-            .setInvalidatedByBiometricEnrollment(true)
-            .build()
 
-        keyGenerator.initialize(keyGenParameterSpec)
+            .setInvalidatedByBiometricEnrollment(true)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            keyGenParameterSpecBuilder.setUserAuthenticationParameters(1, KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL)
+
+        keyGenerator.initialize(keyGenParameterSpecBuilder.build())
         keyGenerator.generateKeyPair()
     }
 
