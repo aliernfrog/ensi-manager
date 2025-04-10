@@ -39,7 +39,7 @@ import com.aliernfrog.ensimanager.R
 fun DecryptionDialog(
     onDismissRequest: () -> Unit,
     onDecryptRequest: (password: String, onFinish: () -> Unit) -> Unit,
-    onBiometricUnlockRequest: (() -> Unit)?,
+    onBiometricUnlockRequest: ((onFinish: () -> Unit) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -47,7 +47,10 @@ fun DecryptionDialog(
     var decrypting by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onBiometricUnlockRequest?.invoke()
+        onBiometricUnlockRequest?.let {
+            decrypting = true
+            it { decrypting = false }
+        }
     }
 
     AlertDialog(
@@ -123,7 +126,10 @@ fun DecryptionDialog(
                             .alpha(if (decrypting) 0.7f else 1f)
                             .let {
                                 if (decrypting) it
-                                else it.clickable(onClick = onClick)
+                                else it.clickable {
+                                    decrypting = true
+                                    onClick { decrypting = false }
+                                }
                             }
                     )
                 }

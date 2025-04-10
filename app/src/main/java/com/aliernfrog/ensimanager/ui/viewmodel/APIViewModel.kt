@@ -177,14 +177,13 @@ class APIViewModel(
         }
     }
 
-    suspend fun decryptAPIProfilesAndLoad(password: String): Array<APIProfile>? {
+    fun decryptAPIProfiles(password: String): Array<APIProfile>? {
         try {
             encryptedData?.let {
                 val decryptResult = CryptoUtil.decryptWithPassword(it, password)
                 val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
                 encryptionMasterKey = decryptResult.masterKey
                 apiProfiles.addAll(array)
-                refetchAllProfiles()
                 return array
             }
         } catch (e: Exception) {
@@ -195,14 +194,13 @@ class APIViewModel(
         return null
     }
 
-    suspend fun decryptAPIProfilesWithBiometricsAndLoad(cipher: Cipher?): Array<APIProfile>? {
+    fun decryptAPIProfilesWithBiometrics(cipher: Cipher?): Array<APIProfile>? {
         try {
             encryptedData?.let {
                 val decryptResult = CryptoUtil.decryptWithBiometrics(cipher!!, it)
                 val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
                 encryptionMasterKey = decryptResult.masterKey
                 apiProfiles.addAll(array)
-                refetchAllProfiles()
                 return array
             }
         } catch (e: Exception) {

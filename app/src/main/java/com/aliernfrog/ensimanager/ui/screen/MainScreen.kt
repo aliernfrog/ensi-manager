@@ -153,27 +153,32 @@ fun MainScreen(
     if (apiViewModel.showDecryptionDialog) DecryptionDialog(
         onDismissRequest = { apiViewModel.showDecryptionDialog = false },
         onDecryptRequest = { password, onFinish ->
-            scope.launch {
-                val profiles = apiViewModel.decryptAPIProfilesAndLoad(password)
-                if (profiles != null) {
-                    apiViewModel.showDecryptionDialog = false
-                    apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+            val profiles = apiViewModel.decryptAPIProfiles(password)
+            if (profiles != null) {
+                apiViewModel.showDecryptionDialog = false
+                apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                scope.launch {
+                    apiViewModel.refetchAllProfiles()
                 }
-                onFinish()
             }
+            onFinish()
         },
-        onBiometricUnlockRequest = if (apiViewModel.biometricDecryptionAvailable) { {
-            apiViewModel.showDecryptionDialog = false
+        onBiometricUnlockRequest = if (apiViewModel.biometricDecryptionAvailable) { { onFinish ->
             apiViewModel.showBiometricPrompt(
                 context = context,
                 forDecryption = true,
                 onSuccess = { scope.launch {
-                    val profiles = apiViewModel.decryptAPIProfilesWithBiometricsAndLoad(it.cryptoObject?.cipher)
-                    if (profiles != null) apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
-                    else apiViewModel.showDecryptionDialog = true
+                    val profiles = apiViewModel.decryptAPIProfilesWithBiometrics(it.cryptoObject?.cipher)
+                    if (profiles != null) {
+                        apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                        scope.launch {
+                            apiViewModel.refetchAllProfiles()
+                        }
+                    }
+                    onFinish()
                 } },
                 onFail = {
-                    apiViewModel.showDecryptionDialog = true
+                    onFinish()
                     Log.d(TAG, "MainScreen: biometric decryption prompt failed")
                 }
             )
