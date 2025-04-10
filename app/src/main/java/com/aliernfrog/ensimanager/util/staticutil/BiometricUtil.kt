@@ -51,6 +51,7 @@ object BiometricUtil {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
             .setDescription(description)
+            .setNegativeButtonText(activity.applicationContext.getString(android.R.string.cancel))
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
             .build()
 
