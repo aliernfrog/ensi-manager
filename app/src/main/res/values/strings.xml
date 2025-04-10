@@ -106,13 +106,15 @@
     <string name="settings_security_description">Improve security by encrypting Ensi Manager</string>
     <string name="settings_security_encryption">Encrypt profiles</string>
     <string name="settings_security_encryption_description">Encrypt your profiles and authorization details to improve security</string>
+    <string name="settings_security_encryption_disabledToast">Encryption disabled</string>
     <string name="settings_security_decryptFirst">Decrypt Ensi Manager to access security settings</string>
     <string name="settings_security_changePassword">Change password</string>
     <string name="settings_security_biometrics">Use biometrics</string>
     <string name="settings_security_biometrics_description">Quickly decrypt without entering your password</string>
     <string name="settings_security_biometrics_unsupported">Not supported on your device</string>
-    <string name="settings_security_biometrics_prompt">Enable biometric unlock</string>
-    <string name="settings_security_biometrics_enabled">Biometric unlock enabled</string>
+    <string name="settings_security_biometrics_prompt">Enable biometric decryption</string>
+    <string name="settings_security_biometrics_enabledToast">Biometric decryption enabled</string>
+    <string name="settings_security_biometrics_disabledToast">Biometric decryption disabled</string>
     <string name="settings_about">About</string>
     <string name="settings_about_changelog">Changelog</string>
     <string name="settings_about_update">Update</string>

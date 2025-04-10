@@ -89,10 +89,10 @@ class APIViewModel(
         !dataEncryptionEnabled || encryptionMasterKey != null || newEncryptionPassword != null
     }
 
-    val biometricUnlockSupported = BiometricUtil.canAuthenticate(context)
-    var biometricUnlockAvailable by mutableStateOf(false)
-    var biometricUnlockEnabled: Boolean
-        get() = prefs.biometricUnlockEnabled.value && biometricUnlockSupported
+    val biometricDecryptionSupported = BiometricUtil.canAuthenticate(context)
+    var biometricDecryptionAvailable by mutableStateOf(false)
+    var biometricDecryptionEnabled: Boolean
+        get() = prefs.biometricUnlockEnabled.value && biometricDecryptionSupported
         set(value) { prefs.biometricUnlockEnabled.value = value }
 
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
@@ -167,7 +167,7 @@ class APIViewModel(
             try {
                 // Might be encrypted, ask user for password if so
                 encryptedData = gson.fromJson(profilesData, EncryptedData::class.java)
-                if (encryptedData?.biometricWrappedKey != null && biometricUnlockEnabled) biometricUnlockAvailable = true
+                if (encryptedData?.biometricWrappedKey != null && biometricDecryptionEnabled) biometricDecryptionAvailable = true
                 showDecryptionDialog = true
             } catch (e: Exception) {
                 // Broken data
@@ -306,10 +306,10 @@ class APIViewModel(
             var json = gson.toJson(apiProfiles)
             if (dataEncryptionEnabled) {
                 if (newPassword != null) {
-                    val encrypted = CryptoUtil.encryptWithPassword(json, newPassword, withBiometrics = biometricUnlockEnabled)
+                    val encrypted = CryptoUtil.encryptWithPassword(json, newPassword, withBiometrics = biometricDecryptionEnabled)
                     json = gson.toJson(encrypted)
                 } else if (encryptionMasterKey != null && encryptedData != null) {
-                    val encrypted = CryptoUtil.reencryptWithKey(json, encryptionMasterKey!!, encryptedData!!, withBiometrics = biometricUnlockEnabled)
+                    val encrypted = CryptoUtil.reencryptWithKey(json, encryptionMasterKey!!, encryptedData!!, withBiometrics = biometricDecryptionEnabled)
                     json = gson.toJson(encrypted)
                 }
             }

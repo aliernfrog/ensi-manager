@@ -30,9 +30,7 @@ fun SecurityPage(
     onNavigateBackRequest: () -> Unit
 ) {
     val context = LocalContext.current
-
     val encryptionEnabled = apiViewModel.dataEncryptionEnabled
-
     val optionsEnabled = encryptionEnabled && apiViewModel.dataDecrypted
 
     SettingsPageContainer(
@@ -57,7 +55,10 @@ fun SecurityPage(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.padding(16.dp)
         ) {
-            if (encryptionEnabled) apiViewModel.changeEncryptionPasswordAndSave(null)
+            if (encryptionEnabled) {
+                apiViewModel.changeEncryptionPasswordAndSave(null)
+                apiViewModel.topToastState.showSuccessToast(R.string.settings_security_encryption_disabledToast)
+            }
             else apiViewModel.showEncryptionDialog = true
         }
 
@@ -72,28 +73,29 @@ fun SecurityPage(
         SwitchRow(
             title = stringResource(R.string.settings_security_biometrics),
             description = stringResource(
-                if (apiViewModel.biometricUnlockSupported) R.string.settings_security_biometrics_description
+                if (apiViewModel.biometricDecryptionSupported) R.string.settings_security_biometrics_description
                 else R.string.settings_security_biometrics_unsupported
             ),
             painter = rememberVectorPainter(Icons.Default.Fingerprint),
-            enabled = optionsEnabled && apiViewModel.biometricUnlockSupported,
-            checked = apiViewModel.biometricUnlockEnabled,
+            enabled = optionsEnabled && apiViewModel.biometricDecryptionSupported,
+            checked = apiViewModel.biometricDecryptionEnabled,
         ) {
             if (it) apiViewModel.showBiometricPrompt(
                 context = context,
                 forDecryption = false,
                 onSuccess = {
                     if (!CryptoUtil.hasBiometricKey()) CryptoUtil.generateBiometricKey()
-                    apiViewModel.biometricUnlockEnabled = true
+                    apiViewModel.biometricDecryptionEnabled = true
                     apiViewModel.saveProfiles()
-                    apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabled)
+                    apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabledToast)
                 },
                 onFail = {
-                    Log.d(TAG, "SecurityPage: biometric unlock failed")
+                    Log.d(TAG, "SecurityPage: biometric prompt failed")
                 }
             ) else {
-                apiViewModel.biometricUnlockEnabled = false
+                apiViewModel.biometricDecryptionEnabled = false
                 apiViewModel.saveProfiles()
+                apiViewModel.topToastState.showToast(R.string.settings_security_biometrics_disabledToast)
             }
         }
     }

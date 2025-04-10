@@ -103,8 +103,8 @@ fun ExperimentalPage(
         FormSection(title = "Biometrics") {
             ButtonRow(
                 title = "Show biometric prompt",
-                enabled = apiViewModel.biometricUnlockSupported,
-                description = if (!apiViewModel.biometricUnlockSupported) "Not supported on this device" else null
+                enabled = apiViewModel.biometricDecryptionSupported,
+                description = if (!apiViewModel.biometricDecryptionSupported) "Not supported on this device" else null
             ) {
                 apiViewModel.showBiometricPrompt(
                     context = context,
@@ -118,15 +118,15 @@ fun ExperimentalPage(
                 )
             }
             ButtonRow(
-                title = "Biometric unlock supported: ${apiViewModel.biometricUnlockSupported}",
+                title = "Biometric decryption supported: ${apiViewModel.biometricDecryptionSupported}",
                 enabled = false,
             ) {}
             ButtonRow(
-                title = "Biometric unlock available: ${apiViewModel.biometricUnlockAvailable}",
+                title = "Biometric decryption available: ${apiViewModel.biometricDecryptionAvailable}",
                 enabled = false
             ) {}
             ButtonRow(
-                title = "Biometric unlock enabled: ${apiViewModel.biometricUnlockEnabled}",
+                title = "Biometric decryption enabled: ${apiViewModel.biometricDecryptionEnabled}",
                 enabled = false
             ) {}
         }

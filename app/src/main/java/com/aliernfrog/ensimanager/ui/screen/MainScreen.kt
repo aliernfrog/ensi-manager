@@ -162,7 +162,7 @@ fun MainScreen(
                 onFinish()
             }
         },
-        onBiometricUnlockRequest = if (apiViewModel.biometricUnlockAvailable) { {
+        onBiometricUnlockRequest = if (apiViewModel.biometricDecryptionAvailable) { {
             apiViewModel.showBiometricPrompt(
                 context = context,
                 forDecryption = true,
@@ -174,7 +174,7 @@ fun MainScreen(
                     }
                 } },
                 onFail = {
-                    Log.d(TAG, "MainScreen: biometric unlock failed")
+                    Log.d(TAG, "MainScreen: biometric decryption prompt failed")
                 }
             )
         } } else null
