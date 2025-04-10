@@ -75,7 +75,7 @@ fun BaseScaffold(
 
     val windowSizeClass = calculateWindowSizeClass(context as Activity)
     val showNavigationBars = currentDestination?.showNavigationBar != false && mainDestinations.isNotEmpty()
-    val showNavigationRail = showNavigationBars && windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+    val showNavigationRail: Boolean? = if (showNavigationBars) windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact else null
     var sideBarWidth by remember { mutableStateOf(0.dp) }
 
     fun isDestinationSelected(destination: Destination): Boolean {
@@ -97,19 +97,19 @@ fun BaseScaffold(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .padding(
-                start = if (showNavigationRail) sideBarWidth else 0.dp
+                start = if (showNavigationRail == true) sideBarWidth else 0.dp
             ),
         bottomBar = {
             BottomBar(
                 destinations = mainDestinations,
-                showNavigationBars = showNavigationBars,
+                showNavigationBars = showNavigationRail == false,
                 isDestinationSelected = ::isDestinationSelected,
                 onNavigateRequest = { changeDestination(it) }
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        val paddingValues = if (showNavigationRail || currentDestination?.showNavigationBar != false) it
+        val paddingValues = if (showNavigationRail != false) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),
             top = it.calculateTopPadding(),
