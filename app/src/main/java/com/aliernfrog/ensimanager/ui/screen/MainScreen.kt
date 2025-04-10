@@ -163,17 +163,17 @@ fun MainScreen(
             }
         },
         onBiometricUnlockRequest = if (apiViewModel.biometricDecryptionAvailable) { {
+            apiViewModel.showDecryptionDialog = false
             apiViewModel.showBiometricPrompt(
                 context = context,
                 forDecryption = true,
                 onSuccess = { scope.launch {
                     val profiles = apiViewModel.decryptAPIProfilesWithBiometricsAndLoad(it.cryptoObject?.cipher)
-                    if (profiles != null) {
-                        apiViewModel.showDecryptionDialog = false
-                        apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
-                    }
+                    if (profiles != null) apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                    else apiViewModel.showDecryptionDialog = true
                 } },
                 onFail = {
+                    apiViewModel.showDecryptionDialog = true
                     Log.d(TAG, "MainScreen: biometric decryption prompt failed")
                 }
             )

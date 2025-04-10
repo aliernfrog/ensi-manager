@@ -95,7 +95,7 @@ fun SecurityPage(
             ) else {
                 apiViewModel.biometricDecryptionEnabled = false
                 apiViewModel.saveProfiles()
-                apiViewModel.topToastState.showToast(R.string.settings_security_biometrics_disabledToast)
+                apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_disabledToast)
             }
         }
     }
