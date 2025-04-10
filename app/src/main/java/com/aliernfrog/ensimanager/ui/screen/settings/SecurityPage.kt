@@ -84,7 +84,7 @@ fun SecurityPage(
                 context = context,
                 forDecryption = false,
                 onSuccess = {
-                    if (!CryptoUtil.hasBiometricKey()) CryptoUtil.generateBiometricKey()
+                    CryptoUtil.generateBiometricKey()
                     apiViewModel.biometricDecryptionEnabled = true
                     apiViewModel.saveProfiles()
                     apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabledToast)
@@ -93,6 +93,7 @@ fun SecurityPage(
                     Log.d(TAG, "SecurityPage: biometric prompt failed")
                 }
             ) else {
+                CryptoUtil.deleteBiometricKey()
                 apiViewModel.biometricDecryptionEnabled = false
                 apiViewModel.saveProfiles()
                 apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_disabledToast)
