@@ -39,7 +39,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
@@ -73,7 +73,7 @@ fun AboutPage(
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val clipboard = LocalClipboard.current
+    val clipboardManager = LocalClipboardManager.current
 
     val scope = rememberCoroutineScope()
     val appIcon = remember {
@@ -226,7 +226,7 @@ fun AboutPage(
                 painter = rememberVectorPainter(Icons.Outlined.CopyAll)
             ) {
                 scope.launch {
-                    clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
+                    clipboardManager.setClip(ClipEntry(ClipData.newPlainText(
                         context.getString(R.string.settings_about_other_copyDebugInfo_clipLabel),
                         mainViewModel.debugInfo
                     )))

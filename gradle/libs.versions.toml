@@ -9,9 +9,8 @@ androidx-lifecycle = "2.8.7"
 androidx-navigation = "2.8.9"
 androidx-splashscreen = "1.0.1"
 
-compose = "1.8.0-rc03"
-compose-material-icons = "1.7.8"
-compose-material3 = "1.4.0-alpha12"
+compose = "1.7.8"
+compose-material3 = "1.3.2"
 
 aboutlibraries = "11.6.3"
 coil = "3.1.0"
@@ -33,7 +32,7 @@ compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compos
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
-compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose-material-icons" }
+compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3" }
 compose-material3-window = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "compose-material3" }
 
