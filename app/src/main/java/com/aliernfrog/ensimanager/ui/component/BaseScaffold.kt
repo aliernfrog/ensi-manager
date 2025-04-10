@@ -121,9 +121,9 @@ fun BaseScaffold(
         content(paddingValues)
     }
 
-    SideBarRail(
+    if (navigationBarType != NavigationBarType.BOTTOM_BAR) SideBarRail(
         destinations = mainDestinations,
-        showNavigationBars = showNavigationBars,
+        showNavigationBars = navigationBarType == NavigationBarType.SIDE_RAIL,
         isDestinationSelected = ::isDestinationSelected,
         onWidthChange = { sideBarWidth = toDp(it) },
         onNavigateRequest = { changeDestination(it) }
