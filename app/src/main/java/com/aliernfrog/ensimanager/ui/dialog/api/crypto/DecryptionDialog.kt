@@ -38,8 +38,8 @@ import com.aliernfrog.ensimanager.R
 @Composable
 fun DecryptionDialog(
     onDismissRequest: () -> Unit,
-    onDecryptRequest: (password: String, onFinish: () -> Unit) -> Unit,
-    onBiometricUnlockRequest: ((onFinish: () -> Unit) -> Unit)?,
+    onDecryptRequest: (password: String, setDecryptingState: (decrypting: Boolean) -> Unit) -> Unit,
+    onBiometricUnlockRequest: ((setDecryptingState: (decrypting: Boolean) -> Unit) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -47,9 +47,9 @@ fun DecryptionDialog(
     var decrypting by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        onBiometricUnlockRequest?.let {
+        onBiometricUnlockRequest?.let { callback ->
             decrypting = true
-            it { decrypting = false }
+            callback { value -> decrypting = value }
         }
     }
 
@@ -59,8 +59,8 @@ fun DecryptionDialog(
             Button(
                 onClick = {
                     decrypting = true
-                    onDecryptRequest(password) {
-                        decrypting = false
+                    onDecryptRequest(password) { value ->
+                        decrypting = value
                     }
                 },
                 enabled = !decrypting
@@ -119,7 +119,7 @@ fun DecryptionDialog(
                     }
                 )
 
-                onBiometricUnlockRequest?.let { onClick ->
+                onBiometricUnlockRequest?.let { callback ->
                     Text(
                         text = stringResource(R.string.settings_security_biometrics),
                         modifier = Modifier
@@ -128,7 +128,7 @@ fun DecryptionDialog(
                                 if (decrypting) it
                                 else it.clickable {
                                     decrypting = true
-                                    onClick { decrypting = false }
+                                    callback { value -> decrypting = value }
                                 }
                             }
                     )
