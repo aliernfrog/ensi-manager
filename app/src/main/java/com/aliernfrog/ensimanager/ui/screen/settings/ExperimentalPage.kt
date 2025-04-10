@@ -101,29 +101,10 @@ fun ExperimentalPage(
         }
 
         FormSection(title = "Biometrics") {
-            var hasBiometricKey by remember { mutableStateOf(CryptoUtil.hasBiometricKey()) }
             ButtonRow(
-                title = "Has biometric key: $hasBiometricKey",
-                description = "Tap to update"
-            ) {
-                hasBiometricKey = CryptoUtil.hasBiometricKey()
-            }
-            ButtonRow(
-                title = "Generate biometric key"
-            ) {
-                CryptoUtil.generateBiometricKey()
-                hasBiometricKey = CryptoUtil.hasBiometricKey()
-                mainViewModel.topToastState.showToast("Biometric key generated")
-            }
-            ButtonRow(
-                title = "Delete biometric key"
-            ) {
-                CryptoUtil.deleteBiometricKey()
-                hasBiometricKey = CryptoUtil.hasBiometricKey()
-                mainViewModel.topToastState.showToast("Biometric key deleted")
-            }
-            ButtonRow(
-                title = "Show biometric prompt"
+                title = "Show biometric prompt",
+                enabled = apiViewModel.biometricUnlockSupported,
+                description = if (!apiViewModel.biometricUnlockSupported) "Not supported on this device" else null
             ) {
                 apiViewModel.showBiometricPrompt(
                     context = context,
@@ -151,6 +132,29 @@ fun ExperimentalPage(
         }
 
         FormSection(title = "Encryption") {
+            var hasBiometricKey by remember { mutableStateOf(CryptoUtil.hasBiometricKey()) }
+            ButtonRow(
+                title = "Has biometric key: $hasBiometricKey",
+                description = "Tap to update"
+            ) {
+                hasBiometricKey = CryptoUtil.hasBiometricKey()
+            }
+            ButtonRow(
+                title = "Generate biometric key",
+                description = "Biometric decryption will fail until re-encrypted with the new key!"
+            ) {
+                CryptoUtil.generateBiometricKey()
+                hasBiometricKey = CryptoUtil.hasBiometricKey()
+                mainViewModel.topToastState.showToast("Biometric key generated")
+            }
+            ButtonRow(
+                title = "Delete biometric key",
+                description = "Biometric decryption will fail until re-encrypted with the new key!"
+            ) {
+                CryptoUtil.deleteBiometricKey()
+                hasBiometricKey = CryptoUtil.hasBiometricKey()
+                mainViewModel.topToastState.showToast("Biometric key deleted")
+            }
             ButtonRow(
                 title = "Password wrapped key",
                 description = apiViewModel.encryptedData?.passwordWrappedKey ?: "null",
