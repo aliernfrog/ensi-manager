@@ -2,8 +2,10 @@ package com.aliernfrog.ensimanager.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.biometric.BiometricPrompt
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -11,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.Density
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
@@ -31,6 +34,9 @@ import com.aliernfrog.ensimanager.util.extension.set
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
+import com.aliernfrog.ensimanager.util.staticutil.BiometricUtil
+import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
+import com.aliernfrog.ensimanager.util.staticutil.EncryptedData
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
@@ -41,6 +47,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import javax.crypto.Cipher
+import javax.crypto.SecretKey
 
 @OptIn(ExperimentalMaterial3Api::class)
 class APIViewModel(
@@ -68,6 +76,24 @@ class APIViewModel(
     var profileSheetAuthorization by mutableStateOf("")
     var profileSheetTrustedSha256 by mutableStateOf("")
     var profileSheetShowAuthorization by mutableStateOf(false)
+
+    var showEncryptionDialog by mutableStateOf(false)
+    var showDecryptionDialog by mutableStateOf(false)
+    var encryptedData by mutableStateOf<EncryptedData?>(null)
+    private var newEncryptionPassword by mutableStateOf<String?>(null)
+    private var encryptionMasterKey by mutableStateOf<SecretKey?>(null)
+    val dataEncryptionEnabled by derivedStateOf {
+        encryptedData != null || newEncryptionPassword != null
+    }
+    val dataDecrypted by derivedStateOf {
+        !dataEncryptionEnabled || encryptionMasterKey != null || newEncryptionPassword != null
+    }
+
+    val biometricDecryptionSupported = BiometricUtil.canAuthenticate(context)
+    var biometricDecryptionAvailable by mutableStateOf(false)
+    var biometricDecryptionEnabled: Boolean
+        get() = prefs.biometricUnlockEnabled.value && biometricDecryptionSupported
+        set(value) { prefs.biometricUnlockEnabled.value = value }
 
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
     var chosenProfile: APIProfile?
@@ -99,14 +125,7 @@ class APIViewModel(
         get() = chosenProfile?.isAvailable ?: false
 
     init {
-        try {
-            apiProfiles.addAll(
-                gson.fromJson(prefs.apiProfiles.value, Array<APIProfile>::class.java)
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load API profiles", e)
-            topToastState.showErrorToast(R.string.api_profiles_restoreError)
-        }
+        loadAPIProfiles()
 
         @Suppress("DEPRECATION")
         if (prefs.legacyAPIURL.value.isNotBlank()) {
@@ -135,6 +154,62 @@ class APIViewModel(
                     prefs.lastActiveAPIProfileId.value = it?.id.toString()
                 }
         }
+    }
+
+    private fun loadAPIProfiles() {
+        val profilesData = prefs.apiProfiles.value
+        if (profilesData.isBlank()) return
+        try {
+            apiProfiles.addAll(
+                gson.fromJson(profilesData, Array<APIProfile>::class.java)
+            )
+        } catch (_: Exception) {
+            try {
+                // Might be encrypted, ask user for password if so
+                encryptedData = gson.fromJson(profilesData, EncryptedData::class.java)
+                if (encryptedData?.biometricWrappedKey != null && biometricDecryptionEnabled) biometricDecryptionAvailable = true
+                showDecryptionDialog = true
+            } catch (e: Exception) {
+                // Broken data
+                Log.e(TAG, "Failed to restore saved profiles", e)
+                topToastState.showErrorToast(R.string.api_profiles_restoreError)
+            }
+        }
+    }
+
+    fun decryptAPIProfiles(password: String): Array<APIProfile>? {
+        try {
+            encryptedData?.let {
+                val decryptResult = CryptoUtil.decryptWithPassword(it, password)
+                val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
+                encryptionMasterKey = decryptResult.masterKey
+                apiProfiles.addAll(array)
+                return array
+            }
+        } catch (e: Exception) {
+            topToastState.showErrorToast(R.string.api_crypto_decrypt_fail, androidToast = true)
+            showDecryptionDialog = true
+            Log.e(TAG, "decryptAPIProfilesAndLoad: failed to decrypt API profiles", e)
+        }
+        return null
+    }
+
+    fun decryptAPIProfilesWithBiometrics(cipher: Cipher?): Array<APIProfile>? {
+        try {
+            encryptedData?.let {
+                val decryptResult = CryptoUtil.decryptWithBiometrics(cipher!!, it)
+                val array = gson.fromJson(decryptResult.decryptedData, Array<APIProfile>::class.java)
+                encryptionMasterKey = decryptResult.masterKey
+                apiProfiles.addAll(array)
+                return array
+            }
+        } catch (e: Exception) {
+            // The data is most likely broken, ask for password just in case
+            topToastState.showErrorToast(R.string.api_crypto_decrypt_fail_biometrics, androidToast = true)
+            showDecryptionDialog = true
+            Log.e(TAG, "decryptAPIProfilesWithBiometricsAndLoad: failed to decrypt API profiles", e)
+        }
+        return null
     }
 
     suspend fun refetchAllProfiles() {
@@ -209,6 +284,12 @@ class APIViewModel(
         emptyMap()
     }
 
+    fun changeEncryptionPasswordAndSave(password: String?) {
+        newEncryptionPassword = password
+        if (password == null) encryptedData = null
+        saveProfiles()
+    }
+
     fun getProfileCache(profile: APIProfile): APIProfileCache? {
         return cache[profile.id]
     }
@@ -219,8 +300,38 @@ class APIViewModel(
     }
 
     fun saveProfiles() {
-        val json = gson.toJson(apiProfiles)
-        prefs.apiProfiles.value = json
+        newEncryptionPassword.let { newPassword ->
+            var json = gson.toJson(apiProfiles)
+            if (dataEncryptionEnabled) {
+                if (newPassword != null) {
+                    val encrypted = CryptoUtil.encryptWithPassword(json, newPassword, withBiometrics = biometricDecryptionEnabled)
+                    json = gson.toJson(encrypted)
+                } else if (encryptionMasterKey != null && encryptedData != null) {
+                    val encrypted = CryptoUtil.reencryptWithKey(json, encryptionMasterKey!!, encryptedData!!, withBiometrics = biometricDecryptionEnabled)
+                    json = gson.toJson(encrypted)
+                }
+            }
+            prefs.apiProfiles.value = json
+        }
+    }
+
+    fun showBiometricPrompt(
+        context: Context,
+        forDecryption: Boolean,
+        onSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,
+        onFail: () -> Unit
+    ) {
+        BiometricUtil.authenticate(
+            activity = context as FragmentActivity,
+            title = context.getString(
+                if (forDecryption) R.string.api_crypto_decrypt_biometrics_prompt
+                else R.string.settings_security_biometrics_prompt
+            ),
+            description = context.getString(R.string.api_crypto_decrypt_biometrics_description),
+            onSuccess = onSuccess,
+            onError = { _, _ -> onFail() },
+            onFail = onFail
+        )
     }
 
     suspend fun openProfileSheetToAddNew() {

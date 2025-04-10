@@ -17,12 +17,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EnhancedEncryption
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Refresh
@@ -39,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -65,9 +68,11 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.CardWithActions
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
+import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.form.FormHeader
 import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
@@ -141,7 +146,14 @@ fun APIProfilesScreen(
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     ) {
         LazyColumn(Modifier.fillMaxSize()) {
-            if (apiViewModel.apiProfiles.isEmpty()) item {
+            if (apiViewModel.dataEncryptionEnabled && !apiViewModel.dataDecrypted) item {
+                DecryptionCard(
+                    onDecryptRequest = {
+                        apiViewModel.showDecryptionDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                )
+            } else if (apiViewModel.apiProfiles.isEmpty()) item {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -162,6 +174,16 @@ fun APIProfilesScreen(
                         Text(stringResource(R.string.api_profiles_add))
                     }
                 }
+            } else if (!apiViewModel.dataEncryptionEnabled && !apiViewModel.prefs.encryptionSuggestionDismissed.value) item {
+                EncryptionCard(
+                    onDismissRequest = {
+                        apiViewModel.prefs.encryptionSuggestionDismissed.value = true
+                    },
+                    onEncryptRequest = {
+                        apiViewModel.showEncryptionDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                )
             }
 
             items(apiViewModel.apiProfiles) { profile ->
@@ -356,5 +378,34 @@ private fun ProfileCard(
                 Text(stringResource(R.string.api_profiles_edit))
             }
         }
+    }
+}
+
+@Composable
+fun EncryptionCard(
+    onDismissRequest: () -> Unit,
+    onEncryptRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CardWithActions(
+        title = stringResource(R.string.api_crypto_encrypt),
+        icon = rememberVectorPainter(Icons.Default.EnhancedEncryption),
+        buttons = {
+            TextButton(
+                onClick = onDismissRequest
+            ) {
+                Text(stringResource(R.string.action_dismiss))
+            }
+
+            Button(
+                onClick = onEncryptRequest
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
+                Text(stringResource(R.string.api_crypto_encrypt_do))
+            }
+        },
+        modifier = modifier
+    ) {
+        Text(stringResource(R.string.api_crypto_encrypt_description))
     }
 }

@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,25 +15,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.ui.component.BaseScaffold
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.DecryptionDialog
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.EncryptionDialog
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.sheet.UpdateSheet
+import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.extension.popBackStackSafe
+import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    apiViewModel: APIViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
     val onNavigateSettingsRequest = {
@@ -50,7 +60,11 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = NavigationConstant.INITIAL_DESTINATION,
-            modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+                .consumeWindowInsets(it)
+                .imePadding(),
             enterTransition = {
                 scaleIn(
                     animationSpec = tween(delayMillis = 100),
@@ -123,6 +137,55 @@ fun MainScreen(
             }
         }
     }
+
+    if (apiViewModel.showEncryptionDialog) EncryptionDialog(
+        onDismissRequest = { apiViewModel.showEncryptionDialog = false },
+        onEncryptRequest = { password, onFinish ->
+            scope.launch {
+                apiViewModel.changeEncryptionPasswordAndSave(password)
+                apiViewModel.showEncryptionDialog = false
+                apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)
+                onFinish()
+            }
+        }
+    )
+
+    if (apiViewModel.showDecryptionDialog) DecryptionDialog(
+        onDismissRequest = { apiViewModel.showDecryptionDialog = false },
+        onDecryptRequest = { password, setDecryptingState ->
+            val profiles = apiViewModel.decryptAPIProfiles(password)
+            if (profiles != null) {
+                apiViewModel.showDecryptionDialog = false
+                apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                scope.launch {
+                    apiViewModel.refetchAllProfiles()
+                }
+            }
+            setDecryptingState(false)
+        },
+        onBiometricUnlockRequest = if (apiViewModel.biometricDecryptionAvailable) { { setDecryptingState ->
+            apiViewModel.showBiometricPrompt(
+                context = context,
+                forDecryption = true,
+                onSuccess = { scope.launch {
+                    setDecryptingState(true)
+                    val profiles = apiViewModel.decryptAPIProfilesWithBiometrics(it.cryptoObject?.cipher)
+                    if (profiles != null) {
+                        apiViewModel.showDecryptionDialog = false
+                        apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                        scope.launch {
+                            apiViewModel.refetchAllProfiles()
+                        }
+                    }
+                    setDecryptingState(false)
+                } },
+                onFail = {
+                    setDecryptingState(false)
+                    Log.d(TAG, "MainScreen: biometric decryption prompt failed")
+                }
+            )
+        } } else null
+    )
 
     APIProfileSwitchSheet(
         onNavigateSettingsRequest = onNavigateSettingsRequest,
