@@ -111,7 +111,7 @@ fun BaseScaffold(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        val paddingValues = if (navigationBarType != NavigationBarType.BOTTOM_BAR) it
+        val paddingValues = if (navigationBarType != NavigationBarType.BOTTOM_BAR || showNavigationBars) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),
             top = it.calculateTopPadding(),
