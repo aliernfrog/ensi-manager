@@ -11,7 +11,7 @@ object BiometricUtil {
     fun canAuthenticate(context: Context): Boolean {
         val biometricManager = BiometricManager.from(context)
         return when (biometricManager.canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            BiometricManager.Authenticators.BIOMETRIC_STRONG
         )) {
             BiometricManager.BIOMETRIC_SUCCESS -> true
             else -> false
@@ -51,7 +51,7 @@ object BiometricUtil {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
             .setDescription(description)
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
             .build()
 
         val cipher = CryptoUtil.initalizeBiometricCipher()
