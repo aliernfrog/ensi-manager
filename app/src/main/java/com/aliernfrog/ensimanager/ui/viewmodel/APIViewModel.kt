@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -28,6 +27,7 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.di.getKoinInstance
+import com.aliernfrog.ensimanager.impl.createSheetStateWithDensity
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.extension.set
@@ -58,8 +58,8 @@ class APIViewModel(
     private val contextUtils: ContextUtils,
     context: Context
 ) : ViewModel() {
-    val profileSwitcherSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
-    val profileSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
+    val profileSwitcherSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
+    val profileSheetState = createSheetStateWithDensity(skipPartiallyExpanded = true, Density(context))
 
     val userAgent = WebUtil.buildUserAgent(context)
     val apiProfiles = mutableStateListOf<APIProfile>()

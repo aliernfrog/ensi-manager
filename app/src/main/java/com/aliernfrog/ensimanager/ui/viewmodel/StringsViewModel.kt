@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -18,6 +17,7 @@ import com.aliernfrog.ensimanager.data.api.APIChatCategory
 import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
+import com.aliernfrog.ensimanager.impl.createSheetStateWithDensity
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.toptoast.state.TopToastState
@@ -33,8 +33,8 @@ class StringsViewModel(
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val lazyListState = LazyListState()
-    val addStringSheetState = SheetState(skipPartiallyExpanded = true, Density(context))
-    val wordSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
+    val addStringSheetState = createSheetStateWithDensity(skipPartiallyExpanded = true, Density(context))
+    val wordSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
 
     var filter by mutableStateOf("")
     var addStringInput by mutableStateOf("")
