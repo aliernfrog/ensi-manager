@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -66,6 +67,7 @@ import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
+import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.LogsViewModel
@@ -126,6 +128,20 @@ private fun LogsList(
         modifier = Modifier.fillMaxSize(),
         state = logsViewModel.lazyListState
     ) {
+        item {
+            SearchField(
+                query = logsViewModel.filter,
+                onQueryChange = { logsViewModel.filter = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-12).dp)
+                    .padding(
+                        start = 8.dp,
+                        end = 8.dp
+                    )
+            )
+        }
+
         item {
             Row(
                 modifier = Modifier

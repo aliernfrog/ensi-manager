@@ -51,7 +51,7 @@ class StringsViewModel(
         get() = categories.getOrNull(currentCategoryIndex)
     val currentCategoryList
         get() = currentCategory?.data?.filter {
-            it.lowercase().contains(filter.lowercase())
+            it.contains(filter, ignoreCase = true)
         } ?: listOf()
 
     init {
