@@ -2,12 +2,10 @@ package com.aliernfrog.ensimanager.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
@@ -23,11 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
-import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -39,16 +34,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
+import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
-import com.aliernfrog.ensimanager.ui.component.TextField
 import com.aliernfrog.ensimanager.ui.component.StringsScreenElement
 import com.aliernfrog.ensimanager.ui.sheet.AddStringSheet
 import com.aliernfrog.ensimanager.ui.sheet.StringSheet
@@ -136,27 +130,16 @@ private fun ListControls(
     stringsViewModel: StringsViewModel = koinViewModel(),
     stringsShown: Int
 ) {
-    TextField(
-        value = stringsViewModel.filter,
-        onValueChange = { stringsViewModel.filter = it },
-        placeholder = { Text(stringResource(R.string.strings_search)) },
-        leadingIcon = rememberVectorPainter(Icons.Rounded.Search),
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = stringsViewModel.filter.isNotEmpty(),
-                enter = fadeIn() + expandHorizontally(),
-                exit = fadeOut() + shrinkHorizontally()
-            ) {
-                IconButton(onClick = { stringsViewModel.filter = "" }) {
-                    Icon(
-                        painter = rememberVectorPainter(Icons.Rounded.Clear),
-                        contentDescription = null
-                    )
-                }
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-        contentColor = MaterialTheme.colorScheme.onSurface
+    SearchField(
+        query = stringsViewModel.filter,
+        onQueryChange = { stringsViewModel.filter = it },
+        modifier = Modifier
+            .fillMaxWidth()
+            .offset(y = (-12).dp)
+            .padding(
+                start = 8.dp,
+                end = 8.dp
+            )
     )
 
     SegmentedButtons(

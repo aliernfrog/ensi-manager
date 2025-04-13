@@ -8,6 +8,7 @@
     <string name="action_done">Done</string>
     <string name="action_password_show">Show password</string>
     <string name="action_password_hide">Hide password</string>
+    <string name="action_search_placeholder">Search..</string>
     <string name="error">Error</string>
     <string name="error_noBody">Body is blank, response code: %STATUS%</string>
     <string name="error_generic">Something went wrong</string>
@@ -79,7 +80,6 @@
     <string name="logs_reversed">Reversed</string>
     <string name="strings">Strings</string>
     <string name="strings_couldntFetch">Something went wrong while fetching strings</string>
-    <string name="strings_search">Search..</string>
     <string name="strings_shownStrings">% strings shown</string>
     <string name="strings_add">Add to {CATEGORY}</string>
     <string name="strings_add_placeholder">Something new</string>

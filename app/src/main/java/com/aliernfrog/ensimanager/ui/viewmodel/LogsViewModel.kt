@@ -40,9 +40,10 @@ class LogsViewModel(
 
     val shownLogTypes = mutableStateListOf(*APILogType.entries.toTypedArray())
     var logsReversed by mutableStateOf(false)
+    var filter by mutableStateOf("")
     val shownLogs: List<APILog>
         get() = logs.filter {
-            shownLogTypes.contains(it.type)
+            shownLogTypes.contains(it.type) && it.str.contains(filter, ignoreCase = true)
         }.let {
             // inverted logic to make the "reversed" one show oldest at top
             return@let if (!logsReversed) it.reversed() else it
