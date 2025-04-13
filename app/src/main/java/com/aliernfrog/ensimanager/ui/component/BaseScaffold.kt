@@ -51,6 +51,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.NavigationBarType
 import com.aliernfrog.ensimanager.util.extension.set
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,8 +76,8 @@ fun BaseScaffold(
 
     val windowSizeClass = calculateWindowSizeClass(context as Activity)
     val showNavigationBars = currentDestination?.showNavigationBar != false && mainDestinations.isNotEmpty()
-    val showNavigationRail: Boolean? = if (mainDestinations.size <= 1) null
-    else windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+    val navigationBarType = if (!showNavigationBars) NavigationBarType.NONE
+    else if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) NavigationBarType.SIDE_RAIL else NavigationBarType.BOTTOM_BAR
     var sideBarWidth by remember { mutableStateOf(0.dp) }
 
     fun isDestinationSelected(destination: Destination): Boolean {
@@ -98,19 +99,19 @@ fun BaseScaffold(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .padding(
-                start = if (showNavigationRail == true) sideBarWidth else 0.dp
+                start = if (navigationBarType == NavigationBarType.SIDE_RAIL) sideBarWidth else 0.dp
             ),
         bottomBar = {
-            if (showNavigationRail == false) BottomBar(
+            if (navigationBarType != NavigationBarType.SIDE_RAIL) BottomBar(
                 destinations = mainDestinations,
-                showNavigationBars = showNavigationBars,
+                showNavigationBars = navigationBarType == NavigationBarType.BOTTOM_BAR,
                 isDestinationSelected = ::isDestinationSelected,
                 onNavigateRequest = { changeDestination(it) }
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        val paddingValues = if (showNavigationRail == true || currentDestination?.showNavigationBar != false) it
+        val paddingValues = if (navigationBarType != NavigationBarType.BOTTOM_BAR || showNavigationBars) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),
             top = it.calculateTopPadding(),
@@ -120,9 +121,9 @@ fun BaseScaffold(
         content(paddingValues)
     }
 
-    if (showNavigationRail == true) SideBarRail(
+    if (navigationBarType != NavigationBarType.BOTTOM_BAR) SideBarRail(
         destinations = mainDestinations,
-        showNavigationBars = showNavigationBars,
+        showNavigationBars = navigationBarType == NavigationBarType.SIDE_RAIL,
         isDestinationSelected = ::isDestinationSelected,
         onWidthChange = { sideBarWidth = toDp(it) },
         onNavigateRequest = { changeDestination(it) }

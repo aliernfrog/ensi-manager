@@ -82,6 +82,8 @@ fun UpdateSheet(
                     .padding(horizontal = 16.dp),
                 markdown = latestVersionInfo.body,
                 linkColor = MaterialTheme.colorScheme.primary,
+                syntaxHighlightColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                syntaxHighlightTextColor = MaterialTheme.colorScheme.onSurface,
                 style = LocalTextStyle.current.copy(
                     color = LocalContentColor.current
                 ),

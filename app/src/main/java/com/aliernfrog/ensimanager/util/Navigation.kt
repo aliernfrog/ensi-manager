@@ -69,3 +69,9 @@ enum class Destination(
         showInNavigationBar = false
     )
 }
+
+enum class NavigationBarType {
+    NONE,
+    BOTTOM_BAR,
+    SIDE_RAIL
+}

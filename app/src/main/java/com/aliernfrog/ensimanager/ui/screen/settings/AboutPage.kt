@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.screen.settings
 
+import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,13 +38,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
@@ -224,11 +225,16 @@ fun AboutPage(
                 description = stringResource(R.string.settings_about_other_copyDebugInfo_description),
                 painter = rememberVectorPainter(Icons.Outlined.CopyAll)
             ) {
-                clipboardManager.setText(AnnotatedString(mainViewModel.debugInfo))
-                settingsViewModel.topToastState.showToast(
-                    text = R.string.settings_about_other_copyDebugInfo_copied,
-                    icon = Icons.Default.CopyAll
-                )
+                scope.launch {
+                    clipboardManager.setClip(ClipEntry(ClipData.newPlainText(
+                        context.getString(R.string.settings_about_other_copyDebugInfo_clipLabel),
+                        mainViewModel.debugInfo
+                    )))
+                    settingsViewModel.topToastState.showToast(
+                        text = R.string.settings_about_other_copyDebugInfo_copied,
+                        icon = Icons.Default.CopyAll
+                    )
+                }
             }
         }
     }
