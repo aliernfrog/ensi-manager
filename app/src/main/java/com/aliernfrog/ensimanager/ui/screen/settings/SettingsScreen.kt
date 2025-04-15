@@ -42,7 +42,6 @@ import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
-import com.aliernfrog.ensimanager.ui.screen.APIProfilesScreen
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.extension.popBackStackSafe
@@ -224,10 +223,7 @@ enum class SettingsPage(
         description = R.string.settings_api_description,
         icon = Icons.Outlined.Api,
         content = { onNavigateBackRequest, _ ->
-            APIProfilesScreen(
-                onNavigateSettingsRequest = null,
-                onNavigateBackRequest = onNavigateBackRequest
-            )
+            APIPage(onNavigateBackRequest = onNavigateBackRequest)
         }
     ),
 

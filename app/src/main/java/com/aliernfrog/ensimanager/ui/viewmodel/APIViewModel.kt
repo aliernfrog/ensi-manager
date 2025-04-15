@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.Density
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
@@ -95,6 +94,7 @@ class APIViewModel(
         get() = prefs.biometricUnlockEnabled.value && biometricDecryptionSupported
         set(value) { prefs.biometricUnlockEnabled.value = value }
 
+    private var selectedDefaultProfile = false
     private var _chosenProfile by mutableStateOf<APIProfile?>(null)
     var chosenProfile: APIProfile?
         get() = _chosenProfile
@@ -108,6 +108,9 @@ class APIViewModel(
                 if (!isScreenAvailable) availableDestinations.firstOrNull()?.let {
                     mainViewModel.navController?.set(it)
                 } ?: mainViewModel.navController?.set(NavigationConstant.INITIAL_DESTINATION)
+            }
+            if (prefs.rememberLastSelectedAPIProfile.value) {
+                prefs.defaultAPIProfileIndex.value = apiProfiles.indexOfFirst { it.id == value?.id }
             }
             onProfileSwitchListeners.forEach {
                 it(value)
@@ -143,16 +146,6 @@ class APIViewModel(
 
         viewModelScope.launch {
             refetchAllProfiles()
-
-            if (prefs.rememberLastAPIProfile.value && prefs.lastActiveAPIProfileId.value.isNotEmpty()) {
-                val selected = apiProfiles.find { it.id == prefs.lastActiveAPIProfileId.value }
-                if (selected?.isAvailable == true) chosenProfile = selected
-            }
-
-            snapshotFlow { chosenProfile }
-                .collect {
-                    prefs.lastActiveAPIProfileId.value = it?.id.toString()
-                }
         }
     }
 
@@ -163,6 +156,7 @@ class APIViewModel(
             apiProfiles.addAll(
                 gson.fromJson(profilesData, Array<APIProfile>::class.java)
             )
+            selectDefaultAPIProfile()
         } catch (_: Exception) {
             try {
                 // Might be encrypted, ask user for password if so
@@ -212,6 +206,15 @@ class APIViewModel(
         return null
     }
 
+    private fun selectDefaultAPIProfile() {
+        if (apiProfiles.isEmpty() || selectedDefaultProfile) return
+        selectedDefaultProfile = true
+        val defaultIndex = prefs.defaultAPIProfileIndex.value
+        if (defaultIndex < 0) return
+        val profile = apiProfiles.elementAtOrNull(defaultIndex)
+        if (profile?.isAvailable == true) chosenProfile = profile
+    }
+
     suspend fun refetchAllProfiles() {
         return coroutineScope {
             apiProfiles.map {
@@ -219,6 +222,7 @@ class APIViewModel(
                     fetchAPIEndpoints(it)
                 }
             }.awaitAll()
+            selectDefaultAPIProfile()
         }
     }
 
