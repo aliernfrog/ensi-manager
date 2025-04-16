@@ -156,7 +156,6 @@ class APIViewModel(
             apiProfiles.addAll(
                 gson.fromJson(profilesData, Array<APIProfile>::class.java)
             )
-            selectDefaultAPIProfile()
         } catch (_: Exception) {
             try {
                 // Might be encrypted, ask user for password if so
