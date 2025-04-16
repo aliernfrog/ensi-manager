@@ -33,7 +33,10 @@ fun RadioButtons(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onSelected() }
+                .let {
+                    if (choice.enabled) it.clickable { onSelected() }
+                    else it
+                }
                 .padding(horizontal = 2.dp)
         ) {
             RadioButton(
