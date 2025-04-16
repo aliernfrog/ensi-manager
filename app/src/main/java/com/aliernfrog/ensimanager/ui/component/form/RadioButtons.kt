@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +44,10 @@ fun RadioButtons(
             FormHeader(
                 title = choice.title,
                 description = choice.description,
+                contentColor = contentColor,
                 modifier = Modifier.alpha(
                     if (choice.enabled) 1f else 0.7f
                 )
-            )
-            Text(
-                text = choice.title,
-                color = contentColor
             )
         }
     }
