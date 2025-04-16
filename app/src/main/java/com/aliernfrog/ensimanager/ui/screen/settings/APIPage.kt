@@ -60,20 +60,7 @@ fun APIPage(
             }
         ) {
             RadioButtons(
-                choices = listOf(
-                    *apiViewModel.apiProfiles.map {
-                        val available = it.isAvailable
-                        RadioButtonChoice(
-                            title = it.name,
-                            description = if (available) null else stringResource(R.string.api_profiles_switcher_unavailable),
-                            enabled = available
-                        )
-                    }.toTypedArray(),
-                    RadioButtonChoice(
-                        title = stringResource(R.string.settings_api_defaultProfile_none),
-                        indexOverride = -1
-                    ),
-                ),
+                choices = defaultProfileChoices,
                 selectedOptionIndex = apiViewModel.prefs.defaultAPIProfileIndex.value,
                 onSelect = { index ->
                     apiViewModel.prefs.defaultAPIProfileIndex.value = index
