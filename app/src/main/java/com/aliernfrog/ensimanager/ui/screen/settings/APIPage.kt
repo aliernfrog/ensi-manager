@@ -24,11 +24,7 @@ fun APIPage(
     val defaultProfileChoices = listOf(
         *apiViewModel.apiProfiles.map {
             val available = it.isAvailable
-            RadioButtonChoice(
-                title = it.name,
-                description = if (available) null else stringResource(R.string.api_profiles_switcher_unavailable),
-                enabled = available
-            )
+            RadioButtonChoice(title = it.name)
         }.toTypedArray(),
         RadioButtonChoice(
             title = stringResource(R.string.settings_api_defaultProfile_none),
