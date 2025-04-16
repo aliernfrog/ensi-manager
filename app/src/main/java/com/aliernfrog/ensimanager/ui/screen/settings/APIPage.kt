@@ -21,6 +21,23 @@ fun APIPage(
     onNavigateBackRequest: () -> Unit
 ) {
     var defaultProfileChoicesExpanded by rememberSaveable { mutableStateOf(false) }
+    val defaultProfileChoices = listOf(
+        *apiViewModel.apiProfiles.map {
+            val available = it.isAvailable
+            RadioButtonChoice(
+                title = it.name,
+                description = if (available) null else stringResource(R.string.api_profiles_switcher_unavailable),
+                enabled = available
+            )
+        }.toTypedArray(),
+        RadioButtonChoice(
+            title = stringResource(R.string.settings_api_defaultProfile_none),
+            indexOverride = -1
+        )
+    )
+    val chosenDefaultProfileName = apiViewModel.prefs.defaultAPIProfileIndex.value.let {
+        defaultProfileChoices.elementAtOrNull(it)?.title ?: stringResource(R.string.settings_api_defaultProfile_none)
+    }
 
     SettingsPageContainer(
         title = stringResource(R.string.settings_api),
@@ -32,9 +49,11 @@ fun APIPage(
         ) {
             apiViewModel.prefs.rememberLastSelectedAPIProfile.value = it
         }
+        
         ExpandableRow(
             title = stringResource(R.string.settings_api_defaultProfile),
             description = stringResource(R.string.settings_api_defaultProfile_description),
+            trailingButtonText = chosenDefaultProfileName,
             expanded = defaultProfileChoicesExpanded,
             onClickHeader = {
                 defaultProfileChoicesExpanded = !defaultProfileChoicesExpanded
@@ -55,7 +74,7 @@ fun APIPage(
                         indexOverride = -1
                     ),
                 ),
-                selectedOptionIndex = 0,
+                selectedOptionIndex = apiViewModel.prefs.defaultAPIProfileIndex.value,
                 onSelect = { index ->
                     apiViewModel.prefs.defaultAPIProfileIndex.value = index
                 }
