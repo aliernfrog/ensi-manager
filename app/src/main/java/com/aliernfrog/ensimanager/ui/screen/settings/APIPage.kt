@@ -26,6 +26,12 @@ fun APIPage(
         title = stringResource(R.string.settings_api),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
+        SwitchRow(
+            title = stringResource(R.string.settings_api_rememberLast),
+            checked = apiViewModel.prefs.rememberLastSelectedAPIProfile.value
+        ) {
+            apiViewModel.prefs.rememberLastSelectedAPIProfile.value = it
+        }
         ExpandableRow(
             title = stringResource(R.string.settings_api_defaultProfile),
             description = stringResource(R.string.settings_api_defaultProfile_description),
@@ -34,12 +40,6 @@ fun APIPage(
                 defaultProfileChoicesExpanded = !defaultProfileChoicesExpanded
             }
         ) {
-            SwitchRow(
-                title = stringResource(R.string.settings_api_rememberLast),
-                checked = apiViewModel.prefs.rememberLastSelectedAPIProfile.value
-            ) {
-                apiViewModel.prefs.rememberLastSelectedAPIProfile.value = it
-            }
             RadioButtons(
                 choices = listOf(
                     *apiViewModel.apiProfiles.map {
