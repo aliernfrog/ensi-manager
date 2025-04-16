@@ -23,10 +23,11 @@ fun RadioButtons(
     colors: RadioButtonColors = RadioButtonDefaults.colors(),
     onSelect: (Int) -> Unit
 ) {
-    choices.forEachIndexed { index, choice ->
+    choices.forEachIndexed { i, choice ->
+        val index = choice.indexOverride ?: i
         val selected = selectedOptionIndex == index
         val onSelected = {
-            onSelect(choice.indexOverride ?: index)
+            onSelect(index)
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
