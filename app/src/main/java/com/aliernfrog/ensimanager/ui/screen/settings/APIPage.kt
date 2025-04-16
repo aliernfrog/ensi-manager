@@ -23,7 +23,6 @@ fun APIPage(
     var defaultProfileChoicesExpanded by rememberSaveable { mutableStateOf(false) }
     val defaultProfileChoices = listOf(
         *apiViewModel.apiProfiles.map {
-            val available = it.isAvailable
             RadioButtonChoice(title = it.name)
         }.toTypedArray(),
         RadioButtonChoice(
