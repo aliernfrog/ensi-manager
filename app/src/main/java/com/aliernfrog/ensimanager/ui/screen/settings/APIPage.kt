@@ -56,7 +56,7 @@ fun APIPage(
         ) {
             RadioButtons(
                 choices = defaultProfileChoices,
-                selectedOptionIndex = apiViewModel.prefs.defaultAPIProfileIndex.value,
+                selectedIndex = apiViewModel.prefs.defaultAPIProfileIndex.value,
                 onSelect = { index ->
                     apiViewModel.prefs.defaultAPIProfileIndex.value = index
                 }

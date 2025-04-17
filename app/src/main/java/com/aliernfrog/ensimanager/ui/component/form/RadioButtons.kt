@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun RadioButtons(
     choices: List<RadioButtonChoice>,
-    selectedOptionIndex: Int,
+    selectedIndex: Int,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     colors: RadioButtonColors = RadioButtonDefaults.colors(),
     onSelect: (Int) -> Unit
 ) {
     choices.forEachIndexed { i, choice ->
         val index = choice.indexOverride ?: i
-        val selected = selectedOptionIndex == index
+        val selected = selectedIndex == index
         val onSelected = {
             onSelect(index)
         }
