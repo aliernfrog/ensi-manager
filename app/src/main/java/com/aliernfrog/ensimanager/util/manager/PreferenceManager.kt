@@ -13,9 +13,9 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val pitchBlack = booleanPreference("pitchBlack", false)
 
     // API
-    val rememberLastAPIProfile = booleanPreference("rememberLastApiProfile", true)
     val apiProfiles = stringPreference("apiProfiles", "[]")
-    val lastActiveAPIProfileId = stringPreference("lastActiveApiProfileId", experimental = true, includeInDebugInfo = false)
+    val rememberLastSelectedAPIProfile = booleanPreference("rememberLastSelectedApiProfile", false)
+    val defaultAPIProfileIndex = intPreference("defaultApiProfileIndex", -1, experimental = true, includeInDebugInfo = false)
 
     @Deprecated("This should only be used for migration purposes")
     val legacyAPIURL = stringPreference("apiEndpointsUrl", experimental = true, includeInDebugInfo = false)

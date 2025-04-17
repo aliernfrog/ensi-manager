@@ -1,4 +1,4 @@
-package com.aliernfrog.ensimanager.ui.component
+package com.aliernfrog.ensimanager.ui.component.form
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -8,40 +8,58 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun RadioButtons(
-    options: List<String>,
-    selectedOptionIndex: Int,
+    choices: List<RadioButtonChoice>,
+    selectedIndex: Int,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     colors: RadioButtonColors = RadioButtonDefaults.colors(),
     onSelect: (Int) -> Unit
 ) {
-    options.forEachIndexed { index, option ->
-        val selected = selectedOptionIndex == index
-        val onSelected = { onSelect(index) }
+    choices.forEachIndexed { i, choice ->
+        val index = choice.indexOverride ?: i
+        val selected = selectedIndex == index
+        val onSelected = {
+            onSelect(index)
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onSelected() }
+                .let {
+                    if (choice.enabled) it.clickable { onSelected() }
+                    else it
+                }
                 .padding(horizontal = 2.dp)
         ) {
             RadioButton(
                 selected = selected,
                 onClick = { onSelected() },
-                colors = colors
+                colors = colors,
+                enabled = choice.enabled
             )
-            Text(
-                text = option,
-                color = contentColor
+            FormHeader(
+                title = choice.title,
+                description = choice.description,
+                contentColor = contentColor,
+                modifier = Modifier.alpha(
+                    if (choice.enabled) 1f else 0.7f
+                )
             )
         }
     }
 }
+
+data class RadioButtonChoice(
+    val title: String,
+    val description: String? = null,
+    val enabled: Boolean = true,
+    val indexOverride: Int? = null
+)

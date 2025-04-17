@@ -68,18 +68,6 @@ fun APIProfileSwitchSheet(
                     onSettingsClick()
                 }
             },
-            {
-                ButtonRow(
-                    title = stringResource(R.string.api_profiles),
-                    painter = rememberVectorPainter(Icons.Default.Api),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                ) {
-                    scope.launch {
-                        onNavigateApiProfilesRequest()
-                        sheetState.hide()
-                    }
-                }
-            },
             modifier = Modifier.padding(horizontal = 8.dp)
         )
 
@@ -115,6 +103,18 @@ fun APIProfileSwitchSheet(
         ) {
             VerticalSegmentor(
                 *profileButtons.toTypedArray(),
+                {
+                    ButtonRow(
+                        title = stringResource(R.string.api_profiles_switcher_manageProfiles),
+                        painter = rememberVectorPainter(Icons.Default.Api),
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                    ) {
+                        scope.launch {
+                            onNavigateApiProfilesRequest()
+                            sheetState.hide()
+                        }
+                    }
+                },
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
