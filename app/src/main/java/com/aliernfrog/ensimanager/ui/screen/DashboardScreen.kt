@@ -25,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -102,65 +103,71 @@ private fun ScreenContent(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    VerticalSegmentor({
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = dashboardViewModel.dashboardData?.avatar,
-                contentDescription = null,
+    VerticalSegmentor(
+        {
+            Row(
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onSurface)
-                    .size(100.dp)
-                    .clickable {
-                        dashboardViewModel.avatarDialogShown = true
-                    }
-            )
-            Column(
-                modifier = Modifier.padding(start = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                TextWithPlaceholder(
-                    text = dashboardViewModel.dashboardData?.name,
-                    placeholderCharRange = Range(12, 18),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                TextWithPlaceholder(
-                    text = dashboardViewModel.dashboardData?.status,
-                    placeholderCharRange = Range(22, 40),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-    }, {
-        dashboardViewModel.dashboardData?.info?.let { data ->
-            val rows: List<@Composable () -> Unit> = data.map { info -> {
-                Column(
+                AsyncImage(
+                    model = dashboardViewModel.dashboardData?.avatar,
+                    contentDescription = null,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onSurface)
+                        .size(100.dp)
+                        .clickable {
+                            dashboardViewModel.avatarDialogShown = true
+                        }
+                )
+                Column(
+                    modifier = Modifier.padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = info.title,
-                        style = MaterialTheme.typography.labelLarge
+                    TextWithPlaceholder(
+                        text = dashboardViewModel.dashboardData?.name,
+                        placeholderCharRange = Range(12, 18),
+                        style = MaterialTheme.typography.titleLarge
                     )
-                    Text(
-                        text = info.value ?: "-"
+                    TextWithPlaceholder(
+                        text = dashboardViewModel.dashboardData?.status,
+                        placeholderCharRange = Range(22, 40),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
-            } }
+            }
+        }, {
+            dashboardViewModel.dashboardData?.info?.let { data ->
+                val rows: List<@Composable () -> Unit> = data.map { info -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = info.title,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Text(
+                            text = info.value ?: "-"
+                        )
+                    }
+                } }
 
-            HorizontalSegmentor(
-                *rows.toTypedArray(),
-                roundness = 0.dp
-            )
-        }
-    }, modifier = Modifier.padding(12.dp))
+                HorizontalSegmentor(
+                    *rows.toTypedArray(),
+                    roundness = 0.dp
+                )
+            }
+        },
+        itemContainerColor = Color.Transparent,
+        modifier = Modifier.padding(12.dp)
+    )
 
     Spacer(Modifier.height(16.dp))
 

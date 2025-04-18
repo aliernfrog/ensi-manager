@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -79,75 +80,79 @@ fun AboutPage(
         title = stringResource(R.string.settings_about),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        VerticalSegmentor({
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .padding(vertical = 8.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        bitmap = appIcon,
-                        contentDescription = stringResource(R.string.app_name),
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(72.dp)
-                    )
-                    Column {
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            text = mainViewModel.applicationVersionLabel,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.clickable {
-                                settingsViewModel.onAboutClick()
-                            }
-                        )
-                    }
-                }
-                ChangelogButton(
-                    updateAvailable = mainViewModel.updateAvailable
-                ) { scope.launch {
-                    mainViewModel.updateSheetState.show()
-                } }
-            }
-        }, {
-            val socialButtons: List<@Composable () -> Unit> = SettingsConstant.socials.map { social -> {
+        VerticalSegmentor(
+            {
                 Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .clickable {
-                            uriHandler.openUri(social.url)
-                        }
                         .padding(vertical = 8.dp)
                 ) {
-                    Icon(
-                        painter = when (val icon = social.icon) {
-                            is Int -> painterResource(icon)
-                            is ImageVector -> rememberVectorPainter(icon)
-                            else -> throw IllegalArgumentException("unexpected class for social icon")
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(social.label)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            bitmap = appIcon,
+                            contentDescription = stringResource(R.string.app_name),
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .size(72.dp)
+                        )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.app_name),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = mainViewModel.applicationVersionLabel,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.clickable {
+                                    settingsViewModel.onAboutClick()
+                                }
+                            )
+                        }
+                    }
+                    ChangelogButton(
+                        updateAvailable = mainViewModel.updateAvailable
+                    ) { scope.launch {
+                        mainViewModel.updateSheetState.show()
+                    } }
                 }
-            } }
+            }, {
+                val socialButtons: List<@Composable () -> Unit> = SettingsConstant.socials.map { social -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .clickable {
+                                uriHandler.openUri(social.url)
+                            }
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Icon(
+                            painter = when (val icon = social.icon) {
+                                is Int -> painterResource(icon)
+                                is ImageVector -> rememberVectorPainter(icon)
+                                else -> throw IllegalArgumentException("unexpected class for social icon")
+                            },
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(social.label)
+                    }
+                } }
 
-            HorizontalSegmentor(
-                *socialButtons.toTypedArray(),
-                roundness = 0.dp
-            )
-        }, modifier = Modifier.padding(horizontal = 12.dp))
+                HorizontalSegmentor(
+                    *socialButtons.toTypedArray(),
+                    roundness = 0.dp
+                )
+            },
+            itemContainerColor = Color.Transparent,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
 
         ExpressiveSection(
             title = stringResource(R.string.settings_about_updates),

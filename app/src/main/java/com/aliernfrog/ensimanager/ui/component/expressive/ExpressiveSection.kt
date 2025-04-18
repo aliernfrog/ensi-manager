@@ -18,8 +18,8 @@ fun ExpressiveSection(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier) {
-        if (title != null) Text(
-            text = title,
+        Text(
+            text = title ?: "",
             color = titleColor,
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(

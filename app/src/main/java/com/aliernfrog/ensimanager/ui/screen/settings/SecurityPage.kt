@@ -57,7 +57,7 @@ fun SecurityPage(
             description = stringResource(R.string.settings_security_encryption_description),
             checked = encryptionEnabled,
             enabled = optionsEnabled || !encryptionEnabled,
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
                 .padding(vertical = 16.dp, horizontal = 12.dp)
                 .clip(RoundedCornerShape(SEGMENTOR_ROUNDNESS))

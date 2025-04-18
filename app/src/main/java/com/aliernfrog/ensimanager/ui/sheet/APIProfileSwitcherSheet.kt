@@ -55,6 +55,7 @@ fun APIProfileSwitchSheet(
                 ExpressiveButtonRow(
                     title = stringResource(R.string.settings),
                     painter = rememberVectorPainter(Icons.Default.Settings),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     trailingComponent = if (Destination.SETTINGS.hasNotification.value) { {
                        Button(
                            onClick = onSettingsClick

@@ -74,7 +74,6 @@ fun ExperimentalPage(
             description = stringResource(R.string.settings_experimental_description),
             checked = mainViewModel.prefs.experimentalOptionsEnabled.value,
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier
                 .padding(vertical = 16.dp, horizontal = 12.dp)
                 .clip(RoundedCornerShape(20.dp))
