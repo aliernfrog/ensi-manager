@@ -25,7 +25,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,7 @@ import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.dialog.ImageDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
@@ -107,7 +106,6 @@ private fun ScreenContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -144,7 +142,6 @@ private fun ScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .padding(vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -160,19 +157,18 @@ private fun ScreenContent(
 
             HorizontalSegmentor(
                 *rows.toTypedArray(),
-                shape = RectangleShape
+                roundness = 0.dp
             )
         }
-    }, modifier = Modifier.padding(8.dp))
+    }, modifier = Modifier.padding(12.dp))
 
     Spacer(Modifier.height(16.dp))
 
     dashboardViewModel.dashboardData?.actions?.let { actions ->
         val buttons: List<@Composable () -> Unit> = actions.map { action -> {
-            ButtonRow(
+            ExpressiveButtonRow(
                 title = action.label,
                 description = action.description,
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 painter = action.icon?.let { rememberAsyncImagePainter(
                     model = ByteBuffer.wrap(it.toByteArray()),
@@ -195,9 +191,7 @@ private fun ScreenContent(
 
         VerticalSegmentor(
             *buttons.toTypedArray(),
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .padding(bottom = 8.dp)
+            modifier = Modifier.padding(12.dp)
         )
     }
 

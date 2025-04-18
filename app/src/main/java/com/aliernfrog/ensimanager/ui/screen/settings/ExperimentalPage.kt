@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Restore
@@ -22,15 +23,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
-import com.aliernfrog.ensimanager.ui.component.form.FormSection
-import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.manager.base.BasePreferenceManager
@@ -66,109 +69,154 @@ fun ExperimentalPage(
         title = stringResource(R.string.settings_experimental),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        SwitchRow(
+        ExpressiveSwitchRow(
             title = stringResource(R.string.settings_experimental),
             description = stringResource(R.string.settings_experimental_description),
             checked = mainViewModel.prefs.experimentalOptionsEnabled.value,
-            shape = AppComponentShape,
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(vertical = 16.dp, horizontal = 12.dp)
+                .clip(RoundedCornerShape(20.dp))
         ) {
             mainViewModel.prefs.experimentalOptionsEnabled.value = it
         }
 
-        FormSection(title = "Updates") {
-            ButtonRow(
-                title = "Check updates (ignore version)"
-            ) {
-                scope.launch {
-                    mainViewModel.checkUpdates(ignoreVersion = true)
-                }
-            }
-            ButtonRow(
-                title = "Show update toast"
-            ) {
-                mainViewModel.showUpdateToast()
-            }
-            ButtonRow(
-                title = "Show update dialog"
-            ) {
-                scope.launch {
-                    mainViewModel.updateSheetState.show()
-                }
-            }
-        }
-
-        FormSection(title = "Biometrics") {
-            ButtonRow(
-                title = "Show biometric prompt",
-                enabled = apiViewModel.biometricDecryptionSupported,
-                description = if (!apiViewModel.biometricDecryptionSupported) "Not supported on this device" else null
-            ) {
-                apiViewModel.showBiometricPrompt(
-                    context = context,
-                    forDecryption = false,
-                    onSuccess = {
-                        mainViewModel.topToastState.showToast("Biometric prompt succeeded")
-                    },
-                    onFail = {
-                        mainViewModel.topToastState.showToast("Biometric prompt failed")
+        ExpressiveSection(title = "Updates") {
+            VerticalSegmentor(
+                {
+                    ExpressiveButtonRow(
+                        title = "Check updates (ignore version)",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        scope.launch {
+                            mainViewModel.checkUpdates(ignoreVersion = true)
+                        }
                     }
-                )
-            }
-            ButtonRow(
-                title = "Biometric decryption supported: ${apiViewModel.biometricDecryptionSupported}",
-                enabled = false,
-            ) {}
-            ButtonRow(
-                title = "Biometric decryption available: ${apiViewModel.biometricDecryptionAvailable}",
-                enabled = false
-            ) {}
-            ButtonRow(
-                title = "Biometric decryption enabled: ${apiViewModel.biometricDecryptionEnabled}",
-                enabled = false
-            ) {}
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Show update toast",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        mainViewModel.showUpdateToast()
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Show update dialog"
+                    ) {
+                        scope.launch {
+                            mainViewModel.updateSheetState.show()
+                        }
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
         }
 
-        FormSection(title = "Encryption") {
+        ExpressiveSection(title = "Biometrics") {
+            VerticalSegmentor(
+                {
+                    ExpressiveButtonRow(
+                        title = "Show biometric prompt",
+                        enabled = apiViewModel.biometricDecryptionSupported,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        apiViewModel.showBiometricPrompt(
+                            context = context,
+                            forDecryption = false,
+                            onSuccess = {
+                                mainViewModel.topToastState.showToast("Biometric prompt succeeded")
+                            },
+                            onFail = {
+                                mainViewModel.topToastState.showToast("Biometric prompt failed")
+                            }
+                        )
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Biometric decryption supported: ${apiViewModel.biometricDecryptionSupported}",
+                        enabled = false,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {}
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Biometric decryption available: ${apiViewModel.biometricDecryptionAvailable}",
+                        enabled = false,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {}
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Biometric decryption enabled: ${apiViewModel.biometricDecryptionEnabled}",
+                        enabled = false,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) { }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+
+        ExpressiveSection(title = "Encryption") {
             var hasBiometricKey by remember { mutableStateOf(CryptoUtil.hasBiometricKey()) }
-            ButtonRow(
-                title = "Has biometric key: $hasBiometricKey",
-                description = "Tap to update"
-            ) {
-                hasBiometricKey = CryptoUtil.hasBiometricKey()
-            }
-            ButtonRow(
-                title = "Generate biometric key",
-                description = "Biometric decryption will fail until re-encrypted with the new key!"
-            ) {
-                CryptoUtil.generateBiometricKey()
-                hasBiometricKey = CryptoUtil.hasBiometricKey()
-                mainViewModel.topToastState.showToast("Biometric key generated")
-            }
-            ButtonRow(
-                title = "Delete biometric key",
-                description = "Biometric decryption will fail until re-encrypted with the new key!"
-            ) {
-                CryptoUtil.deleteBiometricKey()
-                hasBiometricKey = CryptoUtil.hasBiometricKey()
-                mainViewModel.topToastState.showToast("Biometric key deleted")
-            }
-            ButtonRow(
-                title = "Password wrapped key",
-                description = apiViewModel.encryptedData?.passwordWrappedKey ?: "null",
-                enabled = false
-            ) {}
-            ButtonRow(
-                title = "Biometric wrapped key",
-                description = apiViewModel.encryptedData?.biometricWrappedKey ?: "null",
-                enabled = false
-            ) {}
+
+            VerticalSegmentor(
+                {
+                    ExpressiveButtonRow(
+                        title = "Has biometric key: $hasBiometricKey",
+                        description = "Tap to update",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        hasBiometricKey = CryptoUtil.hasBiometricKey()
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Generate biometric key",
+                        description = "Biometric decryption will fail until re-encrypted with the new key!",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        CryptoUtil.generateBiometricKey()
+                        hasBiometricKey = CryptoUtil.hasBiometricKey()
+                        mainViewModel.topToastState.showToast("Biometric key generated")
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Delete biometric key",
+                        description = "Biometric decryption will fail until re-encrypted with the new key!",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        CryptoUtil.deleteBiometricKey()
+                        hasBiometricKey = CryptoUtil.hasBiometricKey()
+                        mainViewModel.topToastState.showToast("Biometric key deleted")
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Password wrapped key",
+                        description = apiViewModel.encryptedData?.passwordWrappedKey ?: "null",
+                        enabled = false,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {}
+                },
+                {
+                    ButtonRow(
+                        title = "Biometric wrapped key",
+                        description = apiViewModel.encryptedData?.biometricWrappedKey ?: "null",
+                        enabled = false,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {}
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
         }
 
-        FormSection(title = "Prefs", bottomDivider = false) {
-            sortedExperimentalOptions.forEach { pref ->
+        ExpressiveSection(title = "Prefs") {
+            val inputs: List<@Composable () -> Unit> = sortedExperimentalOptions.map { pref -> {
                 @Composable
                 fun TextField(
                     onValueChange: (String) -> Unit,
@@ -203,7 +251,7 @@ fun ExperimentalPage(
                     when (pref.defaultValue) {
                         is Boolean -> {
                             pref as BasePreferenceManager.Preference<Boolean>
-                            SwitchRow(
+                            ExpressiveSwitchRow(
                                 title = pref.key,
                                 checked = pref.value
                             ) {
@@ -232,23 +280,30 @@ fun ExperimentalPage(
                         }
                     }
                 }
-            }
+            } }
 
-            ButtonRow(
-                title = "Reset experimental prefs",
-                contentColor = MaterialTheme.colorScheme.error
-            ) {
-                scope.launch {
-                    sortedExperimentalOptions.forEach {
-                        it.resetValue()
+            VerticalSegmentor(
+                *inputs.toTypedArray(),
+                {
+                    ExpressiveButtonRow(
+                        title = "Reset experimental prefs",
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = MaterialTheme.colorScheme.error
+                    ) {
+                        scope.launch {
+                            sortedExperimentalOptions.forEach {
+                                it.resetValue()
+                            }
+                            mainViewModel.topToastState.showAndroidToast(
+                                text = "Restored default values for experimental prefs",
+                                icon = Icons.Rounded.Done
+                            )
+                            GeneralUtil.restartApp(context)
+                        }
                     }
-                    mainViewModel.topToastState.showAndroidToast(
-                        text = "Restored default values for experimental prefs",
-                        icon = Icons.Rounded.Done
-                    )
-                    GeneralUtil.restartApp(context)
-                }
-            }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
         }
     }
 }

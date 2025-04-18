@@ -1,0 +1,9 @@
+package com.aliernfrog.ensimanager.ui.component.expressive
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+val ROW_DEFAULT_ICON_SIZE = 24.dp
+
+val Color.toRowFriendlyColor
+    get() = copy(alpha = 0.18f)

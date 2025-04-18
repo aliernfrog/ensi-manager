@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 
 @Composable
 fun CardWithActions(
@@ -27,7 +27,7 @@ fun CardWithActions(
     content: @Composable () -> Unit
 ) {
     Card(
-        shape = AppComponentShape,
+        shape = RoundedCornerShape(SEGMENTOR_ROUNDNESS),
         modifier = modifier.width(IntrinsicSize.Max)
     ) {
         Column(

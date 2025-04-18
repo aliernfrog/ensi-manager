@@ -48,8 +48,8 @@ import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.component.form.DividerRow
-import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import com.mikepenz.aboutlibraries.entity.Library
@@ -170,11 +170,8 @@ fun LibsPage(
             }
 
             lib.licenses.forEach { license ->
-                FormSection(
-                    title = license.name,
-                    topDivider = true,
-                    bottomDivider = false
-                ) {
+                DividerRow(Modifier.padding(16.dp))
+                ExpressiveSection(title = license.name) {
                     Text(
                         text = license.licenseContent ?: "",
                         fontFamily = FontFamily.Monospace,
