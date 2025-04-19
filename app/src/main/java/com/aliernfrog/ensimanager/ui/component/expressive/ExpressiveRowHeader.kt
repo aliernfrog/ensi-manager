@@ -52,7 +52,9 @@ fun ExpressiveRowHeader(
                     .padding(end = 16.dp)
                     .clip(CircleShape)
                     .let {
-                        if (showIconContainer) it.background(iconContainerColor)
+                        if (showIconContainer) it
+                          .background(iconContainerColor)
+                          .alpha(0.8f)
                         else it
                     }
                     .padding(8.dp)
