@@ -27,10 +27,15 @@ private val SEGMENTOR_SPACING = 2.dp
 fun VerticalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
+    dynamic: Boolean = false,
     itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     roundness: Dp = AppRoundnessSize
 ) {
-    val visibleItemIndexes = remember { mutableStateListOf<Int>() }
+    val visibleItemIndexes = if (dynamic) remember { mutableStateListOf() } else remember {
+        val list = mutableListOf<Int>()
+        for (i in components.indices) list.add(i)
+        list
+    }
     val firstVisibleItemIndex = visibleItemIndexes.minOfOrNull { it }
     val lastVisibleItemIndex = visibleItemIndexes.lastOrNull()
 
@@ -56,10 +61,13 @@ fun VerticalSegmentor(
                         bottomEnd = if (isEnd) roundness else SEGMENTOR_SMALL_ROUNDNESS
                     ))
                     .background(itemContainerColor)
-                    .onSizeChanged {
-                        val isVisible = it.height > 0
-                        if (isVisible && !visibleItemIndexes.contains(index)) visibleItemIndexes.add(index)
-                        else if (!isVisible && visibleItemIndexes.contains(index)) visibleItemIndexes.remove(index)
+                    .let {
+                        if (dynamic) it.onSizeChanged { size ->
+                            val isVisible = size.height > 0
+                            if (isVisible && !visibleItemIndexes.contains(index)) visibleItemIndexes.add(index)
+                            else if (!isVisible && visibleItemIndexes.contains(index)) visibleItemIndexes.remove(index)
+                        }
+                        else it
                     }
             ) {
                 component()
@@ -72,10 +80,15 @@ fun VerticalSegmentor(
 fun HorizontalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
+    dynamic: Boolean = false,
     itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     roundness: Dp = AppRoundnessSize
 ) {
-    val visibleItemIndexes = remember { mutableStateListOf<Int>() }
+    val visibleItemIndexes = if (dynamic) remember { mutableStateListOf() } else remember {
+        val list = mutableListOf<Int>()
+        for (i in components.indices) list.add(i)
+        list
+    }
     val firstVisibleItemIndex = visibleItemIndexes.minOfOrNull { it }
     val lastVisibleItemIndex = visibleItemIndexes.lastOrNull()
 
@@ -102,10 +115,13 @@ fun HorizontalSegmentor(
                         bottomEnd = if (isEnd) roundness else SEGMENTOR_SMALL_ROUNDNESS
                     ))
                     .background(itemContainerColor)
-                    .onSizeChanged {
-                        val isVisible = it.width > 0
-                        if (isVisible && !visibleItemIndexes.contains(index)) visibleItemIndexes.add(index)
-                        else if (!isVisible && visibleItemIndexes.contains(index)) visibleItemIndexes.remove(index)
+                    .let {
+                        if (dynamic) it.onSizeChanged { size ->
+                            val isVisible = size.height > 0
+                            if (isVisible && !visibleItemIndexes.contains(index)) visibleItemIndexes.add(index)
+                            else if (!isVisible && visibleItemIndexes.contains(index)) visibleItemIndexes.remove(index)
+                        }
+                        else it
                     }
             ) {
                 component()
