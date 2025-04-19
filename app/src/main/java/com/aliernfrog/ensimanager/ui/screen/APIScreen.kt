@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
@@ -58,7 +60,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.cache
@@ -72,7 +74,9 @@ import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
-import com.aliernfrog.ensimanager.ui.component.form.FormHeader
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
+import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import com.aliernfrog.ensimanager.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -244,16 +248,23 @@ private fun ProfileCard(
                 vertical = 8.dp
             )
         ) {
-            FormHeader(
+            ExpressiveRowHeader(
                 title = profile.name,
                 description = profileCache?.endpoints?.metadata?.name?.let {
                     if (it != profile.name) it else null
                 },
-                iconColorFilter = null,
+                icon = profile.cache?.endpoints?.metadata?.iconURL?.let { iconURL -> {
+                    AsyncImage(
+                        model = iconURL,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(ROW_DEFAULT_ICON_SIZE)
+                            .clip(CircleShape)
+                    )
+                } } ?: {
+                    ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api))
+                },
                 iconSize = 56.dp,
-                painter = profileCache?.endpoints?.metadata?.iconURL?.let {
-                    rememberAsyncImagePainter(it)
-                } ?:  rememberVectorPainter(Icons.Default.Api),
                 modifier = Modifier.weight(1f).fillMaxWidth()
             )
             if (fetching) CircularProgressIndicator()

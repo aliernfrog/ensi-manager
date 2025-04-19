@@ -2,14 +2,19 @@ package com.aliernfrog.ensimanager.ui.component.form
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
@@ -17,12 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.ui.component.FadeVisibilityColumn
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.ensimanager.ui.theme.AppRoundnessSize
 
 @Composable
@@ -31,7 +37,7 @@ fun ExpandableRow(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
-    painter: Painter? = null,
+    icon: (@Composable () -> Unit)? = null,
     trailingButtonText: String? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     minimizedHeaderColor: Color = Color.Transparent,
@@ -56,18 +62,29 @@ fun ExpandableRow(
         expanded = expanded,
         modifier = modifier,
         headerContent = {
-            ButtonRow(
+            ExpressiveButtonRow(
                 title = title,
                 description = description,
-                painter = painter,
-                expanded = if (trailingButtonText == null) expanded else null,
+                icon = icon,
                 trailingComponent = trailingButtonText?.let { {
                     FilledTonalButton(
                         onClick = onClickHeader
                     ) {
                         Text(text = trailingButtonText)
                     }
-                } },
+                } } ?: {
+                    val rotation by animateFloatAsState(if (expanded) 180f else 0f)
+                    Icon(
+                        imageVector = Icons.Rounded.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(4.dp)
+                            .rotate(rotation)
+                    )
+                },
                 containerColor = headerColor,
                 contentColor = headerContentColor,
                 onClick = onClickHeader

@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.ensimanager.ui.theme.AppRoundnessSize
 
-val SEGMENTOR_ROUNDNESS = 20.dp
 private val SEGMENTOR_SMALL_ROUNDNESS = 5.dp
 private val SEGMENTOR_SPACING = 2.dp
 
@@ -28,7 +28,7 @@ fun VerticalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
     itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    roundness: Dp = SEGMENTOR_ROUNDNESS
+    roundness: Dp = AppRoundnessSize
 ) {
     val visibleItemIndexes = remember { mutableStateListOf<Int>() }
     val firstVisibleItemIndex = visibleItemIndexes.minOfOrNull { it }
@@ -73,7 +73,7 @@ fun HorizontalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
     itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    roundness: Dp = SEGMENTOR_ROUNDNESS
+    roundness: Dp = AppRoundnessSize
 ) {
     val visibleItemIndexes = remember { mutableStateListOf<Int>() }
     val firstVisibleItemIndex = visibleItemIndexes.minOfOrNull { it }

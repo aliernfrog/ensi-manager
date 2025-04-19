@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.ui.component.FadeVisibility
-import com.aliernfrog.ensimanager.ui.component.SEGMENTOR_ROUNDNESS
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
+import com.aliernfrog.ensimanager.ui.theme.AppRoundnessSize
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
@@ -61,7 +61,7 @@ fun SecurityPage(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
                 .padding(vertical = 16.dp, horizontal = 12.dp)
-                .clip(RoundedCornerShape(SEGMENTOR_ROUNDNESS))
+                .clip(RoundedCornerShape(AppRoundnessSize))
         ) {
             if (encryptionEnabled) {
                 apiViewModel.changeEncryptionPasswordAndSave(null)

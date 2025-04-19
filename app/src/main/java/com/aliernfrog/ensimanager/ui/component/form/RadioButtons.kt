@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
 
 @Composable
 fun RadioButtons(
@@ -45,7 +46,7 @@ fun RadioButtons(
                 colors = colors,
                 enabled = choice.enabled
             )
-            FormHeader(
+            ExpressiveRowHeader(
                 title = choice.title,
                 description = choice.description,
                 contentColor = contentColor,

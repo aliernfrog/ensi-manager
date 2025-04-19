@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Restore
@@ -33,7 +32,7 @@ import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
-import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
+import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.manager.base.BasePreferenceManager
@@ -76,7 +75,7 @@ fun ExperimentalPage(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
                 .padding(vertical = 16.dp, horizontal = 12.dp)
-                .clip(RoundedCornerShape(20.dp))
+                .clip(AppComponentShape)
         ) {
             mainViewModel.prefs.experimentalOptionsEnabled.value = it
         }
@@ -193,7 +192,7 @@ fun ExperimentalPage(
                     ) {}
                 },
                 {
-                    ButtonRow(
+                    ExpressiveButtonRow(
                         title = "Biometric wrapped key",
                         description = apiViewModel.encryptedData?.biometricWrappedKey ?: "null",
                         enabled = false

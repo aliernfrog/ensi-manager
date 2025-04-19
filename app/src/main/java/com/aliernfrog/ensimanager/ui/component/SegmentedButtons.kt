@@ -1,21 +1,20 @@
 package com.aliernfrog.ensimanager.ui.component
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ui.theme.AppRoundnessSize
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SegmentedButtons(
     options: List<String>,
     selectedIndex: Int,
     modifier: Modifier = Modifier,
+    roundness: Dp = 30.dp,
     onSelect: (Int) -> Unit
 ) {
     SingleChoiceSegmentedButtonRow(
@@ -29,10 +28,10 @@ fun SegmentedButtons(
                 selected = selected,
                 onClick = { onSelect(index) },
                 shape = RoundedCornerShape(
-                    topStart = if (isStart) AppRoundnessSize else 0.dp,
-                    bottomStart = if (isStart) AppRoundnessSize else 0.dp,
-                    topEnd = if (isEnd) AppRoundnessSize else 0.dp,
-                    bottomEnd = if (isEnd) AppRoundnessSize else 0.dp
+                    topStart = if (isStart) roundness else 0.dp,
+                    bottomStart = if (isStart) roundness else 0.dp,
+                    topEnd = if (isEnd) roundness else 0.dp,
+                    bottomEnd = if (isEnd) roundness else 0.dp
                 )
             ) {
                 Text(option)
