@@ -191,7 +191,9 @@ fun AboutPage(
                     iconColorFilter = if (credit.avatarURL != null) null else ColorFilter.tint(
                         MaterialTheme.colorScheme.onSurface
                     ),
-                    iconShape = CircleShape
+                    iconSize = if (credit.avatarURL != null) 32.dp else 24.dp,
+                    iconShape = CircleShape,
+                    showIconContainer = credit.avatarURL == null
                 ) {
                     credit.link?.let { uriHandler.openUri(it) }
                 }

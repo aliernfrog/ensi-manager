@@ -54,7 +54,7 @@ fun ExpressiveRowHeader(
                     .let {
                         if (showIconContainer) it
                           .background(iconContainerColor)
-                          .alpha(0.8f)
+                          .alpha(0.6f)
                         else it
                     }
                     .padding(8.dp)
