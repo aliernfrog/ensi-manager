@@ -1,7 +1,6 @@
 package com.aliernfrog.ensimanager.ui.component.expressive
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.contentColorFor
@@ -45,8 +44,7 @@ fun ExpressiveSwitchRow(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 enabled = enabled,
-                interactionSource = interactionSource,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                interactionSource = interactionSource
             )
         },
         containerColor = containerColor,
