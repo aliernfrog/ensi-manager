@@ -108,6 +108,7 @@ private fun ScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

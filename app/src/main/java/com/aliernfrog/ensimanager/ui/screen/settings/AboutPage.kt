@@ -3,6 +3,7 @@ package com.aliernfrog.ensimanager.ui.screen.settings
 import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -86,6 +87,7 @@ fun AboutPage(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .padding(vertical = 8.dp)
                 ) {
                     Row(
