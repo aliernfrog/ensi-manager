@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
+import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.dialog.ImageDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
@@ -187,7 +189,10 @@ private fun ScreenContent(
                                 }
                                 .coroutineContext(Dispatchers.IO)
                                 .build()
-                        )
+                        ),
+                        containerColor = action.iconContainerColor?.let {
+                            rememberColorFromHex(it).toRowFriendlyColor
+                        } ?: MaterialTheme.colorScheme.primaryContainer
                     )
                 } },
                 onClick = action.endpoint?.let { {
@@ -225,5 +230,21 @@ private fun ScreenContent(
                 dashboardViewModel.pendingDestructiveAction = null
             } }
         )
+    }
+}
+
+@Composable
+private fun rememberColorFromHex(
+    hexColor: String,
+    fallback: Color = MaterialTheme.colorScheme.primaryContainer
+): Color {
+    var safeHex = if (hexColor.startsWith("#")) hexColor.substring(1) else hexColor
+    if (safeHex.length == 6) safeHex += "FF"
+    return remember(hexColor) {
+        try {
+            Color(safeHex.toLong(16))
+        } catch (e: NumberFormatException) {
+            fallback
+        }
     }
 }
