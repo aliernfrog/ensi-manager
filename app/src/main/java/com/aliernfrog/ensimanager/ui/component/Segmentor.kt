@@ -27,7 +27,7 @@ private val SEGMENTOR_SPACING = 2.dp
 fun VerticalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
-    itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     roundness: Dp = SEGMENTOR_ROUNDNESS
 ) {
     val visibleItemIndexes = remember { mutableStateListOf<Int>() }
@@ -72,7 +72,7 @@ fun VerticalSegmentor(
 fun HorizontalSegmentor(
     vararg components: (@Composable () -> Unit),
     modifier: Modifier = Modifier,
-    itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    itemContainerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     roundness: Dp = SEGMENTOR_ROUNDNESS
 ) {
     val visibleItemIndexes = remember { mutableStateListOf<Int>() }

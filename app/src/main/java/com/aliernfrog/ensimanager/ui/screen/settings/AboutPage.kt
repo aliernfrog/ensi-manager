@@ -3,7 +3,6 @@ package com.aliernfrog.ensimanager.ui.screen.settings
 import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -87,7 +86,6 @@ fun AboutPage(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .padding(vertical = 8.dp)
                 ) {
                     Row(
@@ -126,7 +124,6 @@ fun AboutPage(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .clickable {
                                 uriHandler.openUri(social.url)
                             }
@@ -164,8 +161,7 @@ fun AboutPage(
                         title = stringResource(R.string.settings_about_updates_autoCheckUpdates),
                         description = stringResource(R.string.settings_about_updates_autoCheckUpdates_description),
                         painter = rememberVectorPainter(Icons.Rounded.Schedule),
-                        checked = settingsViewModel.prefs.autoCheckUpdates.value,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        checked = settingsViewModel.prefs.autoCheckUpdates.value
                     ) {
                         settingsViewModel.prefs.autoCheckUpdates.value = it
                     }
@@ -193,8 +189,7 @@ fun AboutPage(
                     iconColorFilter = if (credit.avatarURL != null) null else ColorFilter.tint(
                         MaterialTheme.colorScheme.onSurface
                     ),
-                    iconShape = CircleShape,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    iconShape = CircleShape
                 ) {
                     credit.link?.let { uriHandler.openUri(it) }
                 }
@@ -207,7 +202,6 @@ fun AboutPage(
                         title = stringResource(R.string.settings_about_libs),
                         description = stringResource(R.string.settings_about_libs_description),
                         painter = rememberVectorPainter(Icons.Rounded.Book),
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         trailingComponent = {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -229,8 +223,7 @@ fun AboutPage(
                     ExpressiveButtonRow(
                         title = stringResource(R.string.settings_about_other_copyDebugInfo),
                         description = stringResource(R.string.settings_about_other_copyDebugInfo_description),
-                        painter = rememberVectorPainter(Icons.Rounded.CopyAll),
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        painter = rememberVectorPainter(Icons.Rounded.CopyAll)
                     ) {
                         scope.launch {
                             clipboardManager.setClip(ClipEntry(ClipData.newPlainText(

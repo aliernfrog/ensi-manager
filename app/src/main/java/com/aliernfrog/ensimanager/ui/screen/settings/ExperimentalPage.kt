@@ -85,8 +85,7 @@ fun ExperimentalPage(
             VerticalSegmentor(
                 {
                     ExpressiveButtonRow(
-                        title = "Check updates (ignore version)",
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        title = "Check updates (ignore version)"
                     ) {
                         scope.launch {
                             mainViewModel.checkUpdates(ignoreVersion = true)
@@ -95,8 +94,7 @@ fun ExperimentalPage(
                 },
                 {
                     ExpressiveButtonRow(
-                        title = "Show update toast",
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        title = "Show update toast"
                     ) {
                         mainViewModel.showUpdateToast()
                     }
@@ -119,8 +117,7 @@ fun ExperimentalPage(
                 {
                     ExpressiveButtonRow(
                         title = "Show biometric prompt",
-                        enabled = apiViewModel.biometricDecryptionSupported,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        enabled = apiViewModel.biometricDecryptionSupported
                     ) {
                         apiViewModel.showBiometricPrompt(
                             context = context,
@@ -137,22 +134,19 @@ fun ExperimentalPage(
                 {
                     ExpressiveButtonRow(
                         title = "Biometric decryption supported: ${apiViewModel.biometricDecryptionSupported}",
-                        enabled = false,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        enabled = false
                     ) {}
                 },
                 {
                     ExpressiveButtonRow(
                         title = "Biometric decryption available: ${apiViewModel.biometricDecryptionAvailable}",
-                        enabled = false,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        enabled = false
                     ) {}
                 },
                 {
                     ExpressiveButtonRow(
                         title = "Biometric decryption enabled: ${apiViewModel.biometricDecryptionEnabled}",
-                        enabled = false,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        enabled = false
                     ) { }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
@@ -166,8 +160,7 @@ fun ExperimentalPage(
                 {
                     ExpressiveButtonRow(
                         title = "Has biometric key: $hasBiometricKey",
-                        description = "Tap to update",
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        description = "Tap to update"
                     ) {
                         hasBiometricKey = CryptoUtil.hasBiometricKey()
                     }
@@ -175,8 +168,7 @@ fun ExperimentalPage(
                 {
                     ExpressiveButtonRow(
                         title = "Generate biometric key",
-                        description = "Biometric decryption will fail until re-encrypted with the new key!",
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        description = "Biometric decryption will fail until re-encrypted with the new key!"
                     ) {
                         CryptoUtil.generateBiometricKey()
                         hasBiometricKey = CryptoUtil.hasBiometricKey()
@@ -186,8 +178,7 @@ fun ExperimentalPage(
                 {
                     ExpressiveButtonRow(
                         title = "Delete biometric key",
-                        description = "Biometric decryption will fail until re-encrypted with the new key!",
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        description = "Biometric decryption will fail until re-encrypted with the new key!"
                     ) {
                         CryptoUtil.deleteBiometricKey()
                         hasBiometricKey = CryptoUtil.hasBiometricKey()
@@ -198,16 +189,14 @@ fun ExperimentalPage(
                     ExpressiveButtonRow(
                         title = "Password wrapped key",
                         description = apiViewModel.encryptedData?.passwordWrappedKey ?: "null",
-                        enabled = false,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        enabled = false
                     ) {}
                 },
                 {
                     ButtonRow(
                         title = "Biometric wrapped key",
                         description = apiViewModel.encryptedData?.biometricWrappedKey ?: "null",
-                        enabled = false,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        enabled = false
                     ) {}
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
@@ -286,7 +275,6 @@ fun ExperimentalPage(
                 {
                     ExpressiveButtonRow(
                         title = "Reset experimental prefs",
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         contentColor = MaterialTheme.colorScheme.error
                     ) {
                         scope.launch {

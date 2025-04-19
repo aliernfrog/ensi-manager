@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Contrast
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,7 +59,6 @@ fun AppearancePage(
                         painter = rememberVectorPainter(Icons.Rounded.Brush),
                         checked = settingsViewModel.prefs.materialYou.value,
                         enabled = supportsMaterialYou,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         iconContainerColor = Color.Yellow.toRowFriendlyColor
                     ) {
                         settingsViewModel.prefs.materialYou.value = it
@@ -72,7 +70,6 @@ fun AppearancePage(
                         description = stringResource(R.string.settings_appearance_pitchBlack_description),
                         painter = rememberVectorPainter(Icons.Rounded.Contrast),
                         checked = settingsViewModel.prefs.pitchBlack.value,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         iconContainerColor = Color.Black.toRowFriendlyColor
                     ) {
                         settingsViewModel.prefs.pitchBlack.value = it

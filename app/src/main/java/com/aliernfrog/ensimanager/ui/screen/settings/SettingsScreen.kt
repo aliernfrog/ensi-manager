@@ -132,7 +132,6 @@ private fun SettingsRootPage(
                                 title = stringResource(page.title),
                                 description = if (page == SettingsPage.ABOUT) mainViewModel.applicationVersionLabel else stringResource(page.description),
                                 painter = rememberVectorPainter(page.icon),
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
                                 iconContainerColor = page.iconContainerColor.toRowFriendlyColor
                             ) {
                                 onNavigateRequest(page)

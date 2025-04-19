@@ -46,8 +46,7 @@ fun APIPage(
             {
                 ExpressiveSwitchRow(
                     title = stringResource(R.string.settings_api_rememberLast),
-                    checked = apiViewModel.prefs.rememberLastSelectedAPIProfile.value,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    checked = apiViewModel.prefs.rememberLastSelectedAPIProfile.value
                 ) {
                     apiViewModel.prefs.rememberLastSelectedAPIProfile.value = it
                 }
@@ -58,7 +57,7 @@ fun APIPage(
                     description = stringResource(R.string.settings_api_defaultProfile_description),
                     trailingButtonText = chosenDefaultProfileName,
                     expanded = defaultProfileChoicesExpanded,
-                    minimizedHeaderColor = MaterialTheme.colorScheme.surfaceContainer,
+                    minimizedHeaderColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     onClickHeader = {
                         defaultProfileChoicesExpanded = !defaultProfileChoicesExpanded
                     }
