@@ -32,8 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -45,15 +45,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.SettingsConstant
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -162,7 +164,7 @@ fun AboutPage(
                     ExpressiveSwitchRow(
                         title = stringResource(R.string.settings_about_updates_autoCheckUpdates),
                         description = stringResource(R.string.settings_about_updates_autoCheckUpdates_description),
-                        painter = rememberVectorPainter(Icons.Rounded.Schedule),
+                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Schedule)) },
                         checked = settingsViewModel.prefs.autoCheckUpdates.value
                     ) {
                         settingsViewModel.prefs.autoCheckUpdates.value = it
@@ -185,15 +187,19 @@ fun AboutPage(
                 ExpressiveButtonRow(
                     title = credit.name,
                     description = credit.description,
-                    painter = credit.avatarURL?.let {
-                        rememberAsyncImagePainter(model = it)
-                    } ?: rememberVectorPainter(Icons.Rounded.Face),
-                    iconColorFilter = if (credit.avatarURL != null) null else ColorFilter.tint(
-                        MaterialTheme.colorScheme.onSurface
-                    ),
-                    iconSize = if (credit.avatarURL != null) 32.dp else 24.dp,
-                    iconShape = CircleShape,
-                    showIconContainer = credit.avatarURL == null
+                    icon = credit.avatarURL?.let { {
+                        AsyncImage(
+                            model = it,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(ROW_DEFAULT_ICON_SIZE)
+                                .clip(CircleShape)
+                        )
+                    } } ?: {
+                        ExpressiveRowIcon(
+                            painter = rememberVectorPainter(Icons.Rounded.Face)
+                        )
+                    }
                 ) {
                     credit.link?.let { uriHandler.openUri(it) }
                 }
@@ -205,7 +211,7 @@ fun AboutPage(
                     ExpressiveButtonRow(
                         title = stringResource(R.string.settings_about_libs),
                         description = stringResource(R.string.settings_about_libs_description),
-                        painter = rememberVectorPainter(Icons.Rounded.Book),
+                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Book)) },
                         trailingComponent = {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -227,7 +233,7 @@ fun AboutPage(
                     ExpressiveButtonRow(
                         title = stringResource(R.string.settings_about_other_copyDebugInfo),
                         description = stringResource(R.string.settings_about_other_copyDebugInfo_description),
-                        painter = rememberVectorPainter(Icons.Rounded.CopyAll)
+                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
                     ) {
                         scope.launch {
                             clipboardManager.setClip(ClipEntry(ClipData.newPlainText(

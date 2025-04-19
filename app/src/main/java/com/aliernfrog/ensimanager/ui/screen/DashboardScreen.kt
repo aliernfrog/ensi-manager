@@ -42,6 +42,7 @@ import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.dialog.ImageDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
@@ -176,15 +177,19 @@ private fun ScreenContent(
                 title = action.label,
                 description = action.description,
                 contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-                painter = action.icon?.let { rememberAsyncImagePainter(
-                    model = ByteBuffer.wrap(it.toByteArray()),
-                    imageLoader = ImageLoader.Builder(context)
-                        .components {
-                            add(SvgDecoder.Factory(scaleToDensity = true))
-                        }
-                        .coroutineContext(Dispatchers.IO)
-                        .build()
-                ) },
+                icon = action.icon?.let { {
+                    ExpressiveRowIcon(
+                        painter = rememberAsyncImagePainter(
+                            model = ByteBuffer.wrap(it.toByteArray()),
+                            imageLoader = ImageLoader.Builder(context)
+                                .components {
+                                    add(SvgDecoder.Factory(scaleToDensity = true))
+                                }
+                                .coroutineContext(Dispatchers.IO)
+                                .build()
+                        )
+                    )
+                } },
                 onClick = action.endpoint?.let { {
                     if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
                     else scope.launch {

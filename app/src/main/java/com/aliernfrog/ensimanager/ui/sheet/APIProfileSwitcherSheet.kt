@@ -1,9 +1,11 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -13,10 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
@@ -24,7 +27,9 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import kotlinx.coroutines.launch
@@ -54,7 +59,7 @@ fun APIProfileSwitchSheet(
                 }
                 ExpressiveButtonRow(
                     title = stringResource(R.string.settings),
-                    painter = rememberVectorPainter(Icons.Default.Settings),
+                    icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Settings)) },
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     trailingComponent = if (Destination.SETTINGS.hasNotification.value) { {
                        Button(
@@ -76,12 +81,18 @@ fun APIProfileSwitchSheet(
                 title = profile.name,
                 description = if (!isAvailable) stringResource(R.string.api_profiles_switcher_unavailable) else null,
                 enabled = isAvailable,
-                painter = profile.cache?.endpoints?.metadata?.iconURL.let { iconURL ->
-                    if (iconURL != null) rememberAsyncImagePainter(iconURL)
-                    else rememberVectorPainter(Icons.Default.Api)
+                icon = profile.cache?.endpoints?.metadata?.iconURL?.let { iconURL -> {
+                    AsyncImage(
+                        model = iconURL,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(ROW_DEFAULT_ICON_SIZE)
+                            .clip(CircleShape)
+                    )
+                } } ?: {
+                    ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api))
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                iconColorFilter = null,
                 trailingComponent = if (isAvailable) { {
                     RadioButton(
                         selected = apiViewModel.chosenProfile?.id == profile.id,
@@ -102,7 +113,7 @@ fun APIProfileSwitchSheet(
                 {
                     ExpressiveButtonRow(
                         title = stringResource(R.string.api_profiles_switcher_manageProfiles),
-                        painter = rememberVectorPainter(Icons.Default.Api),
+                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api)) },
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         scope.launch {

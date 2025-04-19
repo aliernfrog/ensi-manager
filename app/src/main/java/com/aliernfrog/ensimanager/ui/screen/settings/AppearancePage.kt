@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.SegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
@@ -56,10 +57,14 @@ fun AppearancePage(
                             if (supportsMaterialYou) R.string.settings_appearance_materialYou_description
                             else R.string.settings_appearance_materialYou_unavailable
                         ),
-                        painter = rememberVectorPainter(Icons.Rounded.Brush),
+                        icon = {
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.Brush),
+                                containerColor = Color.Yellow.toRowFriendlyColor
+                            )
+                        },
                         checked = settingsViewModel.prefs.materialYou.value,
-                        enabled = supportsMaterialYou,
-                        iconContainerColor = Color.Yellow.toRowFriendlyColor
+                        enabled = supportsMaterialYou
                     ) {
                         settingsViewModel.prefs.materialYou.value = it
                     }
@@ -68,9 +73,13 @@ fun AppearancePage(
                     ExpressiveSwitchRow(
                         title = stringResource(R.string.settings_appearance_pitchBlack),
                         description = stringResource(R.string.settings_appearance_pitchBlack_description),
-                        painter = rememberVectorPainter(Icons.Rounded.Contrast),
-                        checked = settingsViewModel.prefs.pitchBlack.value,
-                        iconContainerColor = Color.Black.toRowFriendlyColor
+                        icon = {
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.Contrast),
+                                containerColor = Color.Black.toRowFriendlyColor
+                            )
+                        },
+                        checked = settingsViewModel.prefs.pitchBlack.value
                     ) {
                         settingsViewModel.prefs.pitchBlack.value = it
                     }

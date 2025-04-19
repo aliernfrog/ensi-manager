@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.rounded.Fingerprint
+import androidx.compose.material.icons.rounded.Password
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import com.aliernfrog.ensimanager.ui.component.SEGMENTOR_ROUNDNESS
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
@@ -73,8 +74,12 @@ fun SecurityPage(
             {
                 ExpressiveButtonRow(
                     title = stringResource(R.string.settings_security_changePassword),
-                    painter = rememberVectorPainter(Icons.Default.Password),
-                    iconContainerColor = Color.Red.toRowFriendlyColor,
+                    icon = {
+                        ExpressiveRowIcon(
+                            painter = rememberVectorPainter(Icons.Rounded.Password),
+                            containerColor = Color.Red.toRowFriendlyColor
+                        )
+                    },
                     enabled = optionsEnabled,
                     trailingComponent = {
                         Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null)
@@ -90,8 +95,12 @@ fun SecurityPage(
                         if (apiViewModel.biometricDecryptionSupported) R.string.settings_security_biometrics_description
                         else R.string.settings_security_biometrics_unsupported
                     ),
-                    painter = rememberVectorPainter(Icons.Default.Fingerprint),
-                    iconContainerColor = Color.Green.toRowFriendlyColor,
+                    icon = {
+                      ExpressiveRowIcon(
+                          painter = rememberVectorPainter(Icons.Rounded.Fingerprint),
+                          containerColor = Color.Green.toRowFriendlyColor
+                      )
+                    },
                     enabled = optionsEnabled && apiViewModel.biometricDecryptionSupported,
                     checked = apiViewModel.biometricDecryptionEnabled,
                 ) {

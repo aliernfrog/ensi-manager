@@ -45,6 +45,7 @@ import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -131,8 +132,12 @@ private fun SettingsRootPage(
                             ExpressiveButtonRow(
                                 title = stringResource(page.title),
                                 description = if (page == SettingsPage.ABOUT) mainViewModel.applicationVersionLabel else stringResource(page.description),
-                                painter = rememberVectorPainter(page.icon),
-                                iconContainerColor = page.iconContainerColor.toRowFriendlyColor
+                                icon = {
+                                    ExpressiveRowIcon(
+                                        painter = rememberVectorPainter(page.icon),
+                                        containerColor = page.iconContainerColor.toRowFriendlyColor
+                                    )
+                                }
                             ) {
                                 onNavigateRequest(page)
                             }
@@ -190,7 +195,7 @@ private fun UpdateNotification(
             title = stringResource(R.string.settings_updateNotification_updateAvailable)
                 .replace("{VERSION}", versionInfo.versionName),
             description = stringResource(R.string.settings_updateNotification_description),
-            painter = rememberVectorPainter(Icons.Rounded.Update),
+            icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Update)) },
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier.padding(12.dp).clip(AppComponentShape),
             onClick = onClick
