@@ -167,6 +167,7 @@ private fun ScreenContent(
                 )
             }
         },
+        dynamic = true,
         itemContainerColor = Color.Transparent,
         modifier = Modifier.padding(12.dp)
     )
