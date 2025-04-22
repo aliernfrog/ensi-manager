@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
-import com.aliernfrog.ensimanager.ui.component.form.RadioButtons
+import com.aliernfrog.ensimanager.ui.component.form.ExpressiveRadioButtons
 import com.aliernfrog.ensimanager.ui.component.form.ExpandableRow
 import com.aliernfrog.ensimanager.ui.component.form.RadioButtonChoice
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
@@ -55,14 +55,20 @@ fun APIPage(
                 ExpandableRow(
                     title = stringResource(R.string.settings_api_defaultProfile),
                     description = stringResource(R.string.settings_api_defaultProfile_description),
-                    trailingButtonText = chosenDefaultProfileName,
+                    minimizedHeaderTrailingButtonText = chosenDefaultProfileName,
                     expanded = defaultProfileChoicesExpanded,
-                    minimizedHeaderColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    minimizedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     onClickHeader = {
                         defaultProfileChoicesExpanded = !defaultProfileChoicesExpanded
                     }
                 ) {
-                    RadioButtons(
+                    ExpressiveRadioButtons(
+                        modifier = Modifier.padding(
+                            start = 12.dp,
+                            end = 12.dp,
+                            top = 4.dp,
+                            bottom = 12.dp
+                        ),
                         choices = defaultProfileChoices,
                         selectedIndex = apiViewModel.prefs.defaultAPIProfileIndex.value,
                         onSelect = { index ->
