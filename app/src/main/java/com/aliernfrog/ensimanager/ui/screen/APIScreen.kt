@@ -76,7 +76,6 @@ import com.aliernfrog.ensimanager.ui.component.TextWithIcon
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
 import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import com.aliernfrog.ensimanager.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -258,7 +257,7 @@ private fun ProfileCard(
                         model = iconURL,
                         contentDescription = null,
                         modifier = Modifier
-                            .size(ROW_DEFAULT_ICON_SIZE)
+                            .size(56.dp)
                             .clip(CircleShape)
                     )
                 } } ?: {
