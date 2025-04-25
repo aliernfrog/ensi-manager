@@ -37,7 +37,7 @@ fun ExpandableRow(
     icon: (@Composable () -> Unit)? = null,
     minimizedHeaderTrailingButtonText: String? = null,
     minimizedContainerColor: Color = Color.Transparent,
-    expandedContainerColor: Color = MaterialTheme.colorScheme.surfaceTint,
+    expandedContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     onClickHeader: () -> Unit,
     expandedContent: @Composable AnimatedVisibilityScope.() -> Unit
 ) {
