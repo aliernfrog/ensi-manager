@@ -7,7 +7,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SheetState
@@ -35,7 +37,7 @@ import com.aliernfrog.ensimanager.util.Destination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfileSwitchSheet(
     apiViewModel: APIViewModel = koinViewModel(),
@@ -63,7 +65,8 @@ fun APIProfileSwitchSheet(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     trailingComponent = if (Destination.SETTINGS.hasNotification.value) { {
                        Button(
-                           onClick = onSettingsClick
+                           onClick = onSettingsClick,
+                           shapes = ButtonDefaults.shapes()
                        ) {
                            Text(stringResource(R.string.api_profiles_switcher_update))
                        }

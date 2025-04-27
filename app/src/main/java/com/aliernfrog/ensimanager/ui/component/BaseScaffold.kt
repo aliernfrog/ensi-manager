@@ -111,6 +111,7 @@ fun BaseScaffold(
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
+        @Suppress("KotlinConstantConditions")
         val paddingValues = if (navigationBarType != NavigationBarType.BOTTOM_BAR || showNavigationBars) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),

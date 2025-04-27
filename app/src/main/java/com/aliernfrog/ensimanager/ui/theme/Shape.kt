@@ -9,8 +9,4 @@ val AppComponentShape = RoundedCornerShape(AppRoundnessSize)
 val AppBottomSheetShape = RoundedCornerShape(topStart = AppRoundnessSize, topEnd = AppRoundnessSize)
 val AppFABPadding = 90.dp
 
-val Shapes = Shapes(
-    small = RoundedCornerShape(4.dp),
-    medium = RoundedCornerShape(4.dp),
-    large = RoundedCornerShape(0.dp)
-)
+val Shapes = Shapes()

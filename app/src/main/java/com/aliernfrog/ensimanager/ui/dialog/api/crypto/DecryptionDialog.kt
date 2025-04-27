@@ -14,9 +14,12 @@ import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +38,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DecryptionDialog(
     onDismissRequest: () -> Unit,
@@ -63,6 +67,7 @@ fun DecryptionDialog(
                         decrypting = value
                     }
                 },
+                shapes = ButtonDefaults.shapes(),
                 enabled = !decrypting
             ) {
                 Box {
@@ -82,6 +87,7 @@ fun DecryptionDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes(),
                 enabled = !decrypting
             ) {
                 Text(stringResource(R.string.action_cancel))
@@ -108,9 +114,10 @@ fun DecryptionDialog(
                     enabled = !decrypting,
                     modifier = Modifier.fillMaxWidth(),
                     trailingIcon = {
-                        IconButton(onClick = {
-                            showPassword = !showPassword
-                        }) {
+                        IconButton(
+                            onClick = { showPassword = !showPassword },
+                            shapes = IconButtonDefaults.shapes()
+                        ) {
                             Icon(
                                 imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
                                 contentDescription = togglePasswordVisibilityText(passwordVisible = showPassword)

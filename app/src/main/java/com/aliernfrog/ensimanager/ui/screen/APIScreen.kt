@@ -36,8 +36,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -100,7 +102,7 @@ fun APIGate(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfilesScreen(
     apiViewModel: APIViewModel = koinViewModel(),
@@ -120,6 +122,7 @@ fun APIProfilesScreen(
                         onClick = { scope.launch {
                             apiViewModel.refetchAllProfiles()
                         } },
+                        shapes = IconButtonDefaults.shapes(),
                         enabled = apiViewModel.fetchingProfiles.isEmpty()
                     ) {
                         Icon(Icons.Default.Refresh, null)
@@ -168,7 +171,8 @@ fun APIProfilesScreen(
                     Button(
                         onClick = { scope.launch {
                             apiViewModel.openProfileSheetToAddNew()
-                        } }
+                        } },
+                        shapes = ButtonDefaults.shapes()
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.Add))
                         Text(stringResource(R.string.api_profiles_add))
@@ -199,6 +203,7 @@ fun APIProfilesScreen(
     APIProfileSheet()
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ProfileCard(
     profile: APIProfile,
@@ -241,7 +246,7 @@ private fun ProfileCard(
             ),
         shape = AppComponentShape
     ) {
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth().padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
@@ -318,7 +323,8 @@ private fun ProfileCard(
                             endpointsURL = migratedURL
                         )
                         apiViewModel.saveProfiles()
-                    }
+                    },
+                    shapes = ButtonDefaults.shapes()
                 ) {
                     Text(stringResource(R.string.api_profiles_migrated_migrate))
                 }
@@ -354,6 +360,7 @@ private fun ProfileCard(
         ) {
             OutlinedButton(
                 onClick = { showDeleteConfirmation = true },
+                shapes = ButtonDefaults.shapes(),
                 colors = ButtonDefaults.outlinedButtonColors().copy(
                     contentColor = MaterialTheme.colorScheme.error
                 )
@@ -364,7 +371,8 @@ private fun ProfileCard(
             Button(
                 onClick = { scope.launch {
                     apiViewModel.openProfileSheetToEdit(profile)
-                } }
+                } },
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Edit))
                 Text(stringResource(R.string.api_profiles_edit))
@@ -373,6 +381,7 @@ private fun ProfileCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EncryptionCard(
     onDismissRequest: () -> Unit,
@@ -384,13 +393,15 @@ fun EncryptionCard(
         icon = rememberVectorPainter(Icons.Default.EnhancedEncryption),
         buttons = {
             TextButton(
-                onClick = onDismissRequest
+                onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(R.string.action_dismiss))
             }
 
             Button(
-                onClick = onEncryptRequest
+                onClick = onEncryptRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
                 Text(stringResource(R.string.api_crypto_encrypt_do))

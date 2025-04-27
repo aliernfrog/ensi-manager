@@ -10,7 +10,9 @@ import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrustNewCertDialog(
     publicKey: String?,
@@ -31,7 +34,8 @@ fun TrustNewCertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             Button(
-                onClick = onTrust
+                onClick = onTrust,
+                shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(
                     if (publicKey != null) R.string.api_ssl_trust else R.string.api_profiles_add
@@ -40,7 +44,8 @@ fun TrustNewCertDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = onDismissRequest
+                onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(R.string.action_cancel))
             }

@@ -19,9 +19,11 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +62,7 @@ import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfileSheet(
     apiViewModel: APIViewModel = koinViewModel(),
@@ -219,6 +221,7 @@ fun APIProfileSheet(
             ) { buttonEnabled ->
                 Button(
                     enabled = buttonEnabled && !fetching,
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         if (!valid) return@Button
                         val profile = APIProfile(

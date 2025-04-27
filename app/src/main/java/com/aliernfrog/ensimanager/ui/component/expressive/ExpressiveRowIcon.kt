@@ -34,7 +34,7 @@ fun ExpressiveRowIcon(
             .clip(shape)
             .background(containerColor)
             .padding(8.dp)
-            .alpha(0.65f)
+            .alpha(0.7f)
             .size(iconSize)
     )
 }

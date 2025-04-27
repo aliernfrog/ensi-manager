@@ -13,7 +13,9 @@ import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EncryptionDialog(
     onDismissRequest: () -> Unit,
@@ -60,6 +63,7 @@ fun EncryptionDialog(
                         encrypting = false
                     }
                 },
+                shapes = ButtonDefaults.shapes(),
                 enabled = !encrypting && passwordMatches && confirmationPassword.isNotEmpty()
             ) {
                 Box {
@@ -79,6 +83,7 @@ fun EncryptionDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes(),
                 enabled = !encrypting
             ) {
                 Text(stringResource(R.string.action_cancel))

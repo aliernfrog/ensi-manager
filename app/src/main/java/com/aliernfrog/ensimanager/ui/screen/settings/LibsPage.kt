@@ -18,7 +18,9 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.CorporateFare
 import androidx.compose.material.icons.filled.Engineering
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +58,7 @@ import com.mikepenz.aboutlibraries.entity.Library
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LibsPage(
     settingsViewModel: SettingsViewModel = koinViewModel(),
@@ -138,7 +140,8 @@ fun LibsPage(
                 ) {
                     lib.website?.let {
                         if (it.contains("://")) Button(
-                            onClick = { uriHandler.openUri(it) }
+                            onClick = { uriHandler.openUri(it) },
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                             Text(stringResource(R.string.settings_about_libs_website))
@@ -146,9 +149,8 @@ fun LibsPage(
                     }
                     lib.organization?.url?.let {
                         if (it.contains("://")) FilledTonalButton(
-                            onClick = {
-                                uriHandler.openUri(it)
-                            }
+                            onClick = { uriHandler.openUri(it) },
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.CorporateFare))
                             Text(stringResource(R.string.settings_about_libs_organization))
@@ -160,7 +162,8 @@ fun LibsPage(
                                 dev.organisationUrl?.let {
                                     if (it.contains("://")) uriHandler.openUri(it)
                                 }
-                            }
+                            },
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.Engineering))
                             Text(dev.name ?: "Developer")

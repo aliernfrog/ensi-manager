@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
@@ -43,11 +45,11 @@ import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
-import com.aliernfrog.ensimanager.ui.component.StringsScreenElement
 import com.aliernfrog.ensimanager.ui.sheet.AddStringSheet
 import com.aliernfrog.ensimanager.ui.sheet.StringSheet
 import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
+import com.aliernfrog.ensimanager.util.extension.clickableWithColor
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -113,11 +115,19 @@ private fun StringsList(
             ListControls(stringsShown = list.size)
         }
         items(list) {
-            StringsScreenElement(
-                string = it
-            ) { scope.launch {
-                stringsViewModel.showStringSheet(it)
-            } }
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .clickableWithColor(MaterialTheme.colorScheme.onSurface) { scope.launch {
+                        stringsViewModel.showStringSheet(it)
+                    } }
+                    .padding(8.dp)
+            )
         }
         item {
             Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))

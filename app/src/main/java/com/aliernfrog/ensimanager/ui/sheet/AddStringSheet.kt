@@ -10,7 +10,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
@@ -34,7 +36,7 @@ import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddStringSheet(
     stringsViewModel: StringsViewModel = koinViewModel(),
@@ -76,6 +78,7 @@ fun AddStringSheet(
             Crossfade(stringsViewModel.addStringInput.isNotBlank()) { enabled ->
                 OutlinedButton(
                     onClick = { stringsViewModel.addStringInput = "" },
+                    shapes = ButtonDefaults.shapes(),
                     enabled = enabled
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.Default.Clear))
@@ -87,7 +90,8 @@ fun AddStringSheet(
                 onClick = { scope.launch {
                     stringsViewModel.addStringFromInput()
                     state.hide()
-                } }
+                } },
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Rounded.Done))
                 Text(stringResource(R.string.strings_add_confirm))

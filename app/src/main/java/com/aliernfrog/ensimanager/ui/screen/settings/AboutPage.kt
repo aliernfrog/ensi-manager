@@ -20,8 +20,10 @@ import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Update
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -38,7 +40,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -71,7 +73,7 @@ fun AboutPage(
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
 
     val scope = rememberCoroutineScope()
     val appIcon = remember {
@@ -236,7 +238,7 @@ fun AboutPage(
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
                     ) {
                         scope.launch {
-                            clipboardManager.setClip(ClipEntry(ClipData.newPlainText(
+                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
                                 context.getString(R.string.settings_about_other_copyDebugInfo_clipLabel),
                                 mainViewModel.debugInfo
                             )))
@@ -253,6 +255,7 @@ fun AboutPage(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ChangelogButton(
     updateAvailable: Boolean,
@@ -260,7 +263,8 @@ private fun ChangelogButton(
 ) {
     AnimatedContent(updateAvailable) {
         if (it) ElevatedButton(
-            onClick = { onClick() }
+            onClick = { onClick() },
+            shapes = ButtonDefaults.shapes()
         ) {
             ButtonIcon(
                 rememberVectorPainter(Icons.Rounded.Update)
@@ -268,7 +272,8 @@ private fun ChangelogButton(
             Text(stringResource(R.string.settings_about_update))
         }
         else OutlinedButton(
-            onClick = { onClick() }
+            onClick = { onClick() },
+            shapes = ButtonDefaults.shapes()
         ) {
             ButtonIcon(
                 rememberVectorPainter(Icons.Rounded.Description)
