@@ -261,7 +261,10 @@ private fun ProfileCard(
                             .clip(CircleShape)
                     )
                 } } ?: {
-                    ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api))
+                    ExpressiveRowIcon(
+                        painter = rememberVectorPainter(Icons.Default.Api),
+                        iconSize = 56.dp
+                    )
                 },
                 iconSize = 56.dp,
                 modifier = Modifier.weight(1f).fillMaxWidth()
