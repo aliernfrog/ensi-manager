@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
@@ -159,9 +160,12 @@ fun APIProfileSheet(
                     Icon(Icons.Default.Key, null)
                 },
                 trailingIcon = {
-                    IconButton(onClick = {
-                        apiViewModel.profileSheetShowAuthorization = !apiViewModel.profileSheetShowAuthorization
-                    }) {
+                    IconButton(
+                        onClick = {
+                            apiViewModel.profileSheetShowAuthorization = !apiViewModel.profileSheetShowAuthorization
+                        },
+                        shapes = IconButtonDefaults.shapes()
+                    ) {
                         Icon(
                             imageVector = if (apiViewModel.profileSheetShowAuthorization) Icons.Rounded.VisibilityOff
                             else Icons.Rounded.Visibility,

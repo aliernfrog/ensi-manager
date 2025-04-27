@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -113,9 +114,12 @@ fun EncryptionDialog(
                         Text(stringResource(R.string.api_crypto_encrypt_password))
                     },
                     trailingIcon = {
-                        IconButton(onClick = {
-                            showPassword = !showPassword
-                        }) {
+                        IconButton(
+                            onClick = {
+                                showPassword = !showPassword
+                            },
+                            shapes = IconButtonDefaults.shapes(),
+                        ) {
                             Icon(
                                 imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
                                 contentDescription = togglePasswordVisibilityText(passwordVisible = showPassword)
