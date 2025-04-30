@@ -1,6 +1,5 @@
 package com.aliernfrog.ensimanager.ui.component.form
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,16 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
+import com.aliernfrog.ensimanager.util.extension.clickableWithColor
 
 @Composable
-fun RadioButtons(
+fun ExpressiveRadioButtons(
     choices: List<RadioButtonChoice>,
     selectedIndex: Int,
+    modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     colors: RadioButtonColors = RadioButtonDefaults.colors(),
     onSelect: (Int) -> Unit
 ) {
-    choices.forEachIndexed { i, choice ->
+    val buttons: List<@Composable () -> Unit> = choices.mapIndexed { i, choice -> {
         val index = choice.indexOverride ?: i
         val selected = selectedIndex == index
         val onSelected = {
@@ -34,7 +37,7 @@ fun RadioButtons(
             modifier = Modifier
                 .fillMaxWidth()
                 .let {
-                    if (choice.enabled) it.clickable { onSelected() }
+                    if (choice.enabled) it.clickableWithColor(contentColor) { onSelected() }
                     else it
                 }
                 .padding(horizontal = 2.dp)
@@ -45,7 +48,7 @@ fun RadioButtons(
                 colors = colors,
                 enabled = choice.enabled
             )
-            FormHeader(
+            ExpressiveRowHeader(
                 title = choice.title,
                 description = choice.description,
                 contentColor = contentColor,
@@ -54,7 +57,12 @@ fun RadioButtons(
                 )
             )
         }
-    }
+    } }
+
+    VerticalSegmentor(
+        *buttons.toTypedArray(),
+        modifier = modifier
+    )
 }
 
 data class RadioButtonChoice(

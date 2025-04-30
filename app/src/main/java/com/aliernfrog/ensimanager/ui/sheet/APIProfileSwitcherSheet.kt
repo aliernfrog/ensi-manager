@@ -1,11 +1,15 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SheetState
@@ -13,25 +17,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.form.ButtonRow
-import com.aliernfrog.ensimanager.ui.component.form.FormSection
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfileSwitchSheet(
     apiViewModel: APIViewModel = koinViewModel(),
@@ -53,13 +59,14 @@ fun APIProfileSwitchSheet(
                         Destination.SETTINGS.hasNotification.value = false
                     }
                 }
-                ButtonRow(
+                ExpressiveButtonRow(
                     title = stringResource(R.string.settings),
-                    painter = rememberVectorPainter(Icons.Default.Settings),
+                    icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Settings)) },
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     trailingComponent = if (Destination.SETTINGS.hasNotification.value) { {
                        Button(
-                           onClick = onSettingsClick
+                           onClick = onSettingsClick,
+                           shapes = ButtonDefaults.shapes()
                        ) {
                            Text(stringResource(R.string.api_profiles_switcher_update))
                        }
@@ -68,45 +75,48 @@ fun APIProfileSwitchSheet(
                     onSettingsClick()
                 }
             },
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(horizontal = 12.dp)
         )
 
         val profileButtons: List<@Composable () -> Unit> = apiViewModel.apiProfiles.map { profile -> {
-            ButtonRow(
+            val isAvailable = profile.isAvailable
+            ExpressiveButtonRow(
                 title = profile.name,
-                description = if (!profile.isAvailable) stringResource(R.string.api_profiles_switcher_unavailable) else null,
-                modifier = if (!profile.isAvailable) Modifier.alpha(0.5f) else Modifier,
-                painter = profile.cache?.endpoints?.metadata?.iconURL.let { iconURL ->
-                    if (iconURL != null) rememberAsyncImagePainter(iconURL)
-                    else rememberVectorPainter(Icons.Default.Api)
+                description = if (!isAvailable) stringResource(R.string.api_profiles_switcher_unavailable) else null,
+                enabled = isAvailable,
+                icon = profile.cache?.endpoints?.metadata?.iconURL?.let { iconURL -> {
+                    AsyncImage(
+                        model = iconURL,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(ROW_DEFAULT_ICON_SIZE)
+                            .clip(CircleShape)
+                    )
+                } } ?: {
+                    ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api))
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                iconColorFilter = null,
-                trailingComponent = if (profile.isAvailable) { {
+                trailingComponent = if (isAvailable) { {
                     RadioButton(
                         selected = apiViewModel.chosenProfile?.id == profile.id,
                         onClick = { apiViewModel.chosenProfile = profile }
                     )
                 } } else null
             ) {
-                if (profile.isAvailable)scope.launch {
+                if (isAvailable) scope.launch {
                     apiViewModel.chosenProfile = profile
                     sheetState.hide()
                 }
             }
         } }
 
-        FormSection(
-            title = null,
-            topDivider = true,
-            bottomDivider = false
-        ) {
+        ExpressiveSection(title = null) {
             VerticalSegmentor(
                 *profileButtons.toTypedArray(),
                 {
-                    ButtonRow(
+                    ExpressiveButtonRow(
                         title = stringResource(R.string.api_profiles_switcher_manageProfiles),
-                        painter = rememberVectorPainter(Icons.Default.Api),
+                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api)) },
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         scope.launch {
@@ -115,7 +125,7 @@ fun APIProfileSwitchSheet(
                         }
                     }
                 },
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 12.dp)
             )
         }
     }

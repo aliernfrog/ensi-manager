@@ -17,6 +17,10 @@ data class APIDashboardAction(
     val label: String,
     val description: String?,
     val icon: String?,
+    /**
+     * Hex color code (#RRGGBBAA)
+     */
+    val iconContainerColor: String?,
     val destructive: Boolean = false,
     val endpoint: APIEndpoint?
 )

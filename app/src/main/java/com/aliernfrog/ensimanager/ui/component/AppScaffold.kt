@@ -44,7 +44,7 @@ fun AppScaffold(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppTopBar(
     title: String,
@@ -73,7 +73,10 @@ fun AppTopBar(
         colors = colors,
         navigationIcon = {
             onNavigationClick?.let {
-                IconButton(onClick = it) {
+                IconButton(
+                    shapes = IconButtonDefaults.shapes(),
+                    onClick = it
+                ) {
                     Icon(
                         imageVector = navigationIcon,
                         contentDescription = stringResource(R.string.action_back)
@@ -85,7 +88,7 @@ fun AppTopBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppSmallTopBar(
     title: String,
@@ -101,7 +104,10 @@ fun AppSmallTopBar(
         colors = colors,
         navigationIcon = {
             onNavigationClick?.let {
-                IconButton(onClick = it) {
+                IconButton(
+                    shapes = IconButtonDefaults.shapes(),
+                    onClick = it
+                ) {
                     Icon(
                         imageVector = navigationIcon,
                         contentDescription = stringResource(R.string.action_back)

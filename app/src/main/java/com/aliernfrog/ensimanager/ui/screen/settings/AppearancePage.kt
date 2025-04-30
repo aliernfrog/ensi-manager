@@ -3,17 +3,21 @@ package com.aliernfrog.ensimanager.ui.screen.settings
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Brush
-import androidx.compose.material.icons.outlined.Contrast
+import androidx.compose.material.icons.rounded.Brush
+import androidx.compose.material.icons.rounded.Contrast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.SegmentedButtons
-import com.aliernfrog.ensimanager.ui.component.form.FormSection
-import com.aliernfrog.ensimanager.ui.component.form.SwitchRow
+import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
+import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.ensimanager.ui.theme.Theme
 import com.aliernfrog.ensimanager.ui.theme.supportsMaterialYou
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
@@ -28,7 +32,7 @@ fun AppearancePage(
         title = stringResource(R.string.settings_appearance),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        FormSection(
+        ExpressiveSection(
             title = stringResource(R.string.settings_appearance_theme)
         ) {
             SegmentedButtons(
@@ -36,35 +40,52 @@ fun AppearancePage(
                 selectedIndex = settingsViewModel.prefs.theme.value,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 12.dp)
             ) {
                 settingsViewModel.prefs.theme.value = it
             }
         }
-        FormSection(
-            title = stringResource(R.string.settings_appearance_colors),
-            bottomDivider = false
+
+        ExpressiveSection(
+            title = stringResource(R.string.settings_appearance_colors)
         ) {
-            SwitchRow(
-                title = stringResource(R.string.settings_appearance_materialYou),
-                description = stringResource(
-                    if (supportsMaterialYou) R.string.settings_appearance_materialYou_description
-                    else R.string.settings_appearance_materialYou_unavailable
-                ),
-                painter = rememberVectorPainter(Icons.Outlined.Brush),
-                checked = settingsViewModel.prefs.materialYou.value,
-                enabled = supportsMaterialYou
-            ) {
-                settingsViewModel.prefs.materialYou.value = it
-            }
-            SwitchRow(
-                title = stringResource(R.string.settings_appearance_pitchBlack),
-                description = stringResource(R.string.settings_appearance_pitchBlack_description),
-                painter = rememberVectorPainter(Icons.Outlined.Contrast),
-                checked = settingsViewModel.prefs.pitchBlack.value
-            ) {
-                settingsViewModel.prefs.pitchBlack.value = it
-            }
+            VerticalSegmentor(
+                {
+                    ExpressiveSwitchRow(
+                        title = stringResource(R.string.settings_appearance_materialYou),
+                        description = stringResource(
+                            if (supportsMaterialYou) R.string.settings_appearance_materialYou_description
+                            else R.string.settings_appearance_materialYou_unavailable
+                        ),
+                        icon = {
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.Brush),
+                                containerColor = Color.Yellow.toRowFriendlyColor
+                            )
+                        },
+                        checked = settingsViewModel.prefs.materialYou.value,
+                        enabled = supportsMaterialYou
+                    ) {
+                        settingsViewModel.prefs.materialYou.value = it
+                    }
+                },
+                {
+                    ExpressiveSwitchRow(
+                        title = stringResource(R.string.settings_appearance_pitchBlack),
+                        description = stringResource(R.string.settings_appearance_pitchBlack_description),
+                        icon = {
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.Contrast),
+                                containerColor = Color.Black.toRowFriendlyColor
+                            )
+                        },
+                        checked = settingsViewModel.prefs.pitchBlack.value
+                    ) {
+                        settingsViewModel.prefs.pitchBlack.value = it
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
         }
     }
 }

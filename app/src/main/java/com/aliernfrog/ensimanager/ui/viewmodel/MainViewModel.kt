@@ -8,7 +8,6 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,6 +19,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.ReleaseInfo
 import com.aliernfrog.ensimanager.githubRepoURL
+import com.aliernfrog.ensimanager.ui.component.createSheetStateWithDensity
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
@@ -43,7 +43,7 @@ class MainViewModel(
     lateinit var scope: CoroutineScope
     var navController: NavHostController? = null
 
-    val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
+    val updateSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
 
     private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
     private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)

@@ -1,7 +1,8 @@
-package com.aliernfrog.ensimanager.ui.component.form
+package com.aliernfrog.ensimanager.ui.component.expressive
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -11,56 +12,51 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.util.extension.clickableWithColor
 
 @Composable
-fun FormRow(
+fun ExpressiveButtonRow(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
-    painter: Painter? = null,
-    shape: Shape = RectangleShape,
+    icon: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
+    trailingComponent: @Composable (() -> Unit)? = null,
     containerColor: Color = Color.Transparent,
-    contentColor: Color = if (containerColor == Color.Transparent)
-        MaterialTheme.colorScheme.onSurface else contentColorFor(containerColor),
-    iconColorFilter: ColorFilter? = ColorFilter.tint(contentColor),
-    iconSize: Dp = 24.dp,
+    contentColor: Color =
+        if (containerColor == Color.Transparent) MaterialTheme.colorScheme.onSurface
+        else contentColorFor(containerColor),
+    iconSize: Dp = ROW_DEFAULT_ICON_SIZE,
     interactionSource: MutableInteractionSource? = null,
-    onClick: (() -> Unit)?,
-    content: @Composable () -> Unit
+    onClick: (() -> Unit)?
 ) {
     Row(
         modifier = modifier
             .heightIn(56.dp)
             .fillMaxWidth()
-            .clip(shape)
             .background(containerColor)
             .let {
-                if (onClick != null) it.clickableWithColor(
+                if (onClick != null && enabled) it.clickableWithColor(
                     color = contentColor,
                     interactionSource = interactionSource,
                     onClick = onClick
                 ) else it
             }
-            .padding(end = 9.dp),
+            .padding(end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FormHeader(
+        ExpressiveRowHeader(
             title = title,
             description = description,
-            painter = painter,
+            icon = icon,
             contentColor = contentColor,
-            iconColorFilter = iconColorFilter,
             iconSize = iconSize,
             modifier = Modifier
+                .alpha(if (enabled) 1f else 0.7f)
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(
@@ -68,6 +64,10 @@ fun FormRow(
                     horizontal = 18.dp
                 )
         )
-        content()
+        trailingComponent?.let {
+            Column(Modifier.padding(end = 8.dp)) {
+                trailingComponent()
+            }
+        }
     }
 }

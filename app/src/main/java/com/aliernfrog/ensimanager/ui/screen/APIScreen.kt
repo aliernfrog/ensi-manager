@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
@@ -34,8 +36,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -58,7 +62,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.cache
@@ -72,7 +76,8 @@ import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithIcon
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
-import com.aliernfrog.ensimanager.ui.component.form.FormHeader
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.ensimanager.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
 import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
@@ -97,7 +102,7 @@ fun APIGate(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfilesScreen(
     apiViewModel: APIViewModel = koinViewModel(),
@@ -117,6 +122,7 @@ fun APIProfilesScreen(
                         onClick = { scope.launch {
                             apiViewModel.refetchAllProfiles()
                         } },
+                        shapes = IconButtonDefaults.shapes(),
                         enabled = apiViewModel.fetchingProfiles.isEmpty()
                     ) {
                         Icon(Icons.Default.Refresh, null)
@@ -165,7 +171,8 @@ fun APIProfilesScreen(
                     Button(
                         onClick = { scope.launch {
                             apiViewModel.openProfileSheetToAddNew()
-                        } }
+                        } },
+                        shapes = ButtonDefaults.shapes()
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.Add))
                         Text(stringResource(R.string.api_profiles_add))
@@ -196,6 +203,7 @@ fun APIProfilesScreen(
     APIProfileSheet()
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ProfileCard(
     profile: APIProfile,
@@ -238,22 +246,32 @@ private fun ProfileCard(
             ),
         shape = AppComponentShape
     ) {
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth().padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
             )
         ) {
-            FormHeader(
+            ExpressiveRowHeader(
                 title = profile.name,
                 description = profileCache?.endpoints?.metadata?.name?.let {
                     if (it != profile.name) it else null
                 },
-                iconColorFilter = null,
+                icon = profile.cache?.endpoints?.metadata?.iconURL?.let { iconURL -> {
+                    AsyncImage(
+                        model = iconURL,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                    )
+                } } ?: {
+                    ExpressiveRowIcon(
+                        painter = rememberVectorPainter(Icons.Default.Api),
+                        iconSize = 56.dp
+                    )
+                },
                 iconSize = 56.dp,
-                painter = profileCache?.endpoints?.metadata?.iconURL?.let {
-                    rememberAsyncImagePainter(it)
-                } ?:  rememberVectorPainter(Icons.Default.Api),
                 modifier = Modifier.weight(1f).fillMaxWidth()
             )
             if (fetching) CircularProgressIndicator()
@@ -305,7 +323,8 @@ private fun ProfileCard(
                             endpointsURL = migratedURL
                         )
                         apiViewModel.saveProfiles()
-                    }
+                    },
+                    shapes = ButtonDefaults.shapes()
                 ) {
                     Text(stringResource(R.string.api_profiles_migrated_migrate))
                 }
@@ -341,6 +360,7 @@ private fun ProfileCard(
         ) {
             OutlinedButton(
                 onClick = { showDeleteConfirmation = true },
+                shapes = ButtonDefaults.shapes(),
                 colors = ButtonDefaults.outlinedButtonColors().copy(
                     contentColor = MaterialTheme.colorScheme.error
                 )
@@ -351,7 +371,8 @@ private fun ProfileCard(
             Button(
                 onClick = { scope.launch {
                     apiViewModel.openProfileSheetToEdit(profile)
-                } }
+                } },
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Edit))
                 Text(stringResource(R.string.api_profiles_edit))
@@ -360,6 +381,7 @@ private fun ProfileCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EncryptionCard(
     onDismissRequest: () -> Unit,
@@ -371,13 +393,15 @@ fun EncryptionCard(
         icon = rememberVectorPainter(Icons.Default.EnhancedEncryption),
         buttons = {
             TextButton(
-                onClick = onDismissRequest
+                onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(R.string.action_dismiss))
             }
 
             Button(
-                onClick = onEncryptRequest
+                onClick = onEncryptRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.ArrowForward))
                 Text(stringResource(R.string.api_crypto_encrypt_do))

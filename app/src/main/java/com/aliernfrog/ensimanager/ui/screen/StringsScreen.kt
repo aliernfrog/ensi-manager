@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,7 +44,6 @@ import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
-import com.aliernfrog.ensimanager.ui.component.StringsScreenElement
 import com.aliernfrog.ensimanager.ui.sheet.AddStringSheet
 import com.aliernfrog.ensimanager.ui.sheet.StringSheet
 import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
@@ -113,11 +113,25 @@ private fun StringsList(
             ListControls(stringsShown = list.size)
         }
         items(list) {
-            StringsScreenElement(
-                string = it
-            ) { scope.launch {
-                stringsViewModel.showStringSheet(it)
-            } }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 4.dp,
+                        horizontal = 8.dp
+                    ),
+                onClick = { scope.launch {
+                    stringsViewModel.showStringSheet(it)
+                } }
+            ) {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(
+                        vertical = 8.dp,
+                        horizontal = 12.dp
+                    )
+                )
+            }
         }
         item {
             Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))

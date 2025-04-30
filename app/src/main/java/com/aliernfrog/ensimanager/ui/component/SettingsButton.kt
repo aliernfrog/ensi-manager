@@ -8,8 +8,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -24,7 +26,7 @@ import com.aliernfrog.ensimanager.util.Destination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsButton(
     modifier: Modifier = Modifier,
@@ -41,6 +43,7 @@ fun SettingsButton(
         IconButton(
             modifier = modifier,
             enabled = enabled,
+            shapes = IconButtonDefaults.shapes(),
             onClick = {
                 if (profileSwitcher) scope.launch { apiViewModel.profileSwitcherSheetState.show() }
                 else {
