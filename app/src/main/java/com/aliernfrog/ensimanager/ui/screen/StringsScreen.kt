@@ -114,7 +114,12 @@ private fun StringsList(
         }
         items(list) {
             Card(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 4.dp,
+                        horizontal = 8.dp
+                    ),
                 onClick = { scope.launch {
                     stringsViewModel.showStringSheet(it)
                 } }
