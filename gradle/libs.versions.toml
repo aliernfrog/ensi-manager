@@ -1,25 +1,25 @@
 [versions]
-android-plugin = "8.9.2"
-kotlin-plugin = "2.1.20"
+android-plugin = "8.10.0"
+kotlin-plugin = "2.1.21"
 
 androidx-activity = "1.10.1"
 androidx-biometric = "1.4.0-alpha02"
 androidx-ktx = "1.16.0"
-androidx-lifecycle = "2.8.7"
-androidx-navigation = "2.8.9"
+androidx-lifecycle = "2.9.0"
+androidx-navigation = "2.9.0"
 androidx-splashscreen = "1.0.1"
 
-compose = "1.8.0"
+compose = "1.8.1"
 compose-material-icons = "1.7.8"
-compose-material3 = "1.4.0-alpha13"
+compose-material3 = "1.4.0-alpha14"
 
-aboutlibraries = "11.6.3"
-coil = "3.1.0"
-gson = "2.12.1"
+aboutlibraries = "12.1.2"
+coil = "3.2.0"
+gson = "2.13.1"
 koin = "4.0.4"
 markdown = "0.5.7"
 toptoast = "2.1.0"
-zoomable = "2.5.0"
+zoomable = "2.7.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }

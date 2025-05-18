@@ -10,7 +10,6 @@
     <string name="action_password_hide">Hide password</string>
     <string name="action_search_placeholder">Search..</string>
     <string name="error">Error</string>
-    <string name="error_noBody">Body is blank, response code: %STATUS%</string>
     <string name="error_generic">Something went wrong</string>
     <string name="dialog_delete_description">Are you sure you want to delete {NAME}?</string>
     <string name="dialog_delete_confirm">Delete</string>
@@ -78,7 +77,7 @@
     <string name="logs_reversed">Reversed</string>
     <string name="strings">Strings</string>
     <string name="strings_couldntFetch">Something went wrong while fetching strings</string>
-    <string name="strings_shownStrings">% strings shown</string>
+    <string name="strings_shownStrings">{COUNT} strings shown</string>
     <string name="strings_add">Add to {CATEGORY}</string>
     <string name="strings_add_placeholder">Something new</string>
     <string name="strings_add_confirm">Add</string>

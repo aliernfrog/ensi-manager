@@ -165,7 +165,7 @@ private fun ListControls(
     }
 
     Text(
-        text = stringResource(R.string.strings_shownStrings).replace("%", stringsShown.toString()),
+        text = stringResource(R.string.strings_shownStrings).replace("{COUNT}", stringsShown.toString()),
         modifier = Modifier.padding(horizontal = 8.dp)
     )
 }
