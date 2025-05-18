@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APILog
+import com.aliernfrog.ensimanager.data.api.getTimeStr
 import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
@@ -71,7 +72,6 @@ import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.LogsViewModel
-import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

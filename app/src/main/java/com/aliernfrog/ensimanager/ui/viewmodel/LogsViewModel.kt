@@ -13,9 +13,9 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APILog
 import com.aliernfrog.ensimanager.data.api.doRequest
+import com.aliernfrog.ensimanager.data.api.getTimeStr
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.enum.APILogType
-import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.ensimanager.util.manager.ContextUtils
