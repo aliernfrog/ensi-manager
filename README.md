@@ -6,10 +6,12 @@ Universal Android app for managing your HTTP(s) APIs.
 - **📃 Strings:** Manage string arrays in your API, with categories
 - **📔 Logs:** View logs of your API and filter them based on type (debug, warning and error)
 - **🪪 SSL verification:** Save your endpoint's certificate details to prevent malicious actors from stealing your authorization details
+- **🔒 Encryption:** Protect your API details with password protected encryption
+- **👆 Biometric authentication:** Quickly decrypt your data if encrypted
 - **🎨 Material You & Adaptive design:** Ensi Manager provides an adaptive UI with Material You components to make you feel home!
 
 ## 🔗 API configuration
-Ensi Manager requires an endpoint which returns a JSON of [APIEndpoints](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIEndpoints.kt). All fields are nullable.
+You can check the documentation [here](./API.md).
 
 ## 🔧 Building
 <details>

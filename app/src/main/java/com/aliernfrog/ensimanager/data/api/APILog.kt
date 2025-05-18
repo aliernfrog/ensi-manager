@@ -12,7 +12,8 @@ data class APILog(
     val date: Long,
     val type: APILogType,
     val str: String,
-    var timeStr: MutableState<String?>? = null
+
+    internal var timeStr: MutableState<String?>? = null
 )
 
 fun APILog.getTimeStr(
