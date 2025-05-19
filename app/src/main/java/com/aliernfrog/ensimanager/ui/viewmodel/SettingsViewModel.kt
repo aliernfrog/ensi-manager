@@ -17,7 +17,7 @@ import com.mikepenz.aboutlibraries.util.withContext
 
 class SettingsViewModel(
     val prefs: PreferenceManager,
-    private val topToastState: TopToastState,
+    val topToastState: TopToastState,
     context: Context
 ) : ViewModel() {
     private var aboutClickCount by mutableIntStateOf(0)
@@ -25,11 +25,11 @@ class SettingsViewModel(
     val libraries = Libs.Builder().withContext(context).build().libraries
 
     fun onAboutClick() {
-        if (prefs.experimentalOptionsEnabled) return
+        if (prefs.experimentalOptionsEnabled.value) return
         aboutClickCount++
         if (aboutClickCount == experimentalSettingsRequiredClicks) {
             aboutClickCount = 0
-            prefs.experimentalOptionsEnabled = true
+            prefs.experimentalOptionsEnabled.value = true
             topToastState.showToast(
                 text = R.string.settings_experimental_enabled,
                 icon = Icons.Rounded.Build,

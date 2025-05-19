@@ -1,13 +1,22 @@
-package com.aliernfrog.ensimanager.util.extension
+package com.aliernfrog.ensimanager.data.api
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.aliernfrog.ensimanager.data.EnsiLog
+import com.aliernfrog.ensimanager.enum.APILogType
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-fun EnsiLog.getTimeStr(
+data class APILog(
+    val date: Long,
+    val type: APILogType,
+    val str: String,
+
+    internal var timeStr: MutableState<String?>? = null
+)
+
+fun APILog.getTimeStr(
     context: Context,
     force: Boolean = false
 ): String {

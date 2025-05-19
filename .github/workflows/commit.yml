@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 17
+          java-version: 21
           cache: gradle
 
       - name: Build with Gradle
@@ -32,7 +32,7 @@ jobs:
         run: mv app/build/outputs/apk_from_bundle/release/app-release-universal.apk ensi-manager.apk
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ensi-manager
           path: ensi-manager.apk

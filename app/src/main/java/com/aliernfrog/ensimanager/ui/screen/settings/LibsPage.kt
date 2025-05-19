@@ -18,7 +18,9 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.CorporateFare
 import androidx.compose.material.icons.filled.Engineering
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -48,15 +50,15 @@ import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
 import com.aliernfrog.ensimanager.ui.component.ButtonIcon
+import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.component.form.DividerRow
-import com.aliernfrog.ensimanager.ui.component.form.FormSection
 import com.aliernfrog.ensimanager.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import com.mikepenz.aboutlibraries.entity.Library
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LibsPage(
     settingsViewModel: SettingsViewModel = koinViewModel(),
@@ -103,16 +105,14 @@ fun LibsPage(
 
     AppModalBottomSheet(sheetState = librarySheetState) {
         selectedLibrary?.let { lib ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-            ) {
+            Column(Modifier.fillMaxWidth()) {
                 Text(
                     text = lib.name,
                     style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 16.dp)
                 )
                 lib.description?.let {
                     Text(
@@ -121,7 +121,7 @@ fun LibsPage(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 16.dp)
                     )
                 }
 
@@ -136,11 +136,12 @@ fun LibsPage(
                             isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                         )
                         .horizontalScroll(buttonsScrollState)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 16.dp)
                 ) {
                     lib.website?.let {
                         if (it.contains("://")) Button(
-                            onClick = { uriHandler.openUri(it) }
+                            onClick = { uriHandler.openUri(it) },
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                             Text(stringResource(R.string.settings_about_libs_website))
@@ -148,9 +149,8 @@ fun LibsPage(
                     }
                     lib.organization?.url?.let {
                         if (it.contains("://")) FilledTonalButton(
-                            onClick = {
-                                uriHandler.openUri(it)
-                            }
+                            onClick = { uriHandler.openUri(it) },
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.CorporateFare))
                             Text(stringResource(R.string.settings_about_libs_organization))
@@ -162,7 +162,8 @@ fun LibsPage(
                                 dev.organisationUrl?.let {
                                     if (it.contains("://")) uriHandler.openUri(it)
                                 }
-                            }
+                            },
+                            shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.Engineering))
                             Text(dev.name ?: "Developer")
@@ -172,11 +173,8 @@ fun LibsPage(
             }
 
             lib.licenses.forEach { license ->
-                FormSection(
-                    title = license.name,
-                    topDivider = true,
-                    bottomDivider = false
-                ) {
+                DividerRow(Modifier.padding(16.dp))
+                ExpressiveSection(title = license.name) {
                     Text(
                         text = license.licenseContent ?: "",
                         fontFamily = FontFamily.Monospace,

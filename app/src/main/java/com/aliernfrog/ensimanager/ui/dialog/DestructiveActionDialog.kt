@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,11 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.EnsiAPIDashboardAction
+import com.aliernfrog.ensimanager.data.api.APIDashboardAction
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DestructiveActionDialog(
-    action: EnsiAPIDashboardAction,
+    action: APIDashboardAction,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
@@ -28,6 +30,7 @@ fun DestructiveActionDialog(
         confirmButton = {
             Button(
                 onClick = onConfirm,
+                shapes = ButtonDefaults.shapes(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError
@@ -38,7 +41,8 @@ fun DestructiveActionDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = onDismissRequest
+                onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(R.string.action_cancel))
             }

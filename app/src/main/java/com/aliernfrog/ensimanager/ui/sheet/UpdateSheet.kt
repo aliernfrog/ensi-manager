@@ -3,24 +3,26 @@ package com.aliernfrog.ensimanager.ui.sheet
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.ReleaseInfo
 import com.aliernfrog.ensimanager.ui.component.BaseModalBottomSheet
@@ -41,7 +42,7 @@ import com.aliernfrog.ensimanager.ui.component.form.DividerRow
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun UpdateSheet(
     sheetState: SheetState,
@@ -57,37 +58,56 @@ fun UpdateSheet(
             versionName = latestVersionInfo.versionName,
             preRelease = latestVersionInfo.preRelease,
             updateAvailable = updateAvailable,
-            onGithubClick = { uriHandler.openUri(latestVersionInfo.htmlUrl) },
             onUpdateClick = { uriHandler.openUri(latestVersionInfo.downloadLink) },
             onCheckUpdatesRequest = onCheckUpdatesRequest
         )
         DividerRow(
             alpha = 0.3f
         )
-        MarkdownText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = bottomPadding)
-                .padding(16.dp),
-            markdown = latestVersionInfo.body,
-            linkColor = MaterialTheme.colorScheme.primary,
-            style = LocalTextStyle.current.copy(
-                color = LocalContentColor.current
-            ),
-            onLinkClicked = {
-                uriHandler.openUri(it)
+        Column(Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = bottomPadding)
+        ) {
+            MarkdownText(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .padding(horizontal = 16.dp),
+                markdown = latestVersionInfo.body,
+                linkColor = MaterialTheme.colorScheme.primary,
+                syntaxHighlightColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                syntaxHighlightTextColor = MaterialTheme.colorScheme.onSurface,
+                style = LocalTextStyle.current.copy(
+                    color = LocalContentColor.current
+                ),
+                onLinkClicked = {
+                    uriHandler.openUri(it)
+                }
+            )
+            TextButton(
+                onClick = { uriHandler.openUri(latestVersionInfo.htmlUrl) },
+                shapes = ButtonDefaults.shapes(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.End)
+            ) {
+                ButtonIcon(
+                    painter = painterResource(R.drawable.github)
+                )
+                Text(
+                    text = stringResource(R.string.updates_openInGithub)
+                )
             }
-        )
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Actions(
     versionName: String,
     preRelease: Boolean,
     updateAvailable: Boolean,
-    onGithubClick: () -> Unit,
     onUpdateClick: () -> Unit,
     onCheckUpdatesRequest: () -> Unit
 ) {
@@ -99,44 +119,43 @@ private fun Actions(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .horizontalFadingEdge(
-                    scrollState = versionNameScrollState,
-                    edgeColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                    isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
-                )
-                .horizontalScroll(versionNameScrollState),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(end = 12.dp)
         ) {
-            Text(
-                text = versionName,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                modifier = Modifier
+                    .horizontalFadingEdge(
+                        scrollState = versionNameScrollState,
+                        edgeColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
+                    )
+                    .horizontalScroll(versionNameScrollState),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = versionName,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
             Text(
                 text = stringResource(
                     if (preRelease) R.string.updates_preRelease
                     else R.string.updates_stable
                 ),
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Light,
-                color = LocalContentColor.current.copy(alpha = 0.7f),
-                modifier = Modifier.padding(horizontal = 6.dp)
+                color = LocalContentColor.current.copy(alpha = 0.7f)
             )
         }
-        IconButton(onClick = onGithubClick) {
-            Icon(
-                painter = painterResource(R.drawable.github),
-                contentDescription = stringResource(R.string.updates_openInGithub),
-                modifier = Modifier.padding(6.dp)
-            )
-        }
-        AnimatedContent(updateAvailable) { showUpdate ->
+        AnimatedContent(
+            targetState = updateAvailable
+        ) { showUpdate ->
             if (showUpdate) Button(
-                onClick = onUpdateClick
+                onClick = onUpdateClick,
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(
                     painter = rememberVectorPainter(Icons.Default.Update)
@@ -144,10 +163,11 @@ private fun Actions(
                 Text(stringResource(R.string.updates_update))
             }
             else OutlinedButton(
-                onClick = onCheckUpdatesRequest
+                onClick = onCheckUpdatesRequest,
+                shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(
-                    painter = rememberVectorPainter(Icons.Default.Update)
+                    painter = rememberVectorPainter(Icons.Default.Refresh)
                 )
                 Text(stringResource(R.string.updates_checkUpdates))
             }

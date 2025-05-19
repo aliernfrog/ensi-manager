@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -60,14 +62,16 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.EnsiLog
-import com.aliernfrog.ensimanager.enum.EnsiLogType
+import com.aliernfrog.ensimanager.data.api.APILog
+import com.aliernfrog.ensimanager.data.api.getTimeStr
+import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.ui.component.AppScaffold
 import com.aliernfrog.ensimanager.ui.component.AppTopBar
 import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
+import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
+import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.LogsViewModel
-import com.aliernfrog.ensimanager.util.extension.getTimeStr
 import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -80,7 +84,7 @@ fun LogsScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(logsViewModel.logs) {
         if (logsViewModel.logs.isEmpty()) logsViewModel.fetchLogs()
     }
 
@@ -91,7 +95,7 @@ fun LogsScreen(
                 scrollBehavior = it,
                 actions = {
                     SettingsButton(
-                        onClick = onNavigateSettingsRequest
+                        onNavigateSettingsRequest = onNavigateSettingsRequest
                     )
                 }
             )
@@ -125,6 +129,20 @@ private fun LogsList(
         state = logsViewModel.lazyListState
     ) {
         item {
+            SearchField(
+                query = logsViewModel.filter,
+                onQueryChange = { logsViewModel.filter = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-12).dp)
+                    .padding(
+                        start = 8.dp,
+                        end = 8.dp
+                    )
+            )
+        }
+
+        item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,13 +151,12 @@ private fun LogsList(
                         edgeColor = MaterialTheme.colorScheme.surface,
                         isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
-                    //.height(IntrinsicSize.Max)
                     .horizontalScroll(filtersScrollState)
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                EnsiLogType.entries.forEach {
+                APILogType.entries.forEach {
                     val selected = logsViewModel.shownLogTypes.contains(it)
                     FilterChip(
                         selected = selected,
@@ -158,9 +175,7 @@ private fun LogsList(
                     )
                 }
                 VerticalDivider(
-                    // TODO use Intrinsic height (for some reason its broken)
                     modifier = Modifier
-                        //.fillMaxHeight()
                         .height(32.dp)
                         .padding(
                             horizontal = 4.dp,
@@ -189,14 +204,14 @@ private fun LogsList(
             )
         }
         item {
-            Spacer(Modifier.height(70.dp))
+            Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))
         }
     }
 }
 
 @Composable
 private fun LogItem(
-    log: EnsiLog,
+    log: APILog,
     isLastItem: Boolean
 ) {
     val context = LocalContext.current
