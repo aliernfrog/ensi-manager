@@ -142,7 +142,7 @@ This endpoint must return a JSON array of [`APILog`](./app/src/main/java/com/ali
 > **Warning:** This will be displayed in a reversed order, meaning that "Something went wrong!" message will display at top and others at the bottom.
 
 # 🔑 Authorization & security
-If you want to secure your endpoints, you can make them require a specific `Authorization` header content. You can then enter this information in your API profile cpnfiguration in Ensi Manager.
+If you want to secure your endpoints, you can make them require a specific `Authorization` header content. You can then enter this information in your API profile configuration in Ensi Manager.
 
 Ensi Manager can protect your authorization header in following ways:
 - **🪪 SSL verification:** This is enabled for all HTTPS APIs. You can either provide the key yourself when adding the API profile or leave the field empty to automatically pull the current one. Ensi Manager will abort the requests if saved SSL key does not match.
