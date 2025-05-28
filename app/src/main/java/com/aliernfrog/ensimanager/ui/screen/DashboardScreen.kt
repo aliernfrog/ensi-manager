@@ -181,6 +181,7 @@ private fun ScreenContent(
                 description = action.description,
                 contentColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 icon = action.icon?.let { {
+                    val defaultIconContainerColor = if (action.destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primaryContainer
                     ExpressiveRowIcon(
                         painter = rememberAsyncImagePainter(
                             model = ByteBuffer.wrap(it.toByteArray()),
@@ -192,8 +193,8 @@ private fun ScreenContent(
                                 .build()
                         ),
                         containerColor = action.iconContainerColor?.let {
-                            rememberColorFromHex(it).toRowFriendlyColor
-                        } ?: MaterialTheme.colorScheme.primaryContainer
+                            rememberColorFromHex(it, fallback = defaultIconContainerColor).toRowFriendlyColor
+                        } ?: defaultIconContainerColor
                     )
                 } },
                 onClick = action.endpoint?.let { {
@@ -240,7 +241,7 @@ private fun rememberColorFromHex(
     fallback: Color = MaterialTheme.colorScheme.primaryContainer
 ): Color {
     var safeHex = if (hexColor.startsWith("#")) hexColor.substring(1) else hexColor
-    if (safeHex.length == 6) safeHex += "FF"
+    if (safeHex.length == 6) safeHex = "FF" + safeHex; // add alpha channel
     return remember(hexColor) {
         try {
             Color(safeHex.toLong(16))

@@ -18,7 +18,7 @@ data class APIDashboardAction(
     val description: String?,
     val icon: String?,
     /**
-     * Hex color code (#RRGGBBAA)
+     * Hex color code (#RRGGBB or #AARRGGBB)
      */
     val iconContainerColor: String?,
     val destructive: Boolean = false,
