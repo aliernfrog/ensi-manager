@@ -240,7 +240,7 @@ private fun rememberColorFromHex(
     fallback: Color = MaterialTheme.colorScheme.primaryContainer
 ): Color {
     var safeHex = if (hexColor.startsWith("#")) hexColor.substring(1) else hexColor
-    if (safeHex.length == 6) safeHex += "FF"
+    if (safeHex.length == 6) safeHex = "FF" + safeHex; // add alpha channel
     return remember(hexColor) {
         try {
             Color(safeHex.toLong(16))
