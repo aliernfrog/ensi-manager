@@ -2,10 +2,12 @@ package com.aliernfrog.ensimanager.util.staticutil
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.aliernfrog.ensimanager.TAG
 
 object BiometricUtil {
     fun canAuthenticate(context: Context): Boolean {
@@ -28,36 +30,41 @@ object BiometricUtil {
     ) {
         if (Build.VERSION.SDK_INT <= 28) return onFail()
 
-        val executor = ContextCompat.getMainExecutor(activity)
+        try {
+            val executor = ContextCompat.getMainExecutor(activity)
 
-        val biometricPrompt = BiometricPrompt(activity, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    onError(errorCode, errString)
-                }
+            val biometricPrompt = BiometricPrompt(activity, executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                        super.onAuthenticationError(errorCode, errString)
+                        onError(errorCode, errString)
+                    }
 
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    onSuccess(result)
-                }
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        onSuccess(result)
+                    }
 
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    onFail()
-                }
-            })
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                        onFail()
+                    }
+                })
 
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(title)
-            .setDescription(description)
-            .setNegativeButtonText(activity.applicationContext.getString(android.R.string.cancel))
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-            .build()
+            val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle(title)
+                .setDescription(description)
+                .setNegativeButtonText(activity.applicationContext.getString(android.R.string.cancel))
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                .build()
 
-        val cipher = CryptoUtil.initalizeBiometricCipher()
-        val cryptoObject = BiometricPrompt.CryptoObject(cipher)
+            val cipher = CryptoUtil.initalizeBiometricCipher()
+            val cryptoObject = BiometricPrompt.CryptoObject(cipher)
 
-        biometricPrompt.authenticate(promptInfo, cryptoObject)
+            biometricPrompt.authenticate(promptInfo, cryptoObject)
+        } catch (e: Exception) {
+            Log.e(TAG, "BiometricUtil/authenticate: ", e)
+            onFail()
+        }
     }
 }
