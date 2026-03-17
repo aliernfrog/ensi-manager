@@ -1,8 +1,8 @@
 package com.aliernfrog.ensimanager.data.api
 
-import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.MainDestination
 
 data class APIProfileCache(
     val endpoints: APIEndpoints? = null,
-    val availableDestinations: List<Destination> = emptyList()
+    val availableDestinations: List<MainDestination> = emptyList()
 )

@@ -36,20 +36,20 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.svg.SvgDecoder
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.doRequest
-import com.aliernfrog.ensimanager.ui.component.AppScaffold
-import com.aliernfrog.ensimanager.ui.component.AppTopBar
-import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.dialog.ImageDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
-import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.extension.toastSummary
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppTopBar
+import io.github.aliernfrog.shared.ui.component.HorizontalSegmentor
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -59,7 +59,7 @@ import java.nio.ByteBuffer
 @Composable
 fun DashboardScreen(
     dashboardViewModel: DashboardViewModel = koinViewModel(),
-    onNavigateRequest: (Destination) -> Unit
+    onNavigateRequest: (Any) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -74,7 +74,9 @@ fun DashboardScreen(
               scrollBehavior = it,
               actions = {
                   SettingsButton(
-                      onNavigateSettingsRequest = { onNavigateRequest(Destination.SETTINGS) }
+                      onNavigateSettingsRequest = {
+                          onNavigateRequest(SettingsDestination.root)
+                      }
                   )
               }
           )
@@ -192,8 +194,8 @@ private fun ScreenContent(
                                 .coroutineContext(Dispatchers.IO)
                                 .build()
                         ),
-                        containerColor = action.iconContainerColor?.let {
-                            rememberColorFromHex(it, fallback = defaultIconContainerColor).toRowFriendlyColor
+                        containerColor = action.iconContainerColor?.let { hexString ->
+                            rememberColorFromHex(hexString, fallback = defaultIconContainerColor).toRowFriendlyColor
                         } ?: defaultIconContainerColor
                     )
                 } },
@@ -241,11 +243,11 @@ private fun rememberColorFromHex(
     fallback: Color = MaterialTheme.colorScheme.primaryContainer
 ): Color {
     var safeHex = if (hexColor.startsWith("#")) hexColor.substring(1) else hexColor
-    if (safeHex.length == 6) safeHex = "FF" + safeHex; // add alpha channel
+    if (safeHex.length == 6) safeHex = "FF$safeHex" // add alpha channel
     return remember(hexColor) {
         try {
             Color(safeHex.toLong(16))
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             fallback
         }
     }

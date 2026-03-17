@@ -22,7 +22,7 @@ fun TopToastState.showSuccessToast(text: Any, androidToast: Boolean = false) {
     )
 }
 
-fun TopToastState.showErrorToast(text: Any = R.string.error_generic, androidToast: Boolean = false) {
+fun TopToastState.showErrorToast(text: Any = R.string.warning_error, androidToast: Boolean = false) {
     if (androidToast) showAndroidToast(
         text = text,
         icon = Icons.Rounded.PriorityHigh,

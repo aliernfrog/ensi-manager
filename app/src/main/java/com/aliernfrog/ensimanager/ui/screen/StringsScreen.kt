@@ -38,16 +38,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.AppScaffold
-import com.aliernfrog.ensimanager.ui.component.AppTopBar
-import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SearchField
-import com.aliernfrog.ensimanager.ui.component.SegmentedButtons
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.sheet.AddStringSheet
 import com.aliernfrog.ensimanager.ui.sheet.StringSheet
-import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppTopBar
+import io.github.aliernfrog.shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -156,8 +156,8 @@ private fun ListControls(
             )
     )
 
-    SegmentedButtons(
-        options = stringsViewModel.categories.map { it.title },
+    SingleChoiceConnectedButtonGroup(
+        choices = stringsViewModel.categories.map { it.title },
         selectedIndex = stringsViewModel.currentCategoryIndex,
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {

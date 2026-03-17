@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
-import com.aliernfrog.ensimanager.util.extension.clickableWithColor
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
+import io.github.aliernfrog.shared.util.extension.clickableWithColor
 
 @Composable
 fun ExpressiveRadioButtons(

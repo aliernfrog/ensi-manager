@@ -1,9 +1,9 @@
 package com.aliernfrog.ensimanager.data.api
 
 import com.aliernfrog.ensimanager.data.HTTPResponse
-import com.aliernfrog.ensimanager.di.getKoinInstance
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
+import io.github.aliernfrog.shared.di.getKoinInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject

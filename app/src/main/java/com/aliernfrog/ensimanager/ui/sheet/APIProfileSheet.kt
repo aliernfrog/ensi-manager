@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -52,14 +53,14 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.component.FadeVisibility
 import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.togglePasswordVisibilityText
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -101,6 +102,7 @@ fun APIProfileSheet(
                 else apiViewModel.apiProfiles.add(withKey)
                 trustNewCertDialogProfile = null
                 apiViewModel.saveProfiles()
+                @SuppressLint("LocalContextGetResourceValueCall")
                 apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
                 sheetState.hide()
                 apiViewModel.clearProfileSheetState()

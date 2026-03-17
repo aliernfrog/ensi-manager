@@ -1,146 +1,93 @@
 package com.aliernfrog.ensimanager.ui.viewmodel
 
-import android.content.Context
-import android.os.Build
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
-import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavHostController
-import com.aliernfrog.ensimanager.BuildConfig
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.TAG
-import com.aliernfrog.ensimanager.data.ReleaseInfo
-import com.aliernfrog.ensimanager.githubRepoURL
-import com.aliernfrog.ensimanager.ui.component.createSheetStateWithDensity
 import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.MainDestinationGroup
+import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
-import com.aliernfrog.ensimanager.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
-import kotlinx.coroutines.CancellationException
+import io.github.aliernfrog.shared.impl.UpdateCheckResult
+import io.github.aliernfrog.shared.impl.VersionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainViewModel(
-    context: Context,
+    val prefs: PreferenceManager,
     val topToastState: TopToastState,
-    val prefs: PreferenceManager
+    val versionManager: VersionManager
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
-    var navController: NavHostController? = null
 
-    val updateSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
+    val navigationBackStack = mutableStateListOf<Any>(
+        NavigationConstant.INITIAL_DESTINATION
+    )
+    var currentMainDestination by mutableStateOf(NavigationConstant.INITIAL_MAIN_DESTINATION)
+    val isAtMainDestination: Boolean
+        get() = navigationBackStack.last() == MainDestinationGroup
 
-    private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
-    private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
-    private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
-    val applicationVersionLabel = "$applicationVersionName (${
-        BuildConfig.GIT_COMMIT.ifBlank { applicationVersionCode.toString() }
-    }${
-        if (BuildConfig.GIT_LOCAL_CHANGES) "*" else ""
-    }${
-        BuildConfig.GIT_BRANCH.let {
-            if (it == applicationVersionName) ""
-            else " - ${it.ifBlank { "local" }}"
-        }
-    })"
-
-
-    var latestVersionInfo by mutableStateOf(ReleaseInfo(
-        versionName = applicationVersionName,
-        preRelease = applicationIsPreRelease,
-        body = context.getString(R.string.updates_noChangelog),
-        htmlUrl = githubRepoURL,
-        downloadLink = githubRepoURL
-    ))
-        private set
+    val availableUpdates = versionManager.availableUpdates
+    val currentVersionInfo = versionManager.currentVersionInfo
+    val isCompatibleWithLatestVersion = versionManager.isCompatibleWithLatestVersion
+    val isCheckingForUpdates = versionManager.isCheckingForUpdates
+    var showUpdateNotification by mutableStateOf(false)
 
     var updateAvailable by mutableStateOf(false)
         private set
 
-    val debugInfo: String
-        get() = arrayOf(
-            "Ensi Manager $applicationVersionLabel",
-            "Android API ${Build.VERSION.SDK_INT}",
-            prefs.debugInfoPrefs.joinToString("\n") {
-                "${it.key}: ${it.value}"
-            }
-        ).joinToString("\n")
-
-    suspend fun checkUpdates(
+    fun checkUpdates(
         manuallyTriggered: Boolean = false,
-        ignoreVersion: Boolean = false
+        skipVersionCheck: Boolean = false
     ) {
-        withContext(Dispatchers.IO) {
-            try {
-                val updatesURL = prefs.updatesURL.value
-                val responseJson = JSONObject(URL(updatesURL).readText())
-                val json = responseJson.getJSONObject(
-                    if (applicationIsPreRelease && responseJson.has("preRelease")) "preRelease" else "stable"
-                )
-                val latestVersionCode = json.getInt("versionCode")
-                latestVersionInfo = ReleaseInfo(
-                    versionName = json.getString("versionName"),
-                    preRelease = json.getBoolean("preRelease"),
-                    body = json.getString("body"),
-                    htmlUrl = json.getString("htmlUrl"),
-                    downloadLink = json.getString("downloadUrl")
-                )
-                updateAvailable = ignoreVersion || latestVersionCode > applicationVersionCode
-                if (updateAvailable) {
-                    if (manuallyTriggered) coroutineScope {
-                        updateSheetState.show()
-                    } else {
-                        showUpdateToast()
-                        Destination.SETTINGS.hasNotification.value = true
-                    }
-                } else {
+        viewModelScope.launch(Dispatchers.IO) {
+            val updateCheckResult = versionManager.checkUpdates(skipVersionCheck = skipVersionCheck)
+            when (updateCheckResult) {
+                UpdateCheckResult.NoUpdates -> {
                     if (manuallyTriggered) withContext(Dispatchers.Main) {
-                        topToastState.showAndroidToast(
+                        topToastState.showToast(
                             text = R.string.updates_noUpdates,
                             icon = Icons.Rounded.Info,
                             iconTintColor = TopToastColor.ON_SURFACE
                         )
                     }
                 }
-            } catch (_: CancellationException) {
-            } catch (e: Exception) {
-                Log.e(TAG, "checkUpdates: ", e)
-                if (manuallyTriggered) withContext(Dispatchers.Main) {
-                    topToastState.showAndroidToast(
-                        text = R.string.updates_error,
-                        icon = Icons.Rounded.PriorityHigh,
-                        iconTintColor = TopToastColor.ERROR
-                    )
+                UpdateCheckResult.Error -> {
+                    if (manuallyTriggered) withContext(Dispatchers.Main) {
+                        topToastState.showToast(
+                            text = R.string.updates_error,
+                            icon = Icons.Rounded.PriorityHigh,
+                            iconTintColor = TopToastColor.ERROR
+                        )
+                    }
+                }
+                is UpdateCheckResult.UpdatesAvailable -> {
+                    withContext(Dispatchers.Main) {
+                        if (manuallyTriggered && navigationBackStack.first() !is Destination.Updates)
+                            navigationBackStack.add(Destination.Updates)
+                        else showUpdateToast()
+                    }
                 }
             }
         }
     }
 
     fun showUpdateToast() {
-        topToastState.showToast(
-            text = R.string.updates_updateAvailable,
-            icon = Icons.Rounded.Update,
-            duration = 20000,
-            swipeToDismiss = true,
-            dismissOnClick = true,
-            onToastClick = {
-                scope.launch { updateSheetState.show() }
-            }
-        )
+        io.github.aliernfrog.shared.util.showUpdateToast {
+            if (navigationBackStack.first() !is Destination.Updates)
+                navigationBackStack.add(Destination.Updates)
+        }
     }
 }

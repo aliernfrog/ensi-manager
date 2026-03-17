@@ -1,16 +1,14 @@
 package com.aliernfrog.ensimanager
 
-import android.os.Build
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
-import com.aliernfrog.ensimanager.data.Social
-import com.aliernfrog.ensimanager.impl.CreditData
+import io.github.aliernfrog.shared.data.Social
+import io.github.aliernfrog.shared.impl.CreditData
 
 const val TAG = "EnsiManagerLogs"
 const val githubRepoURL = "https://github.com/aliernfrog/ensi-manager"
-const val experimentalSettingsRequiredClicks = 10
-
-val imeSupportsSyncAppContent = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+const val defaultReleasesURL = "https://raw.githubusercontent.com/aliernfrog/ensi-manager/refs/heads/main/releases.json"
+const val crashReportURL = "https://aliernfrog.vercel.app/crash-report"
 
 object SettingsConstant {
     val socials = listOf(
@@ -31,6 +29,19 @@ object SettingsConstant {
         )
     )
 
+    val supportLinks = listOf(
+        Social(
+            label = "Discord",
+            icon = io.github.aliernfrog.shared.R.drawable.discord,
+            url = "https://discord.gg/SQXqBMs"
+        ),
+        Social(
+            label = "GitHub Issues",
+            icon = io.github.aliernfrog.shared.R.drawable.github,
+            url = "$githubRepoURL/issues"
+        )
+    )
+
     val credits = listOf(
         CreditData(
             name = "alieRN",
@@ -44,6 +55,7 @@ object SettingsConstant {
         ),
         CreditData(
             name = "Exi",
+            githubUsername = "Exi277",
             description = "Assisting with Ensi"
         ),
         CreditData(

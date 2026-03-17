@@ -17,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

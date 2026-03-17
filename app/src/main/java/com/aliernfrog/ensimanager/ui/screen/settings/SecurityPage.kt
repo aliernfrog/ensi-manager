@@ -19,17 +19,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
-import com.aliernfrog.ensimanager.ui.component.FadeVisibility
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
-import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
-import com.aliernfrog.ensimanager.ui.theme.AppRoundnessSize
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
+import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
+import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsPageContainer
+import io.github.aliernfrog.shared.ui.theme.AppRoundnessSize
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

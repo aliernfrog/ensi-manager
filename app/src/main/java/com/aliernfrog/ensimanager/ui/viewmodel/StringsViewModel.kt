@@ -17,11 +17,11 @@ import com.aliernfrog.ensimanager.data.api.APIChatCategory
 import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
-import com.aliernfrog.ensimanager.ui.component.createSheetStateWithDensity
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
+import io.github.aliernfrog.shared.ui.component.createSheetStateWithDensity
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)

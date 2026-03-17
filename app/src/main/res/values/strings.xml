@@ -1,18 +1,31 @@
 <resources>
     <string name="app_name">Ensi Manager</string>
     <string name="action_back">Back</string>
+    <string name="action_ok">Okay</string>
     <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_dismiss">Dismiss</string>
+    <string name="action_openInBrowser">Open in browser</string>
     <string name="action_clear">Clear</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_expand">Expand</string>
+    <string name="action_collapse">Collapse</string>
     <string name="action_done">Done</string>
     <string name="action_password_show">Show password</string>
     <string name="action_password_hide">Hide password</string>
     <string name="action_search_placeholder">Search..</string>
+
+    <string name="warning">Warning</string>
+    <string name="warning_error">Something went wrong</string>
+    <string name="warning_error_tapToReport">Something went wrong! Tap here to report the error and view details</string>
+
+    <string name="info_pleaseWait">Please wait…</string>
+
     <string name="error">Error</string>
-    <string name="error_generic">Something went wrong</string>
+
     <string name="dialog_delete_description">Are you sure you want to delete {NAME}?</string>
     <string name="dialog_delete_confirm">Delete</string>
+
     <string name="api_profiles">API Profiles</string>
     <string name="api_profiles_switcher">Profiles and settings</string>
     <string name="api_profiles_switcher_update">Update available</string>
@@ -43,6 +56,7 @@
     <string name="api_profiles_add_sha256_info">If this does not match with the one provided by server, requests will be aborted\nLeave empty to automatically pull from the server</string>
     <string name="api_profiles_add_sha256_notHttps">Only available for HTTPS profiles</string>
     <string name="api_profiles_add_saved">Saved profile</string>
+
     <string name="api_crypto_encrypt">Encrypt Ensi Manager</string>
     <string name="api_crypto_encrypt_description">Encrypt your profiles and authorization details to improve security</string>
     <string name="api_crypto_encrypt_do">Encrypt</string>
@@ -60,21 +74,25 @@
     <string name="api_crypto_decrypt_fail">Failed to decrypt data, wrong password?</string>
     <string name="api_crypto_decrypt_fail_biometrics">Failed to decrypt data, try password?</string>
     <string name="api_crypto_decrypt_decrypted">Successfully decrypted</string>
+
     <string name="api_ssl_trust">Trust</string>
     <string name="api_ssl_trustNew_text">This profile\'s certificate SHA-256 is</string>
     <string name="api_ssl_trustNew_q">Trust this certificate?</string>
     <string name="api_ssl_trustNew_notSecure">This profile is not secured with HTTPS! This can lead to various issues, including getting your authorization details stolen.</string>
     <string name="api_ssl_trustNew_notSecure_q">Add the profile anyway?</string>
+
     <string name="dashboard">Dashboard</string>
     <string name="dashboard_couldntFetch">Something went wrong while fetching dashboard data</string>
     <string name="dashboard_destructive_warning">This action is destructive, do you want to proceed?</string>
     <string name="dashboard_destructive_proceed">Proceed</string>
+
     <string name="logs">Logs</string>
     <string name="logs_couldntFetch">Something went wrong while fetching logs</string>
     <string name="logs_type_log">Debug</string>
     <string name="logs_type_warn">Warning</string>
     <string name="logs_type_error">Error</string>
     <string name="logs_reversed">Reversed</string>
+
     <string name="strings">Strings</string>
     <string name="strings_couldntFetch">Something went wrong while fetching strings</string>
     <string name="strings_shownStrings">{COUNT} strings shown</string>
@@ -82,6 +100,7 @@
     <string name="strings_add_placeholder">Something new</string>
     <string name="strings_add_confirm">Add</string>
     <string name="strings_remove">Remove string</string>
+
     <string name="settings">Settings</string>
     <string name="settings_category_api">API</string>
     <string name="settings_category_app">App</string>
@@ -119,14 +138,25 @@
     <string name="settings_security_biometrics_enabledToast">Biometric decryption enabled</string>
     <string name="settings_security_biometrics_disabledToast">Biometric decryption disabled</string>
     <string name="settings_about">About</string>
+    <string name="settings_about_description">App info, support links and update configuration</string>
     <string name="settings_about_changelog">Changelog</string>
     <string name="settings_about_update">Update</string>
     <string name="settings_about_updates">Updates</string>
     <string name="settings_about_updates_autoCheckUpdates">Check for updates automatically</string>
     <string name="settings_about_updates_autoCheckUpdates_description">Check for Ensi Manager updates automatically on launch</string>
+    <string name="settings_about_issues">Issues &amp; feedback</string>
+    <string name="settings_about_issues_title">Having issues or feedback?</string>
+    <string name="settings_about_issues_description">You can use the following links to report issues, get help, or provide feedback about Ensi Manager</string>
+    <string name="settings_about_issues_githubIssues">GitHub Issues</string>
+    <string name="settings_about_issues_discord">Discord server</string>
+    <string name="settings_about_issues_copyDebugInfo">Copy debug information</string>
+    <string name="settings_about_issues_copyDebugInfo_description">Including this in bug reports is recommended</string>
+    <string name="settings_about_issues_copyDebugInfo_clipLabel">Ensi Manager debug info</string>
+    <string name="settings_about_issues_copyDebugInfo_copied">Copied debug information</string>
     <string name="settings_about_credits">Credits</string>
     <string name="settings_about_libs">Libraries</string>
     <string name="settings_about_libs_description">Libraries used to make Ensi Manager</string>
+    <string name="settings_about_libs_license">License</string>
     <string name="settings_about_libs_website">Website</string>
     <string name="settings_about_libs_organization">Organization</string>
     <string name="settings_about_other">Other</string>
@@ -138,13 +168,33 @@
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">Not intended for normal usage, might break the app when misused</string>
     <string name="settings_experimental_updatesURL">Updates URL</string>
-    <string name="updates_updateAvailable">Ensi Manager update available! Click for more details</string>
-    <string name="updates_noUpdates">No updates available</string>
-    <string name="updates_error">Something went wrong while checking for updates</string>
-    <string name="updates_stable">Stable</string>
-    <string name="updates_preRelease">Pre-release</string>
-    <string name="updates_openInGithub">View in GitHub</string>
-    <string name="updates_update">Update</string>
+
+    <string name="mediaOverlay_guide">Help</string>
+    <string name="mediaOverlay_guide_toggleOverlay">Tap to view the image fully, tap again to show the options</string>
+    <string name="mediaOverlay_guide_toggleZoom">Rapidly tap twice to toggle zoom</string>
+    <string name="mediaOverlay_guide_zoom">Pinch fingers to zoom-in and zoom-out, drag fingers to move</string>
+
+    <string name="updates">Updates</string>
+    <string name="updates_changelog">Changelog</string>
+    <string name="updates_noChangelog">Updates must be checked in order to fetch the changelog</string>
+    <string name="updates_incompatible">Latest version of Ensi Manager requires at least Android {ANDROID_VERSION}</string>
     <string name="updates_checkUpdates">Check updates</string>
-    <string name="updates_noChangelog">Check updates to view changelog</string>
+    <string name="updates_currentVersion">Current version</string>
+    <string name="updates_prerelease">Pre-release</string>
+    <string name="updates_noUpdates">No updates available</string>
+    <string name="updates_update">Update</string>
+    <string name="updates_updateAvailable">Ensi Manager update available! Click for more details</string>
+    <string name="updates_error">Something went wrong while checking for updates</string>
+
+    <string name="crashHandler_title">Oops!</string>
+    <string name="crashHandler_description">Ensi Manager encountered an unexpected error and crashed</string>
+    <string name="crashHandler_report">Please click the button below to send crash report to Ensi Manager developer, this requires no additional steps</string>
+    <string name="crashHandler_sendReport">Send crash report</string>
+    <string name="crashHandler_sendReport_sent">Sent report</string>
+    <string name="crashHandler_restartApp">Restart app</string>
+    <string name="crashHandler_support">Support</string>
+    <string name="crashHandler_support_description">Tap to expand support links</string>
+    <string name="crashHandler_support_guide">To report this crash to Ensi Manager developer directly, use Discord or GitHub links below.\nMake sure to copy and include the crash details in your report to speed up the process</string>
+    <string name="crashHandler_support_copyDetails">Copy crash details</string>
+    <string name="crashHandler_stackTrace">Stack trace</string>
 </resources>

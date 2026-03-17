@@ -11,12 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.ensimanager.ui.component.form.ExpressiveRadioButtons
-import com.aliernfrog.ensimanager.ui.component.form.ExpandableRow
 import com.aliernfrog.ensimanager.ui.component.form.RadioButtonChoice
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
+import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsPageContainer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

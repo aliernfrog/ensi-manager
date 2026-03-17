@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -68,23 +69,23 @@ import com.aliernfrog.ensimanager.data.api.APIProfile
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.api.isAvailable
-import com.aliernfrog.ensimanager.ui.component.AppScaffold
-import com.aliernfrog.ensimanager.ui.component.AppSmallTopBar
-import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.component.CardWithActions
-import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
-import com.aliernfrog.ensimanager.ui.component.TextWithIcon
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowHeader
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
-import com.aliernfrog.ensimanager.ui.theme.AppComponentShape
-import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.CardWithActions
+import io.github.aliernfrog.shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.shared.ui.component.TextWithIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.dialog.DeleteConfirmationDialog
+import io.github.aliernfrog.shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.shared.ui.theme.AppFABPadding
+import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -203,6 +204,7 @@ fun APIProfilesScreen(
     APIProfileSheet()
 }
 
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ProfileCard(
@@ -223,12 +225,13 @@ private fun ProfileCard(
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     if (showDeleteConfirmation) DeleteConfirmationDialog(
-        toDelete = profile.name,
+        name = profile.name,
         onDismissRequest = { showDeleteConfirmation = false },
-        onConfirm = {
+        onConfirmDelete = {
             apiViewModel.apiProfiles.remove(profile)
             apiViewModel.saveProfiles()
             apiViewModel.topToastState.showSuccessToast(
+                @SuppressLint("LocalContextGetResourceValueCall")
                 context.getString(R.string.api_profiles_delete_deleted).replace("{NAME}", profile.name)
             )
             showDeleteConfirmation = false

@@ -22,11 +22,11 @@ import coil3.compose.rememberAsyncImagePainter
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsButton(
     modifier: Modifier = Modifier,
@@ -35,20 +35,22 @@ fun SettingsButton(
     onNavigateSettingsRequest: () -> Unit
 ) {
     val apiViewModel = koinViewModel<APIViewModel>()
+    val mainViewModel = koinViewModel<MainViewModel>()
     val scope = rememberCoroutineScope()
-    val hasNotification = Destination.SETTINGS.hasNotification.value
+    val hasNotification = mainViewModel.showUpdateNotification
 
     @Composable
     fun BadgedIconButton(content: @Composable () -> Unit) {
         IconButton(
+            shapes = IconButtonDefaults.shapes(),
             modifier = modifier,
             enabled = enabled,
-            shapes = IconButtonDefaults.shapes(),
             onClick = {
-                if (profileSwitcher) scope.launch { apiViewModel.profileSwitcherSheetState.show() }
-                else {
+                if (profileSwitcher) scope.launch {
+                    apiViewModel.profileSwitcherSheetState.show()
+                } else {
                     onNavigateSettingsRequest()
-                    Destination.SETTINGS.hasNotification.value = false
+                    mainViewModel.showUpdateNotification = false
                 }
             }
         ) {

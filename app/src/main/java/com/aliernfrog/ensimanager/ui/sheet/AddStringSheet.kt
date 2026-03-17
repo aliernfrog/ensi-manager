@@ -30,9 +30,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.ButtonIcon
 import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

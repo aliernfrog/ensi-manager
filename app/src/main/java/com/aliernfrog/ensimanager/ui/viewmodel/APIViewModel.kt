@@ -25,13 +25,9 @@ import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
-import com.aliernfrog.ensimanager.di.getKoinInstance
-import com.aliernfrog.ensimanager.ui.component.createSheetStateWithDensity
-import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.MainDestination
 import com.aliernfrog.ensimanager.util.NavigationConstant
-import com.aliernfrog.ensimanager.util.extension.set
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
-import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.BiometricUtil
 import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
@@ -39,6 +35,9 @@ import com.aliernfrog.ensimanager.util.staticutil.EncryptedData
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
+import io.github.aliernfrog.shared.di.getKoinInstance
+import io.github.aliernfrog.shared.impl.ContextUtils
+import io.github.aliernfrog.shared.ui.component.createSheetStateWithDensity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -101,13 +100,15 @@ class APIViewModel(
         set(value) {
             _chosenProfile = value
             value?.cache?.availableDestinations?.let { availableDestinations ->
-                val mainViewModel = getKoinInstance<MainViewModel>()
-                val currentRoute = mainViewModel.navController?.currentDestination?.route
-                val currentDestination = Destination.entries.find { it.route == currentRoute }
+                val mainViewModel = getKoinInstance<MainViewModel>() // TODO use domains for such
+                val currentDestination = mainViewModel.currentMainDestination
                 val isScreenAvailable = availableDestinations.contains(currentDestination)
-                if (!isScreenAvailable) availableDestinations.firstOrNull()?.let {
-                    mainViewModel.navController?.set(it)
-                } ?: mainViewModel.navController?.set(NavigationConstant.INITIAL_DESTINATION)
+                if (!isScreenAvailable) availableDestinations.firstOrNull()?.let { firstAvailableDestination ->
+                    mainViewModel.currentMainDestination = firstAvailableDestination
+                } ?: {
+                    mainViewModel.navigationBackStack.add(NavigationConstant.INITIAL_DESTINATION)
+                    mainViewModel.navigationBackStack.removeAll { it != NavigationConstant.INITIAL_DESTINATION }
+                }
             }
             if (prefs.rememberLastSelectedAPIProfile.value) {
                 prefs.defaultAPIProfileIndex.value = apiProfiles.indexOfFirst { it.id == value?.id }
@@ -243,7 +244,7 @@ class APIViewModel(
                             deprecatedEndpoints = findDeprecatedEndpoints(body.orEmpty())
                         )
                     }
-                    val availableDestinations = Destination.entries.filter { dest ->
+                    val availableDestinations = MainDestination.entries.filter { dest ->
                         endpoints?.let {
                             dest.isAvailableInEndpoints?.invoke(it) != false
                         } == true

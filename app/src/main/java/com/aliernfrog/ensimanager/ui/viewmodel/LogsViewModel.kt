@@ -18,9 +18,9 @@ import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
-import com.aliernfrog.ensimanager.util.manager.ContextUtils
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
+import io.github.aliernfrog.shared.impl.ContextUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException

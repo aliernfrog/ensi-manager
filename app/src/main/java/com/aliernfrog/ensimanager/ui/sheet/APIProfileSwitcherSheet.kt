@@ -26,14 +26,14 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.cache
 import com.aliernfrog.ensimanager.data.api.id
 import com.aliernfrog.ensimanager.data.api.isAvailable
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -45,6 +45,8 @@ fun APIProfileSwitchSheet(
     onNavigateSettingsRequest: () -> Unit,
     onNavigateApiProfilesRequest: () -> Unit
 ) {
+    val mainViewModel = koinViewModel<MainViewModel>() // TODO remove dependency
+
     val scope = rememberCoroutineScope()
 
     AppModalBottomSheet(
@@ -56,14 +58,14 @@ fun APIProfileSwitchSheet(
                     scope.launch {
                         onNavigateSettingsRequest()
                         sheetState.hide()
-                        Destination.SETTINGS.hasNotification.value = false
+                        mainViewModel.showUpdateNotification = false
                     }
                 }
                 ExpressiveButtonRow(
                     title = stringResource(R.string.settings),
                     icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Settings)) },
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    trailingComponent = if (Destination.SETTINGS.hasNotification.value) { {
+                    trailingComponent = if (mainViewModel.showUpdateNotification) { {
                        Button(
                            onClick = onSettingsClick,
                            shapes = ButtonDefaults.shapes()
