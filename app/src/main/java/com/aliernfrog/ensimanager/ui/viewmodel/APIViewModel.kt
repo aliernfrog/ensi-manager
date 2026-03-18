@@ -26,6 +26,7 @@ import com.aliernfrog.ensimanager.data.api.isAvailable
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.util.MainDestination
+import com.aliernfrog.ensimanager.util.MainDestinationGroup
 import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
@@ -101,10 +102,11 @@ class APIViewModel(
             _chosenProfile = value
             value?.cache?.availableDestinations?.let { availableDestinations ->
                 val mainViewModel = getKoinInstance<MainViewModel>() // TODO use domains for such
-                val currentDestination = mainViewModel.currentMainDestination
-                val isScreenAvailable = availableDestinations.contains(currentDestination)
-                if (!isScreenAvailable) availableDestinations.firstOrNull()?.let { firstAvailableDestination ->
+                availableDestinations.firstOrNull()?.let { firstAvailableDestination ->
                     mainViewModel.currentMainDestination = firstAvailableDestination
+                    if (!mainViewModel.navigationBackStack.contains(MainDestinationGroup))
+                        mainViewModel.navigationBackStack.add(MainDestinationGroup)
+                    mainViewModel.navigationBackStack.removeAll { it == NavigationConstant.INITIAL_DESTINATION }
                 } ?: {
                     mainViewModel.navigationBackStack.add(NavigationConstant.INITIAL_DESTINATION)
                     mainViewModel.navigationBackStack.removeAll { it != NavigationConstant.INITIAL_DESTINATION }
