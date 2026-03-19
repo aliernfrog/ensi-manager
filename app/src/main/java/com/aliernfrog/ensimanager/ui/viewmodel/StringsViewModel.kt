@@ -14,9 +14,9 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIChatCategory
-import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
+import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.toptoast.state.TopToastState
@@ -28,7 +28,7 @@ import org.json.JSONObject
 class StringsViewModel(
     context: Context,
     private val topToastState: TopToastState,
-    private val apiViewModel: APIViewModel,
+    private val apiState: APIState,
     private val gson: Gson
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
@@ -38,7 +38,7 @@ class StringsViewModel(
 
     var filter by mutableStateOf("")
     var addStringInput by mutableStateOf("")
-    val isFetching get() = apiViewModel.isChosenProfileFetching
+    val isFetching get() = apiState.chosenProfile?.isFetching == true
 
     var chosenString by mutableStateOf("")
     var chosenStringCategory by mutableStateOf<String?>(null)
@@ -55,14 +55,14 @@ class StringsViewModel(
         } ?: listOf()
 
     init {
-        apiViewModel.onProfileSwitchListeners.add {
+        apiState.onProfileSwitchListeners.add {
             categories = emptyList()
         }
     }
 
     suspend fun fetchStrings() {
         try {
-            val response = apiViewModel.chosenProfile?.doRequest({ it.getStrings })
+            val response = apiState.chosenProfile?.doRequest({ it.getStrings })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
             categories = gson.fromJson(response.responseBody, Array<APIChatCategory>::class.java).toList()
         } catch (e: Exception) {
@@ -75,7 +75,7 @@ class StringsViewModel(
         val json = JSONObject()
             .put("category", chosenStringCategory)
             .put("string", chosenString)
-        val response = apiViewModel.chosenProfile?.doRequest({ it.deleteString }, json)
+        val response = apiState.chosenProfile?.doRequest({ it.deleteString }, json)
         topToastState.toastSummary(response)
         fetchStrings()
     }
@@ -84,7 +84,7 @@ class StringsViewModel(
         val json = JSONObject()
             .put("category", currentCategory?.id)
             .put("string", addStringInput)
-        val response = apiViewModel.chosenProfile?.doRequest({ it.addString }, json)
+        val response = apiState.chosenProfile?.doRequest({ it.addString }, json)
         topToastState.toastSummary(response)
         fetchStrings()
     }

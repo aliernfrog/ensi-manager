@@ -59,20 +59,17 @@ import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.MainDestination
 import com.aliernfrog.ensimanager.util.NavigationBarType
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun MainDestinationContent(
-    vm: MainViewModel = koinViewModel()
-) {
+fun MainDestinationContent(vm: MainViewModel) {
     val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
     val mainDestinations = remember { MainDestination.entries }
-    val currentMainDestination = vm.currentMainDestination
-    val isAtMainDestination = vm.isAtMainDestination
+    val currentMainDestination = vm.appState.navController.currentMainDestination
+    val isAtMainDestination = vm.appState.navController.isAtMainDestination
 
     val windowSizeClass = calculateWindowSizeClass(context as Activity)
     val navigationBarType = if (mainDestinations.size <= 1) NavigationBarType.HIDDEN
@@ -85,11 +82,11 @@ fun MainDestinationContent(
     )
 
     fun onNavigateRequest(entry: Any) {
-        vm.navigationBackStack.add(entry)
+        vm.appState.navController.add(entry)
     }
 
     fun onNavigateSettingsRequest() {
-        vm.navigationBackStack.add(SettingsDestination.root)
+        vm.appState.navController.add(SettingsDestination.root)
     }
 
     fun isDestinationSelected(destination: MainDestination): Boolean {
@@ -98,7 +95,7 @@ fun MainDestinationContent(
 
     fun changeDestination(destination: MainDestination) {
         if (!isDestinationSelected(destination) && isAtMainDestination)
-            vm.currentMainDestination = destination
+            vm.appState.navController.currentMainDestination = destination
     }
 
     Box {

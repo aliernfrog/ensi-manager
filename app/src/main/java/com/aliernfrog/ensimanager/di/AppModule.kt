@@ -2,6 +2,9 @@ package com.aliernfrog.ensimanager.di
 
 import com.aliernfrog.ensimanager.BuildConfig
 import com.aliernfrog.ensimanager.TAG
+import com.aliernfrog.ensimanager.domain.APIState
+import com.aliernfrog.ensimanager.domain.AppState
+import com.aliernfrog.ensimanager.repository.APIProfileRepository
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
@@ -36,4 +39,9 @@ val appModule = module {
             allowSwipingByDefault = false
         )
     }
+
+    singleOf(::APIProfileRepository)
+
+    singleOf(::AppState)
+    singleOf(::APIState)
 }

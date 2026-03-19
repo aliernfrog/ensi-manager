@@ -19,7 +19,7 @@
 -keep class com.aliernfrog.ensimanager.data.api.APIEndpoints { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APILog { *; }
 -keep class com.aliernfrog.ensimanager.data.api.APIMetadata { *; }
--keep class com.aliernfrog.ensimanager.data.api.APIProfile { *; }
+-keep class com.aliernfrog.ensimanager.impl.api.APIProfile { *; }
 -keep class com.aliernfrog.ensimanager.enum.APILogType { *; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,

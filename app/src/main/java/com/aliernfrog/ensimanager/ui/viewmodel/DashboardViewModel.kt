@@ -12,9 +12,9 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APIDashboard
 import com.aliernfrog.ensimanager.data.api.APIDashboardAction
-import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
+import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
@@ -22,14 +22,14 @@ import com.google.gson.Gson
 @OptIn(ExperimentalMaterial3Api::class)
 class DashboardViewModel(
     val topToastState: TopToastState,
-    private val apiViewModel: APIViewModel,
+    private val apiState: APIState,
     private val gson: Gson
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
-    val isFetching get() = apiViewModel.isChosenProfileFetching
-    val chosenProfile get() = apiViewModel.chosenProfile
+    val chosenProfile get() = apiState.chosenProfile
+    val isFetching get() = chosenProfile?.isFetching == true
     var avatarDialogShown by mutableStateOf(false)
 
     var dashboardData by mutableStateOf<APIDashboard?>(null)
@@ -38,14 +38,14 @@ class DashboardViewModel(
     var pendingDestructiveAction by mutableStateOf<APIDashboardAction?>(null)
 
     init {
-        apiViewModel.onProfileSwitchListeners.add {
+        apiState.onProfileSwitchListeners.add {
             dashboardData = null
         }
     }
 
     suspend fun fetchDashboardData() {
         try {
-            val response = apiViewModel.chosenProfile?.doRequest({ it.getDashboard })
+            val response = apiState.chosenProfile?.doRequest({ it.getDashboard })
             if (response == null || !response.isSuccessful) return topToastState.showErrorToast(response.summary)
             dashboardData = gson.fromJson(response.responseBody, APIDashboard::class.java)
         } catch (e: Exception) {

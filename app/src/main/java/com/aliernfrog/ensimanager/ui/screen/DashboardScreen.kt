@@ -35,7 +35,6 @@ import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import coil3.svg.SvgDecoder
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog

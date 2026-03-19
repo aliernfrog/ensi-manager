@@ -4,16 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.domain.APIState
+import com.aliernfrog.ensimanager.domain.AppState
 import com.aliernfrog.ensimanager.util.Destination
-import com.aliernfrog.ensimanager.util.MainDestinationGroup
-import com.aliernfrog.ensimanager.util.NavigationConstant
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
@@ -27,26 +23,17 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 class MainViewModel(
     val prefs: PreferenceManager,
+    val appState: AppState,
+    val apiState: APIState,
     val topToastState: TopToastState,
     val versionManager: VersionManager
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
 
-    val navigationBackStack = mutableStateListOf<Any>(
-        NavigationConstant.INITIAL_DESTINATION
-    )
-    var currentMainDestination by mutableStateOf(NavigationConstant.INITIAL_MAIN_DESTINATION)
-    val isAtMainDestination: Boolean
-        get() = navigationBackStack.last() == MainDestinationGroup
-
     val availableUpdates = versionManager.availableUpdates
     val currentVersionInfo = versionManager.currentVersionInfo
     val isCompatibleWithLatestVersion = versionManager.isCompatibleWithLatestVersion
     val isCheckingForUpdates = versionManager.isCheckingForUpdates
-    var showUpdateNotification by mutableStateOf(false)
-
-    var updateAvailable by mutableStateOf(false)
-        private set
 
     fun checkUpdates(
         manuallyTriggered: Boolean = false,
@@ -75,8 +62,8 @@ class MainViewModel(
                 }
                 is UpdateCheckResult.UpdatesAvailable -> {
                     withContext(Dispatchers.Main) {
-                        if (manuallyTriggered && navigationBackStack.first() !is Destination.Updates)
-                            navigationBackStack.add(Destination.Updates)
+                        if (manuallyTriggered && appState.navController.backStack.last() !is Destination.Updates)
+                            appState.navController.add(Destination.Updates)
                         else showUpdateToast()
                     }
                 }
@@ -86,8 +73,8 @@ class MainViewModel(
 
     fun showUpdateToast() {
         io.github.aliernfrog.shared.util.showUpdateToast {
-            if (navigationBackStack.first() !is Destination.Updates)
-                navigationBackStack.add(Destination.Updates)
+            if (appState.navController.backStack.last() !is Destination.Updates)
+                appState.navController.add(Destination.Updates)
         }
     }
 }

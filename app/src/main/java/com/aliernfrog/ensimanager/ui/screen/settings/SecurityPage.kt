@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
+import com.aliernfrog.ensimanager.ui.viewmodel.settings.APISettingsViewModel
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
@@ -35,20 +35,20 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SecurityPage(
-    apiViewModel: APIViewModel = koinViewModel(),
+    vm: APISettingsViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
     val context = LocalContext.current
-    val encryptionEnabled = apiViewModel.dataEncryptionEnabled
-    val optionsEnabled = encryptionEnabled && apiViewModel.dataDecrypted
+    val encryptionEnabled = vm.apiState.dataEncryptionEnabled
+    val optionsEnabled = encryptionEnabled && vm.apiState.dataDecrypted
 
     SettingsPageContainer(
         title = stringResource(R.string.settings_security),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        FadeVisibility(!apiViewModel.dataDecrypted) {
+        FadeVisibility(!vm.apiState.dataDecrypted) {
             DecryptionCard(
-                onDecryptRequest = { apiViewModel.showDecryptionDialog = true },
+                onDecryptRequest = { vm.apiState.showDecryptionDialog = true },
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp),
                 description = stringResource(R.string.settings_security_decryptFirst)
             )
@@ -65,10 +65,10 @@ fun SecurityPage(
                 .clip(RoundedCornerShape(AppRoundnessSize))
         ) {
             if (encryptionEnabled) {
-                apiViewModel.changeEncryptionPasswordAndSave(null)
-                apiViewModel.topToastState.showSuccessToast(R.string.settings_security_encryption_disabledToast)
+                vm.apiState.changeEncryptionPasswordAndSave(null)
+                vm.topToastState.showSuccessToast(R.string.settings_security_encryption_disabledToast)
             }
-            else apiViewModel.showEncryptionDialog = true
+            else vm.apiState.showEncryptionDialog = true
         }
 
         VerticalSegmentor(
@@ -86,14 +86,14 @@ fun SecurityPage(
                         Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null)
                     }
                 ) {
-                    apiViewModel.showEncryptionDialog = true
+                    vm.apiState.showEncryptionDialog = true
                 }
             },
             {
                 ExpressiveSwitchRow(
                     title = stringResource(R.string.settings_security_biometrics),
                     description = stringResource(
-                        if (apiViewModel.biometricDecryptionSupported) R.string.settings_security_biometrics_description
+                        if (vm.apiState.biometricDecryptionSupportedByDevice) R.string.settings_security_biometrics_description
                         else R.string.settings_security_biometrics_unsupported
                     ),
                     icon = {
@@ -102,26 +102,26 @@ fun SecurityPage(
                           containerColor = Color.Green.toRowFriendlyColor
                       )
                     },
-                    enabled = optionsEnabled && apiViewModel.biometricDecryptionSupported,
-                    checked = apiViewModel.biometricDecryptionEnabled,
+                    enabled = optionsEnabled && vm.apiState.biometricDecryptionSupportedByDevice,
+                    checked = vm.apiState.biometricDecryptionEnabled,
                 ) {
-                    if (it) apiViewModel.showBiometricPrompt(
+                    if (it) vm.apiState.showBiometricPrompt(
                         context = context,
                         forDecryption = false,
                         onSuccess = {
                             CryptoUtil.generateBiometricKey()
-                            apiViewModel.biometricDecryptionEnabled = true
-                            apiViewModel.saveProfiles()
-                            apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabledToast)
+                            vm.apiState.biometricDecryptionEnabled = true
+                            vm.apiState.saveProfiles()
+                            vm.topToastState.showSuccessToast(R.string.settings_security_biometrics_enabledToast)
                         },
                         onFail = {
                             Log.d(TAG, "SecurityPage: biometric prompt failed")
                         }
                     ) else {
                         CryptoUtil.deleteBiometricKey()
-                        apiViewModel.biometricDecryptionEnabled = false
-                        apiViewModel.saveProfiles()
-                        apiViewModel.topToastState.showSuccessToast(R.string.settings_security_biometrics_disabledToast)
+                        vm.apiState.biometricDecryptionEnabled = false
+                        vm.apiState.saveProfiles()
+                        vm.topToastState.showSuccessToast(R.string.settings_security_biometrics_disabledToast)
                     }
                 }
             },

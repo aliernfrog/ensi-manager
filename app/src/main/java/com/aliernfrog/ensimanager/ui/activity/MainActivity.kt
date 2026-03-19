@@ -32,11 +32,9 @@ import com.aliernfrog.ensimanager.ui.screen.APIProfilesScreen
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
 import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.MainDestinationGroup
-import com.aliernfrog.ensimanager.util.extension.removeLastIfMultiple
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import com.aliernfrog.ensimanager.util.slideTransitionMetadata
 import com.aliernfrog.ensimanager.util.slideVerticalTransitionMetadata
@@ -51,7 +49,6 @@ import io.github.aliernfrog.shared.util.SharedString
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
-import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -102,29 +99,27 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun App(vm: MainViewModel) {
-        val apiViewModel = koinViewModel<APIViewModel>() // TODO remove
-
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
-        val applyImePadding = !vm.isAtMainDestination
+        val applyImePadding = !vm.appState.navController.isAtMainDestination
 
         val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
         val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
         val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
         val isCheckingForUpdates = vm.isCheckingForUpdates.collectAsStateWithLifecycle().value
 
-        val onNavigateBackRequest: () -> Unit = {
-            vm.navigationBackStack.removeLastIfMultiple()
-        }
+        val onNavigateBackRequest: (() -> Unit)? = if (vm.appState.navController.backStack.size >= 2) { {
+            vm.appState.navController.removeLastIfMultiple()
+        } } else null
 
         val onNavigateSettingsRequest: () -> Unit = {
-            vm.navigationBackStack.add(SettingsDestination.root)
+            vm.appState.navController.add(SettingsDestination.root)
         }
 
         InsetsObserver()
         AppContainer {
             NavDisplay(
-                backStack = vm.navigationBackStack,
+                backStack = vm.appState.navController.backStack,
                 modifier = Modifier
                     .fillMaxSize()
                     .let {
@@ -133,14 +128,15 @@ class MainActivity : AppCompatActivity() {
                     },
                 entryProvider = entryProvider {
                     entry<MainDestinationGroup> { _ ->
-                        MainDestinationContent()
+                        MainDestinationContent(vm)
                     }
 
                     entry<Destination.APIProfiles>(
                         metadata = slideTransitionMetadata
                     ) {
                         APIProfilesScreen(
-                            onNavigateSettingsRequest = onNavigateSettingsRequest
+                            onNavigateSettingsRequest = onNavigateSettingsRequest,
+                            onNavigateBackRequest = onNavigateBackRequest
                         )
                     }
 
@@ -155,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                             onCheckUpdatesRequest = {
                                 vm.checkUpdates(manuallyTriggered = true)
                             },
-                            onNavigateBackRequest = onNavigateBackRequest
+                            onNavigateBackRequest = onNavigateBackRequest!!
                         )
                     }
 
@@ -164,56 +160,58 @@ class MainActivity : AppCompatActivity() {
                     ) { destination ->
                         SettingsScreen(
                             destination = destination,
-                            onNavigateBackRequest = onNavigateBackRequest,
-                            onNavigateRequest = { vm.navigationBackStack.add(it) },
+                            onNavigateBackRequest = onNavigateBackRequest!!,
+                            onNavigateRequest = {
+                                vm.appState.navController.add(it)
+                            },
                             onCheckUpdatesRequest = { skipVersionCheck ->
                                 vm.checkUpdates(skipVersionCheck = skipVersionCheck)
                             },
                             onNavigateUpdatesScreenRequest = {
-                                vm.navigationBackStack.add(Destination.Updates)
+                                vm.appState.navController.add(Destination.Updates)
                             }
                         )
                     }
                 }
             )
 
-            if (apiViewModel.showEncryptionDialog) EncryptionDialog(
-                onDismissRequest = { apiViewModel.showEncryptionDialog = false },
+            if (vm.apiState.showEncryptionDialog) EncryptionDialog(
+                onDismissRequest = { vm.apiState.showEncryptionDialog = false },
                 onEncryptRequest = { password, onFinish ->
                     scope.launch {
-                        apiViewModel.changeEncryptionPasswordAndSave(password)
-                        apiViewModel.showEncryptionDialog = false
-                        apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)
+                        vm.apiState.changeEncryptionPasswordAndSave(password)
+                        vm.apiState.showEncryptionDialog = false
+                        vm.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)
                         onFinish()
                     }
                 }
             )
 
-            if (apiViewModel.showDecryptionDialog) DecryptionDialog(
-                onDismissRequest = { apiViewModel.showDecryptionDialog = false },
+            if (vm.apiState.showDecryptionDialog) DecryptionDialog(
+                onDismissRequest = { vm.apiState.showDecryptionDialog = false },
                 onDecryptRequest = { password, setDecryptingState ->
-                    val profiles = apiViewModel.decryptAPIProfiles(password)
+                    val profiles = vm.apiState.decryptDataWithPassword(password)
                     if (profiles != null) {
-                        apiViewModel.showDecryptionDialog = false
-                        apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                        vm.apiState.showDecryptionDialog = false
+                        vm.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
                         scope.launch {
-                            apiViewModel.refetchAllProfiles()
+                            vm.apiState.refetchAllProfiles()
                         }
                     }
                     setDecryptingState(false)
                 },
-                onBiometricUnlockRequest = if (apiViewModel.biometricDecryptionAvailable) { { setDecryptingState ->
-                    apiViewModel.showBiometricPrompt(
+                onBiometricUnlockRequest = if (vm.apiState.canDecryptWithBiometrics) { { setDecryptingState ->
+                    vm.apiState.showBiometricPrompt(
                         context = context,
                         forDecryption = true,
                         onSuccess = { scope.launch {
                             setDecryptingState(true)
-                            val profiles = apiViewModel.decryptAPIProfilesWithBiometrics(it.cryptoObject?.cipher)
+                            val profiles = vm.apiState.decryptDataWithBiometrics(it.cryptoObject?.cipher)
                             if (profiles != null) {
-                                apiViewModel.showDecryptionDialog = false
-                                apiViewModel.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                                vm.apiState.showDecryptionDialog = false
+                                vm.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
                                 scope.launch {
-                                    apiViewModel.refetchAllProfiles()
+                                    vm.apiState.refetchAllProfiles()
                                 }
                             }
                             setDecryptingState(false)
@@ -227,9 +225,10 @@ class MainActivity : AppCompatActivity() {
             )
 
             APIProfileSwitchSheet(
+                sheetState = vm.apiState.profileSwitcherSheetState,
                 onNavigateSettingsRequest = onNavigateSettingsRequest,
                 onNavigateApiProfilesRequest = {
-                    vm.navigationBackStack.add(Destination.APIProfiles)
+                    vm.appState.navController.add(Destination.APIProfiles)
                 }
             )
             TopToastHost(vm.topToastState)

@@ -16,18 +16,50 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.rounded.Api
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
+import com.aliernfrog.ensimanager.util.extension.removeLastIfMultiple
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.screen.settings.category
 import io.github.aliernfrog.shared.util.SharedStringResolvable
 
-object NavigationConstant {
-    val INITIAL_DESTINATION = Destination.APIProfiles
-    val INITIAL_MAIN_DESTINATION = MainDestination.DASHBOARD
+class NavController {
+    companion object {
+        val INITIAL_DESTINATION = Destination.APIProfiles
+        val INITIAL_MAIN_DESTINATION = MainDestination.DASHBOARD
+    }
+
+    val backStack = mutableStateListOf<Any>(INITIAL_DESTINATION)
+    var currentMainDestination by mutableStateOf(INITIAL_MAIN_DESTINATION)
+    val isAtMainDestination = backStack.last() == MainDestinationGroup
+
+    fun add(
+        navEntry: Any,
+        clearBackStack: Boolean = navEntry is MainDestination
+    ) {
+        if (navEntry is MainDestination) {
+            currentMainDestination = navEntry
+            navigateToMainDestination(clearBackStack = clearBackStack)
+            return
+        }
+        backStack.add(navEntry)
+        if (clearBackStack) backStack.removeAll { it != navEntry }
+    }
+
+    fun navigateToMainDestination(clearBackStack: Boolean = true) {
+        if (!backStack.contains(MainDestinationGroup))
+            backStack.add(MainDestinationGroup)
+        if (clearBackStack) backStack.removeAll { it != MainDestinationGroup }
+    }
+
+    fun removeLastIfMultiple() = backStack.removeLastIfMultiple()
 }
 
 object MainDestinationGroup
@@ -36,7 +68,7 @@ enum class MainDestination(
     @StringRes val label: Int,
     val vectorFilled: ImageVector,
     val vectorOutlined: ImageVector,
-    val isAvailableInEndpoints: ((APIEndpoints) -> Boolean)?
+    val isAvailableInEndpoints: (APIEndpoints) -> Boolean
 ) {
     DASHBOARD(
         label = R.string.dashboard,

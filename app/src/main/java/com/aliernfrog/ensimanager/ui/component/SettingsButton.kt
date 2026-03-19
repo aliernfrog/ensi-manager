@@ -20,11 +20,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.api.cache
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
+import com.aliernfrog.ensimanager.domain.APIState
+import com.aliernfrog.ensimanager.domain.AppState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -34,10 +33,9 @@ fun SettingsButton(
     enabled: Boolean = true,
     onNavigateSettingsRequest: () -> Unit
 ) {
-    val apiViewModel = koinViewModel<APIViewModel>()
-    val mainViewModel = koinViewModel<MainViewModel>()
+    val appState = koinInject<AppState>()
+    val apiState = koinInject<APIState>()
     val scope = rememberCoroutineScope()
-    val hasNotification = mainViewModel.showUpdateNotification
 
     @Composable
     fun BadgedIconButton(content: @Composable () -> Unit) {
@@ -47,14 +45,14 @@ fun SettingsButton(
             enabled = enabled,
             onClick = {
                 if (profileSwitcher) scope.launch {
-                    apiViewModel.profileSwitcherSheetState.show()
+                    apiState.profileSwitcherSheetState.show()
                 } else {
                     onNavigateSettingsRequest()
-                    mainViewModel.showUpdateNotification = false
+                    appState.showUpdateNotification = false
                 }
             }
         ) {
-            if (hasNotification) BadgedBox(
+            if (appState.showUpdateNotification) BadgedBox(
                 badge = { Badge() }
             ) {
                 content()
@@ -65,7 +63,7 @@ fun SettingsButton(
 
     if (profileSwitcher) BadgedIconButton {
         Image(
-            painter = apiViewModel.chosenProfile?.cache?.endpoints?.metadata?.iconURL.let { iconURL ->
+            painter = apiState.chosenProfile?.endpoints?.metadata?.iconURL.let { iconURL ->
                 if (iconURL != null) rememberAsyncImagePainter(iconURL)
                 else rememberVectorPainter(Icons.Default.Api)
             },

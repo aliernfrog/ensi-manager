@@ -12,9 +12,9 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.api.APILog
-import com.aliernfrog.ensimanager.data.api.doRequest
 import com.aliernfrog.ensimanager.data.api.getTimeStr
 import com.aliernfrog.ensimanager.data.isSuccessful
+import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.enum.APILogType
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
@@ -29,7 +29,7 @@ import kotlin.coroutines.cancellation.CancellationException
 class LogsViewModel(
     private val contextUtils: ContextUtils,
     private val topToastState: TopToastState,
-    private val apiViewModel: APIViewModel,
+    private val apiState: APIState,
     private val gson: Gson
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
@@ -49,10 +49,10 @@ class LogsViewModel(
             return@let if (!logsReversed) it.reversed() else it
         }
 
-    val isFetching get() = apiViewModel.isChosenProfileFetching
+    val isFetching get() = apiState.chosenProfile?.isFetching == true
 
     init {
-        apiViewModel.onProfileSwitchListeners.add {
+        apiState.onProfileSwitchListeners.add {
             logs = emptyList()
         }
     }
@@ -60,7 +60,7 @@ class LogsViewModel(
     suspend fun fetchLogs() {
         withContext(Dispatchers.IO) {
             try {
-                val response = apiViewModel.chosenProfile?.doRequest({ it.getLogs })
+                val response = apiState.chosenProfile?.doRequest({ it.getLogs })
                 if (response?.isSuccessful != true) return@withContext topToastState.toastSummary(response)
                 logs = gson.fromJson(response.responseBody, Array<APILog>::class.java).toList()
                 withContext(Dispatchers.Main) {
