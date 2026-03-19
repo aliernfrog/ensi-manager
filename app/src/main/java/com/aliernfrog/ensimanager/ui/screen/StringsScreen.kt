@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -190,7 +191,7 @@ private fun FloatingButtons(
 
     AnimatedVisibility(
         visible = firstVisibleItemIndex > 0,
-        modifier = scrollTopButtonModifier,
+        modifier = scrollTopButtonModifier.padding(16.dp),
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
@@ -201,7 +202,10 @@ private fun FloatingButtons(
         } }
     }
 
-    Column(bottomButtonsColumnModifier) {
+    Column(
+        modifier = bottomButtonsColumnModifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         AnimatedVisibility(
             visible = isAtBottom(layoutInfo),
             modifier = scrollBottomButtonModifier,

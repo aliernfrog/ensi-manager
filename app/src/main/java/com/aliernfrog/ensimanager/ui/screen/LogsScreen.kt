@@ -285,7 +285,7 @@ private fun FloatingButtons(
 
     AnimatedVisibility(
         visible = firstVisibleItemIndex > 0,
-        modifier = scrollTopButtonModifier,
+        modifier = scrollTopButtonModifier.padding(16.dp),
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
@@ -298,7 +298,7 @@ private fun FloatingButtons(
 
     AnimatedVisibility(
         visible = isAtBottom(layoutInfo),
-        modifier = scrollBottomButtonModifier.systemBarsPadding(),
+        modifier = scrollBottomButtonModifier.padding(16.dp).systemBarsPadding(),
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
