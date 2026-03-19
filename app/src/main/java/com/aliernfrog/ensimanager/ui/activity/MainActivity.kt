@@ -108,9 +108,9 @@ class MainActivity : AppCompatActivity() {
         val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
         val isCheckingForUpdates = vm.isCheckingForUpdates.collectAsStateWithLifecycle().value
 
-        val onNavigateBackRequest: (() -> Unit)? = if (vm.appState.navController.backStack.size >= 2) { {
+        val onNavigateBackRequest: () -> Unit = {
             vm.appState.navController.removeLastIfMultiple()
-        } } else null
+        }
 
         val onNavigateSettingsRequest: () -> Unit = {
             vm.appState.navController.add(SettingsDestination.root)
@@ -133,10 +133,11 @@ class MainActivity : AppCompatActivity() {
 
                     entry<Destination.APIProfiles>(
                         metadata = slideTransitionMetadata
-                    ) {
+                    ) { destination ->
+                        val isFirst = vm.appState.navController.backStack.firstOrNull() == destination
                         APIProfilesScreen(
                             onNavigateSettingsRequest = onNavigateSettingsRequest,
-                            onNavigateBackRequest = onNavigateBackRequest
+                            onNavigateBackRequest = if (isFirst) null else onNavigateBackRequest
                         )
                     }
 
@@ -151,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                             onCheckUpdatesRequest = {
                                 vm.checkUpdates(manuallyTriggered = true)
                             },
-                            onNavigateBackRequest = onNavigateBackRequest!!
+                            onNavigateBackRequest = onNavigateBackRequest
                         )
                     }
 
@@ -160,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                     ) { destination ->
                         SettingsScreen(
                             destination = destination,
-                            onNavigateBackRequest = onNavigateBackRequest!!,
+                            onNavigateBackRequest = onNavigateBackRequest,
                             onNavigateRequest = {
                                 vm.appState.navController.add(it)
                             },
