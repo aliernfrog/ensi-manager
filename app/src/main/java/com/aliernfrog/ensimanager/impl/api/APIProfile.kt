@@ -38,6 +38,10 @@ class APIProfile(
     var endpoints by mutableStateOf<APIEndpoints?>(null)
         private set
 
+    var isFetching by mutableStateOf(false)
+    var error by mutableStateOf<String?>(null)
+    var migratedTo by mutableStateOf<String?>(null)
+
     val availableDestinations: List<MainDestination>
         get() = endpoints?.let {
             MainDestination.entries.filter { destination ->
@@ -47,10 +51,6 @@ class APIProfile(
 
     val isAvailable: Boolean
         get() = availableDestinations.isNotEmpty() && endpoints != null && endpoints?.migration == null
-
-    var isFetching by mutableStateOf(false)
-    var error by mutableStateOf<String?>(null)
-    var migratedTo by mutableStateOf<String?>(null)
 
     suspend fun doRequest(endpointSelector: (APIEndpoints) -> APIEndpoint?, body: JSONObject? = null): HTTPResponse {
         val apiState by inject<APIState>()

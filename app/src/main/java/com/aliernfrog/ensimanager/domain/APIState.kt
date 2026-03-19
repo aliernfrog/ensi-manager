@@ -83,8 +83,10 @@ class APIState(
 
     fun loadProfiles(context: Context) {
         val res = apiProfileRepository.loadAPIProfiles(context)
-        if (res is APIProfileRepository.APIProfilesLoadResult.Encrypted)
+        if (res is APIProfileRepository.APIProfilesLoadResult.Encrypted) {
             canDecryptWithBiometrics = res.encryptedData.biometricWrappedKey != null && biometricDecryptionEnabled
+            showDecryptionDialog = true
+        }
     }
 
     suspend fun refetchAllProfiles() = withContext(Dispatchers.IO) {

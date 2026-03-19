@@ -121,7 +121,7 @@ class APIProfileRepository(
 
     fun saveProfiles() {
         pendingEncryptionPassword.let { newPassword ->
-            var json = gson.toJson(apiProfiles)
+            var json = gson.toJson(_apiProfiles.value)
             if (dataEncryptionEnabled) {
                 if (newPassword != null) {
                     val encrypted = CryptoUtil.encryptWithPassword(
