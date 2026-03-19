@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.repository.APIProfileRepository
+import com.aliernfrog.ensimanager.util.MainDestinationGroup
 import com.aliernfrog.ensimanager.util.NavController
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.BiometricUtil
@@ -70,6 +71,8 @@ class APIState(
                 } ?: {
                     appState.navController.add(NavController.INITIAL_DESTINATION, clearBackStack = true)
                 }
+                else if (!appState.navController.backStack.contains(MainDestinationGroup))
+                    appState.navController.navigateToMainDestination(clearBackStack = true)
             }
             if (prefs.rememberLastSelectedAPIProfile.value) {
                 prefs.defaultAPIProfileIndex.value = apiProfiles.value.indexOfFirst {

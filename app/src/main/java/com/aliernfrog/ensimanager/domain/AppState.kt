@@ -7,6 +7,5 @@ import com.aliernfrog.ensimanager.util.NavController
 
 class AppState {
     val navController = NavController()
-
     var showUpdateNotification by mutableStateOf(false)
 }

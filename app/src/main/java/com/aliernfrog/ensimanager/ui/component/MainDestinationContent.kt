@@ -69,7 +69,6 @@ fun MainDestinationContent(vm: MainViewModel) {
 
     val mainDestinations = vm.apiState.chosenProfile?.availableDestinations ?: emptyList()
     val currentMainDestination = vm.appState.navController.currentMainDestination
-    val isAtMainDestination = vm.appState.navController.isAtMainDestination
 
     val windowSizeClass = calculateWindowSizeClass(context as Activity)
     val navigationBarType = if (mainDestinations.size <= 1) NavigationBarType.HIDDEN
@@ -94,7 +93,7 @@ fun MainDestinationContent(vm: MainViewModel) {
     }
 
     fun changeDestination(destination: MainDestination) {
-        if (!isDestinationSelected(destination) && isAtMainDestination)
+        if (!isDestinationSelected(destination))
             vm.appState.navController.currentMainDestination = destination
     }
 
