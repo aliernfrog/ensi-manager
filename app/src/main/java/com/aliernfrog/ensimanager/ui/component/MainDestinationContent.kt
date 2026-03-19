@@ -67,7 +67,7 @@ fun MainDestinationContent(vm: MainViewModel) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
-    val mainDestinations = remember { MainDestination.entries }
+    val mainDestinations = vm.apiState.chosenProfile?.availableDestinations ?: emptyList()
     val currentMainDestination = vm.appState.navController.currentMainDestination
     val isAtMainDestination = vm.appState.navController.isAtMainDestination
 
