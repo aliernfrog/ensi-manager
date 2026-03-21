@@ -136,6 +136,7 @@ class MainActivity : AppCompatActivity() {
                     ) { destination ->
                         val isFirst = vm.appState.navController.backStack.firstOrNull() == destination
                         APIProfilesScreen(
+                            isInitialScreen = isFirst,
                             onNavigateSettingsRequest = onNavigateSettingsRequest,
                             onNavigateBackRequest = if (isFirst) null else onNavigateBackRequest
                         )

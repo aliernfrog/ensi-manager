@@ -19,6 +19,8 @@ import com.aliernfrog.ensimanager.util.staticutil.EncryptedData
 import com.aliernfrog.ensimanager.util.staticutil.WebUtil
 import io.github.aliernfrog.shared.ui.component.createSheetStateWithDensity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -93,15 +95,17 @@ class APIState(
     }
 
     suspend fun refetchAllProfiles() = withContext(Dispatchers.IO) {
-        apiProfiles.value.forEach {
-            it.fetchAPIEndpoints()
-        }
+        apiProfiles.value.map {
+            async {
+                it.fetchAPIEndpoints()
+            }
+        }.awaitAll()
         launch(Dispatchers.Main) {
-            selectDefaultProfile()
+            selectDefaultProfileIfNeeded()
         }
     }
 
-    private fun selectDefaultProfile() {
+    private fun selectDefaultProfileIfNeeded() {
         if (apiProfiles.value.isEmpty() || selectedDefaultProfile) return
         selectedDefaultProfile = true
 

@@ -91,6 +91,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun APIProfilesScreen(
     vm: APIProfilesViewModel = koinViewModel(),
+    isInitialScreen: Boolean,
     onNavigateSettingsRequest: (() -> Unit)?,
     onNavigateBackRequest: (() -> Unit)? = null
 ) {
@@ -107,7 +108,10 @@ fun APIProfilesScreen(
     AppScaffold(
         topBar = {
             AppSmallTopBar(
-                title = stringResource(R.string.api_profiles),
+                title = stringResource(
+                    if (isInitialScreen) R.string.app_name
+                    else R.string.api_profiles
+                ),
                 scrollBehavior = it,
                 onNavigationClick = onNavigateBackRequest,
                 actions = {
