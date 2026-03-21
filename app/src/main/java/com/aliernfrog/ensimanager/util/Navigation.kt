@@ -38,7 +38,8 @@ class NavController {
 
     val backStack = mutableStateListOf<Any>(INITIAL_DESTINATION)
     var currentMainDestination by mutableStateOf(INITIAL_MAIN_DESTINATION)
-    val isAtMainDestination = backStack.last() == MainDestinationGroup
+    val isAtMainDestination
+        get() = backStack.last() == MainDestinationGroup
 
     fun add(
         navEntry: Any,

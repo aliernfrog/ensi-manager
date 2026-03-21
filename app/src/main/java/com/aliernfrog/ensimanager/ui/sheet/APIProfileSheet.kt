@@ -74,56 +74,6 @@ fun APIProfileSheet(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var name by rememberSaveable {
-        mutableStateOf(editingProfile?.name ?: "")
-    }
-    var endpointsURL by rememberSaveable {
-        mutableStateOf(editingProfile?.endpointsURL ?: "")
-    }
-    var authorization by rememberSaveable {
-        mutableStateOf(editingProfile?.authorization ?: "")
-    }
-    var showAuthorization by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var sha256 by rememberSaveable {
-        mutableStateOf(editingProfile?.trustedSha256 ?: "")
-    }
-
-    var fetching by rememberSaveable { mutableStateOf(false) }
-    var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
-
-    val isNameUnique = !existingProfiles.any {
-        it.name == name
-    }
-    val isURLUnique = !existingProfiles.any {
-        it.endpointsURL == endpointsURL
-    }
-    val isEndpointUnsecure by remember { derivedStateOf {
-        endpointsURL.let {
-            it.contains("://") && !it.startsWith("https://", ignoreCase = true)
-        }
-    } }
-    val valid by remember { derivedStateOf {
-        name.isNotEmpty() && endpointsURL.isNotEmpty() && isNameUnique && isURLUnique
-    } }
-
-    trustNewCertDialogProfile?.let { profile ->
-        TrustNewCertDialog(
-            publicKey = profile.endpoints?.sslPublicKey,
-            onTrust = { scope.launch {
-                val withKey = profile.copy(trustedSha256 = profile.endpoints?.sslPublicKey)
-                if (editingProfile != null) onUpdateProfileRequest(withKey)
-                else onAddProfileRequest(withKey)
-                trustNewCertDialogProfile = null
-                @SuppressLint("LocalContextGetResourceValueCall")
-                topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
-                sheetState.hide()
-            } },
-            onDismissRequest = { trustNewCertDialogProfile = null }
-        )
-    }
-
     AppModalBottomSheet(
         title = editingProfile?.name.let {
             if (it == null) stringResource(R.string.api_profiles_add)
@@ -131,6 +81,56 @@ fun APIProfileSheet(
         },
         sheetState = sheetState
     ) {
+        var name by rememberSaveable {
+            mutableStateOf(editingProfile?.name ?: "")
+        }
+        var endpointsURL by rememberSaveable {
+            mutableStateOf(editingProfile?.endpointsURL ?: "")
+        }
+        var authorization by rememberSaveable {
+            mutableStateOf(editingProfile?.authorization ?: "")
+        }
+        var showAuthorization by rememberSaveable {
+            mutableStateOf(false)
+        }
+        var sha256 by rememberSaveable {
+            mutableStateOf(editingProfile?.trustedSha256 ?: "")
+        }
+
+        var fetching by rememberSaveable { mutableStateOf(false) }
+        var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
+
+        val isNameUnique = !existingProfiles.any {
+            it.name == name
+        }
+        val isURLUnique = !existingProfiles.any {
+            it.endpointsURL == endpointsURL
+        }
+        val isEndpointUnsecure by remember { derivedStateOf {
+            endpointsURL.let {
+                it.contains("://") && !it.startsWith("https://", ignoreCase = true)
+            }
+        } }
+        val valid by remember { derivedStateOf {
+            name.isNotEmpty() && endpointsURL.isNotEmpty() && isNameUnique && isURLUnique
+        } }
+
+        trustNewCertDialogProfile?.let { profile ->
+            TrustNewCertDialog(
+                publicKey = profile.endpoints?.sslPublicKey,
+                onTrust = { scope.launch {
+                    val withKey = profile.copy(trustedSha256 = profile.endpoints?.sslPublicKey)
+                    if (editingProfile != null) onUpdateProfileRequest(withKey)
+                    else onAddProfileRequest(withKey)
+                    trustNewCertDialogProfile = null
+                    @SuppressLint("LocalContextGetResourceValueCall")
+                    topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
+                    sheetState.hide()
+                } },
+                onDismissRequest = { trustNewCertDialogProfile = null }
+            )
+        }
+
         Column(
             modifier = Modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
