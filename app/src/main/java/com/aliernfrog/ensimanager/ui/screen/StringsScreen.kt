@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.data.api.APIStringsCategory
 import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.sheet.AddStringSheet
@@ -55,13 +57,13 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StringsScreen(
-    stringsViewModel: StringsViewModel = koinViewModel(),
+    vm: StringsViewModel = koinViewModel(),
     onNavigateSettingsRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(stringsViewModel.categories) {
-        if (stringsViewModel.categories.isEmpty()) stringsViewModel.fetchStrings()
+    LaunchedEffect(vm.categories) {
+        if (vm.categories.isEmpty()) vm.fetchStrings()
     }
 
     AppScaffold(
@@ -76,42 +78,68 @@ fun StringsScreen(
                 }
             )
         },
-        topAppBarState = stringsViewModel.topAppBarState
+        topAppBarState = vm.topAppBarState
     ) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
             PullToRefreshBox(
-                isRefreshing = stringsViewModel.isFetching,
+                isRefreshing = vm.isFetching,
                 onRefresh = { scope.launch {
-                    stringsViewModel.fetchStrings()
+                    vm.fetchStrings()
                 } }
             ) {
-                StringsList()
+                StringsList(vm)
             }
             FloatingButtons(
+                lazyListState = vm.lazyListState,
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
                 bottomButtonsColumnModifier = Modifier.align(Alignment.BottomEnd),
                 scrollBottomButtonModifier = Modifier.align(Alignment.TopEnd),
-                addStringButtonModifier = Modifier.align(Alignment.BottomEnd)
+                addStringButtonModifier = Modifier.align(Alignment.BottomEnd),
+                onAddStringRequest = { scope.launch {
+                    vm.addStringSheetState.show()
+                } }
             )
         }
     }
 
-    AddStringSheet()
-    StringSheet()
+    AddStringSheet(
+        state = vm.addStringSheetState,
+        currentCategory = vm.currentCategory,
+        onAddStringRequest = { scope.launch {
+            vm.addString(it)
+            vm.addStringSheetState.hide()
+        } }
+    )
+    StringSheet(
+        state = vm.stringSheetState,
+        string = vm.chosenString,
+        stringCategory = vm.chosenStringCategory,
+        onDeleteStringRequest = { scope.launch {
+            vm.deleteChosenWord()
+            vm.stringSheetState.hide()
+        } }
+    )
 }
 
 @Composable
 private fun StringsList(
-    stringsViewModel: StringsViewModel = koinViewModel()
+    vm: StringsViewModel
 ) {
-    val list = stringsViewModel.currentCategoryList
+    val list = vm.currentCategoryList
     val scope = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = stringsViewModel.lazyListState
+        state = vm.lazyListState
     ) {
         item {
-            ListControls(stringsShown = list.size)
+            ListControls(
+                stringsShown = list.size,
+                categories = vm.categories,
+                currentCategoryIndex = vm.currentCategoryIndex,
+                onCategoryIndexChange = { vm.currentCategoryIndex = it },
+                filter = vm.filter,
+                onFilterChange = { vm.filter = it }
+            )
         }
         items(list) {
             Card(
@@ -122,7 +150,7 @@ private fun StringsList(
                         horizontal = 8.dp
                     ),
                 onClick = { scope.launch {
-                    stringsViewModel.showStringSheet(it)
+                    vm.showStringSheet(it)
                 } }
             ) {
                 Text(
@@ -142,12 +170,16 @@ private fun StringsList(
 
 @Composable
 private fun ListControls(
-    stringsViewModel: StringsViewModel = koinViewModel(),
-    stringsShown: Int
+    stringsShown: Int,
+    categories: List<APIStringsCategory>,
+    currentCategoryIndex: Int,
+    onCategoryIndexChange: (Int) -> Unit,
+    filter: String,
+    onFilterChange: (String) -> Unit
 ) {
     SearchField(
-        query = stringsViewModel.filter,
-        onQueryChange = { stringsViewModel.filter = it },
+        query = filter,
+        onQueryChange = onFilterChange,
         modifier = Modifier
             .fillMaxWidth()
             .offset(y = (-12).dp)
@@ -158,12 +190,11 @@ private fun ListControls(
     )
 
     SingleChoiceConnectedButtonGroup(
-        choices = stringsViewModel.categories.map { it.title },
-        selectedIndex = stringsViewModel.currentCategoryIndex,
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
-    ) {
-        stringsViewModel.currentCategoryIndex = it
-    }
+        choices = categories.map { it.title },
+        selectedIndex = currentCategoryIndex,
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        onSelect = onCategoryIndexChange
+    )
 
     Text(
         text = stringResource(R.string.strings_shownStrings).replace("{COUNT}", stringsShown.toString()),
@@ -175,18 +206,19 @@ private fun ListControls(
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    stringsViewModel: StringsViewModel = koinViewModel(),
+    lazyListState: LazyListState,
     scrollTopButtonModifier: Modifier,
     bottomButtonsColumnModifier: Modifier,
     scrollBottomButtonModifier: Modifier,
-    addStringButtonModifier: Modifier
+    addStringButtonModifier: Modifier,
+    onAddStringRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val firstVisibleItemIndex by remember {
-        derivedStateOf { stringsViewModel.lazyListState.firstVisibleItemIndex }
+        derivedStateOf { lazyListState.firstVisibleItemIndex }
     }
     val layoutInfo by remember {
-        derivedStateOf { stringsViewModel.lazyListState.layoutInfo }
+        derivedStateOf { lazyListState.layoutInfo }
     }
 
     AnimatedVisibility(
@@ -198,7 +230,7 @@ private fun FloatingButtons(
         FloatingActionButton(
             icon = Icons.Outlined.KeyboardArrowUp
         ) { scope.launch {
-            stringsViewModel.lazyListState.animateScrollToItem(0)
+            lazyListState.animateScrollToItem(0)
         } }
     }
 
@@ -215,17 +247,16 @@ private fun FloatingButtons(
             FloatingActionButton(
                 icon = Icons.Outlined.KeyboardArrowDown
             ) { scope.launch {
-                stringsViewModel.lazyListState.animateScrollToItem(stringsViewModel.lazyListState.layoutInfo.totalItemsCount + 1)
+                lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount + 1)
             } }
         }
 
         FloatingActionButton(
             icon = Icons.Outlined.Add,
             modifier = addStringButtonModifier,
-            containerColor = MaterialTheme.colorScheme.primary
-        ) { scope.launch {
-            stringsViewModel.addStringSheetState.show()
-        } }
+            containerColor = MaterialTheme.colorScheme.primary,
+            onClick = onAddStringRequest
+        )
     }
 }
 
