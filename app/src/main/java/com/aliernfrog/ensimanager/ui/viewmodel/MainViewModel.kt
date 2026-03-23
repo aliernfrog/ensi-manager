@@ -13,9 +13,9 @@ import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.shared.domain.IAppState
 import io.github.aliernfrog.shared.impl.UpdateCheckResult
 import io.github.aliernfrog.shared.impl.VersionManager
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,11 +24,13 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     val prefs: PreferenceManager,
     val appState: AppState,
+    private val iAppState: IAppState,
     val apiState: APIState,
     val topToastState: TopToastState,
     val versionManager: VersionManager
 ) : ViewModel() {
-    lateinit var scope: CoroutineScope
+    val lastCaughtException
+        get() = iAppState.lastCaughtException
 
     val availableUpdates = versionManager.availableUpdates
     val currentVersionInfo = versionManager.currentVersionInfo

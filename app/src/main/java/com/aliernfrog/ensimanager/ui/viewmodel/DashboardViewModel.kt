@@ -16,6 +16,7 @@ import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.extension.showReportableErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
 
@@ -50,7 +51,7 @@ class DashboardViewModel(
             dashboardData = gson.fromJson(response.responseBody, APIDashboard::class.java)
         } catch (e: Exception) {
             Log.e(TAG, "fetchDashboardData: ", e)
-            topToastState.showErrorToast(R.string.dashboard_couldntFetch)
+            topToastState.showReportableErrorToast(R.string.dashboard_couldntFetch, e)
         }
     }
 }

@@ -16,7 +16,7 @@ import com.aliernfrog.ensimanager.data.api.getTimeStr
 import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.enum.APILogType
-import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.extension.showReportableErrorToast
 import com.aliernfrog.ensimanager.util.extension.toastSummary
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.Gson
@@ -73,7 +73,7 @@ class LogsViewModel(
             } catch (_: CancellationException) {
             } catch (e: Exception) {
                 Log.e(TAG, "fetchLogs: ", e)
-                topToastState.showErrorToast(R.string.logs_couldntFetch)
+                topToastState.showReportableErrorToast(R.string.logs_couldntFetch, e)
             }
         }
     }

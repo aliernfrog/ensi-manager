@@ -24,7 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.SettingsConstant.supportLinks
 import com.aliernfrog.ensimanager.TAG
+import com.aliernfrog.ensimanager.crashReportURL
 import com.aliernfrog.ensimanager.ui.component.MainDestinationContent
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.DecryptionDialog
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.EncryptionDialog
@@ -43,6 +45,7 @@ import io.github.aliernfrog.shared.ui.component.util.AppContainer
 import io.github.aliernfrog.shared.ui.component.util.InsetsObserver
 import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.sheet.CrashDetailsSheet
 import io.github.aliernfrog.shared.ui.theme.Theme
 import io.github.aliernfrog.shared.util.LocalSharedString
 import io.github.aliernfrog.shared.util.SharedString
@@ -61,7 +64,6 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val view = LocalView.current
-            val scope = rememberCoroutineScope()
             val useDarkTheme = shouldUseDarkTheme(vm.prefs.theme.value)
             var isAppInitialized by rememberSaveable { mutableStateOf(false) }
 
@@ -84,7 +86,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             LaunchedEffect(Unit) {
-                vm.scope = scope
                 vm.topToastState.setComposeView(view)
                 if (isAppInitialized) return@LaunchedEffect
 
@@ -233,6 +234,14 @@ class MainActivity : AppCompatActivity() {
                     vm.appState.navController.add(Destination.APIProfiles)
                 }
             )
+
+            CrashDetailsSheet(
+                throwable = vm.lastCaughtException,
+                crashReportURL = crashReportURL,
+                debugInfo = vm.versionManager.getDebugInfo(),
+                supportLinks = supportLinks
+            )
+
             TopToastHost(vm.topToastState)
         }
     }

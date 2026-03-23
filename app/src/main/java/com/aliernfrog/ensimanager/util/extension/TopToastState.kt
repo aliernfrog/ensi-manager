@@ -9,6 +9,7 @@ import com.aliernfrog.ensimanager.data.isSuccessful
 import com.aliernfrog.ensimanager.data.summary
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.shared.util.extension.showReportableErrorToast
 
 fun TopToastState.showSuccessToast(text: Any, androidToast: Boolean = false) {
     if (androidToast) showAndroidToast(
@@ -31,6 +32,16 @@ fun TopToastState.showErrorToast(text: Any = R.string.warning_error, androidToas
         text = text,
         icon = Icons.Rounded.PriorityHigh,
         iconTintColor = TopToastColor.ERROR
+    )
+}
+
+fun TopToastState.showReportableErrorToast(
+    text: Any = R.string.warning_error_tapToReport,
+    throwable: Throwable
+) {
+    showReportableErrorToast(
+        text = text,
+        throwable = throwable
     )
 }
 

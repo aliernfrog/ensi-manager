@@ -5,7 +5,7 @@ import android.util.Log
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.impl.api.APIProfile
-import com.aliernfrog.ensimanager.util.extension.showErrorToast
+import com.aliernfrog.ensimanager.util.extension.showReportableErrorToast
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.BiometricUtil
 import com.aliernfrog.ensimanager.util.staticutil.CryptoUtil
@@ -57,7 +57,7 @@ class APIProfileRepository(
             } catch (e: Exception) {
                 // Broken data
                 Log.e(TAG, "APIProfileRepository/loadAPIProfiles: failed to load saved profiles", e)
-                topToastState.showErrorToast(R.string.api_profiles_restoreError)
+                topToastState.showReportableErrorToast(R.string.api_profiles_restoreError, e)
                 APIProfilesLoadResult.Error
             }
         }
@@ -73,7 +73,7 @@ class APIProfileRepository(
                 return APIProfilesLoadResult.Success(_apiProfiles.value)
             }
         } catch (e: Exception) {
-            topToastState.showErrorToast(R.string.api_crypto_decrypt_fail, androidToast = true)
+            topToastState.showReportableErrorToast(R.string.api_crypto_decrypt_fail, e)
             Log.e(TAG, "APIProfileRepository/decryptDataWithPassword: failed to decrypt API profiles", e)
             return APIProfilesLoadResult.Error
         }
@@ -90,7 +90,7 @@ class APIProfileRepository(
             }
         } catch (e: Exception) {
             // The data is most likely broken, ask for password just in case
-            topToastState.showErrorToast(R.string.api_crypto_decrypt_fail_biometrics, androidToast = true)
+            topToastState.showReportableErrorToast(R.string.api_crypto_decrypt_fail_biometrics, e)
             Log.e(TAG, "APIProfileRepository/decryptDataWithBiometrics: failed to decrypt API profiles", e)
             return APIProfilesLoadResult.Error
         }
