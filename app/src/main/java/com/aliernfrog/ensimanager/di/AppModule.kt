@@ -35,7 +35,7 @@ val appModule = module {
         get<PreferenceManager>().let { prefs ->
             @Suppress("KotlinConstantConditions") VersionManager(
                 tag = TAG,
-                appName = "PF Tool",
+                appName = "Ensi Manager",
                 releasesURLPref = prefs.releasesURL,
                 debugInfoPrefs = prefs.debugInfoPrefs,
                 defaultInstallURL = "https://github.com/aliernfrog/pf-tool",

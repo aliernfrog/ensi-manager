@@ -1,0 +1,32 @@
+[
+  {
+    "versionName": "v3.0.2",
+    "versionCode": 300200,
+    "prerelease": false,
+    "minSdk": 24,
+    "body": "### 🐛 Bug Fixes\n- [`4ef0aac`](https://github.com/aliernfrog/ensi-manager/commit/4ef0aac91e1faffa88d9048aaf04a523c37e9fd3) - **Encryption**: Catch errors when showing biometric prompt *(commit by @aliernfrog)*",
+    "createdAt": 1759084491000,
+    "htmlUrl": "https://github.com/aliernfrog/ensi-manager/releases/tag/v3.0.2",
+    "downloadUrl": "https://github.com/aliernfrog/ensi-manager/releases/download/v3.0.2/ensi-manager.apk"
+  },
+  {
+    "versionName": "v3.0.1",
+    "versionCode": 300100,
+    "prerelease": false,
+    "minSdk": 24,
+    "body": "### ✨ New Features\n- [`0b4784b`](https://github.com/aliernfrog/ensi-manager/commit/0b4784b1951add7f0adb69ee4bcdd91572df774c) - **dashboard**: set icon container color to error if action is destructive *(commit by @aliernfrog)*\n\n### 🐛 Bug Fixes\n- [`b6f4d45`](https://github.com/aliernfrog/ensi-manager/commit/b6f4d45661177d1ff00cd9db00abe026ee523fc6) - **dashboard**: fix getting color from hex string *(commit by @aliernfrog)*",
+    "createdAt": 1748456683000,
+    "htmlUrl": "https://github.com/aliernfrog/ensi-manager/releases/tag/v3.0.1",
+    "downloadUrl": "https://github.com/aliernfrog/ensi-manager/releases/download/v3.0.1/ensi-manager.apk"
+  },
+  {
+    "versionName": "v3.0.0",
+    "versionCode": 300010,
+    "prerelease": false,
+    "minSdk": 24,
+    "body": "### 🔌 API Updates\r\n- New documentation [here](https://github.com/aliernfrog/ensi-manager/blob/main/API.md).\r\n- [`APIEndpoints`](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIEndpoints.kt) now accepts `metadata` field, which is an [`APIMetadata`](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIMetadata.kt) to be shown in the API profile list.\r\n- `getChatCategories`, `addChatCategory` and `deleteChatCategory` are now renamed to `getStrings`, `addString` and `deleteString`. Old names of these are now deprecated and will be removed in the future. Requests made by the app to `addString` and `deleteString` endpoints have no changes.\r\n- All fields in [`APIEndpoints`](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIEndpoints.kt) are now nullable. Based on available fields, the app will show corresponding tabs or make the API profile unselectable if it has no corresponding endpoints.\r\n- No breaking changes (except a deprecation)!\r\n\r\n### ✨ New Features\r\n- [`b80b4d6`](https://github.com/aliernfrog/ensi-manager/commit/b80b4d6983cb94ab440e66e201f07c3ba164c10b) - **switch-row**: minor ui improvement *(commit by @aliernfrog)*\r\n- [`984a1e3`](https://github.com/aliernfrog/ensi-manager/commit/984a1e3e39bc0317ef1fc9a5fe6057c41bcc5e07) - **update-sheet**: improve version name visibility *(commit by @aliernfrog)*\r\n- [`49c1d45`](https://github.com/aliernfrog/ensi-manager/commit/49c1d45e2f098d2bd4ef11f897224d78bd72cdf7) - show build information, add copy debug info option *(commit by @aliernfrog)*\r\n- [`a24c3f9`](https://github.com/aliernfrog/ensi-manager/commit/a24c3f9b0e92a53e3a531821294546865b76b105) - API profiles & switching between them *(commit by @aliernfrog)*\r\n- [`10edbf6`](https://github.com/aliernfrog/ensi-manager/commit/10edbf6b8c1b54e54b8cdd5324ba732dd221dcf9) - certificate SHA-256 checks *(commit by @aliernfrog)*\r\n- [`b0d84d8`](https://github.com/aliernfrog/ensi-manager/commit/b0d84d8476d29903a9ca813927072bdcac5498f2) - make the app more universal *(commit by @aliernfrog)*\r\n- [`f5c951d`](https://github.com/aliernfrog/ensi-manager/commit/f5c951d533b522c5c5444484cf9b6dc765ee2ed3) - **profiles**: password encryption with biometric decryption support *(commit by @aliernfrog)*\r\n- [`10cb94d`](https://github.com/aliernfrog/ensi-manager/commit/10cb94d100019981feae1b77731987e4cf6098e8) - **logs**: search logs *(commit by @aliernfrog)*\r\n- [`4b1490b`](https://github.com/aliernfrog/ensi-manager/commit/4b1490b4b422d60b6b5ec04c6d2675d0042b5c7e) - some improvements to new features *(PR #36 by @aliernfrog)*\r\n- [`8273881`](https://github.com/aliernfrog/ensi-manager/commit/8273881db07c609bb5c31d342629b6d956ad8bba) - expressive design *(PR #37 by @aliernfrog)*\r\n\r\n### 🐛 Bug Fixes\r\n- [`df3e80d`](https://github.com/aliernfrog/ensi-manager/commit/df3e80da96e175a1d8ed57729de899fb60a3d71e) - **updates**: do not show toast on config change *(commit by @aliernfrog)*\r\n- [`75a9e60`](https://github.com/aliernfrog/ensi-manager/commit/75a9e60280aa453f10009e339e77e55456905e6c) - **settings/libraries**: correct padding *(commit by @aliernfrog)*\r\n- [`cb05f3e`](https://github.com/aliernfrog/ensi-manager/commit/cb05f3ef283efdc797574e34c4d77a9eb5bbd22d) - draw behind navigation bar in landscape mode *(commit by @aliernfrog)*\r\n- [`9c73020`](https://github.com/aliernfrog/ensi-manager/commit/9c73020ed5effa190e9ee8fe117da5d1621d3c6c) - disable large top bar on compact height *(commit by @aliernfrog)*\r\n- [`836da44`](https://github.com/aliernfrog/ensi-manager/commit/836da4440a57dc3e0fb776ca01c52093e3e89cec) - apply navigation bar padding in all screens *(commit by @aliernfrog)*\r\n\r\n### ♻️ Refactors\r\n- [`aa361b2`](https://github.com/aliernfrog/ensi-manager/commit/aa361b2c11005d619198bb2f00a929fff8101b89) - preference handling *(commit by @aliernfrog)*",
+    "createdAt": 1747640105000,
+    "htmlUrl": "https://github.com/aliernfrog/ensi-manager/releases/tag/v3.0.0",
+    "downloadUrl": "https://github.com/aliernfrog/ensi-manager/releases/download/v3.0.0/ensi-manager.apk"
+  }
+]
