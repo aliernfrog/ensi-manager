@@ -3,7 +3,6 @@ package com.aliernfrog.ensimanager.ui.theme
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
-import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
@@ -19,10 +18,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.activity.MainActivity
-
-val supportsMaterialYou = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+import io.github.aliernfrog.shared.ui.theme.supportsMaterialYou
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("NewApi")
@@ -74,12 +71,4 @@ fun EnsiManagerTheme(
         typography = Typography,
         content = content
     )
-}
-
-enum class Theme(
-    @StringRes val label: Int
-) {
-    SYSTEM(R.string.settings_appearance_theme_system),
-    LIGHT(R.string.settings_appearance_theme_light),
-    DARK(R.string.settings_appearance_theme_dark)
 }

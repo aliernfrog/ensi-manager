@@ -6,6 +6,7 @@ import android.util.Base64
 import android.util.Log
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.data.HTTPResponse
+import io.github.aliernfrog.shared.util.extension.getAppVersionCode
 import okhttp3.CertificatePinner
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -76,7 +77,7 @@ class WebUtil {
         }
 
         fun buildUserAgent(context: Context): String =
-            "EnsiManager/${GeneralUtil.getAppVersionCode(context)} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
+            "EnsiManager/${context.getAppVersionCode()} (${context.packageName}), Android ${Build.VERSION.SDK_INT}"
 
         /*private fun getResponseFromConnection(connection: HttpURLConnection): String {
             return try {

@@ -1,8 +1,9 @@
 package com.aliernfrog.ensimanager.util.manager
 
 import android.content.Context
-import com.aliernfrog.ensimanager.ui.theme.Theme
-import com.aliernfrog.ensimanager.util.manager.base.BasePreferenceManager
+import com.aliernfrog.ensimanager.defaultReleasesURL
+import io.github.aliernfrog.shared.ui.theme.Theme
+import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 
 class PreferenceManager(context: Context) : BasePreferenceManager(
     prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)
@@ -29,5 +30,5 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
     val autoCheckUpdates = booleanPreference("autoUpdates", true)
     val encryptionSuggestionDismissed = booleanPreference("encryptionSuggestionDismissed", false, experimental = true, includeInDebugInfo = false)
-    val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/ensimanager/latest.json", experimental = true, includeInDebugInfo = false)
+    val releasesURL = stringPreference("releasesUrl", defaultReleasesURL, experimental = true, includeInDebugInfo = false)
 }

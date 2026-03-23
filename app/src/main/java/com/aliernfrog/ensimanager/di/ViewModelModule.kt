@@ -1,16 +1,18 @@
 package com.aliernfrog.ensimanager.di
 
 import com.aliernfrog.ensimanager.ui.viewmodel.*
-import org.koin.core.module.dsl.singleOf
+import com.aliernfrog.ensimanager.ui.viewmodel.settings.APISettingsViewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    singleOf(::MainViewModel)
-    singleOf(::InsetsViewModel)
-    singleOf(::APIViewModel)
+    viewModelOf(::MainViewModel)
+    viewModelOf(::APIProfilesViewModel)
 
-    singleOf(::DashboardViewModel)
-    singleOf(::StringsViewModel)
-    singleOf(::LogsViewModel)
-    singleOf(::SettingsViewModel)
+    viewModelOf(::DashboardViewModel)
+    viewModelOf(::StringsViewModel)
+    viewModelOf(::LogsViewModel)
+
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::APISettingsViewModel)
 }

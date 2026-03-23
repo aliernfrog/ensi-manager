@@ -20,13 +20,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.api.cache
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.domain.APIState
+import com.aliernfrog.ensimanager.domain.AppState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsButton(
     modifier: Modifier = Modifier,
@@ -34,25 +33,26 @@ fun SettingsButton(
     enabled: Boolean = true,
     onNavigateSettingsRequest: () -> Unit
 ) {
-    val apiViewModel = koinViewModel<APIViewModel>()
+    val appState = koinInject<AppState>()
+    val apiState = koinInject<APIState>()
     val scope = rememberCoroutineScope()
-    val hasNotification = Destination.SETTINGS.hasNotification.value
 
     @Composable
     fun BadgedIconButton(content: @Composable () -> Unit) {
         IconButton(
+            shapes = IconButtonDefaults.shapes(),
             modifier = modifier,
             enabled = enabled,
-            shapes = IconButtonDefaults.shapes(),
             onClick = {
-                if (profileSwitcher) scope.launch { apiViewModel.profileSwitcherSheetState.show() }
-                else {
+                if (profileSwitcher) scope.launch {
+                    apiState.profileSwitcherSheetState.show()
+                } else {
                     onNavigateSettingsRequest()
-                    Destination.SETTINGS.hasNotification.value = false
+                    appState.showUpdateNotification = false
                 }
             }
         ) {
-            if (hasNotification) BadgedBox(
+            if (appState.showUpdateNotification) BadgedBox(
                 badge = { Badge() }
             ) {
                 content()
@@ -63,7 +63,7 @@ fun SettingsButton(
 
     if (profileSwitcher) BadgedIconButton {
         Image(
-            painter = apiViewModel.chosenProfile?.cache?.endpoints?.metadata?.iconURL.let { iconURL ->
+            painter = apiState.chosenProfile?.endpoints?.metadata?.iconURL.let { iconURL ->
                 if (iconURL != null) rememberAsyncImagePainter(iconURL)
                 else rememberVectorPainter(Icons.Default.Api)
             },

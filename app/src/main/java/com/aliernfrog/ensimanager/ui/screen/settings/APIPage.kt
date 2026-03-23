@@ -10,23 +10,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.ensimanager.ui.component.form.ExpressiveRadioButtons
-import com.aliernfrog.ensimanager.ui.component.form.ExpandableRow
 import com.aliernfrog.ensimanager.ui.component.form.RadioButtonChoice
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
+import com.aliernfrog.ensimanager.ui.viewmodel.settings.APISettingsViewModel
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
+import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsPageContainer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun APIPage(
-    apiViewModel: APIViewModel = koinViewModel(),
+    vm: APISettingsViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
+    val apiProfiles = vm.apiState.apiProfiles.collectAsStateWithLifecycle().value
+
     var defaultProfileChoicesExpanded by rememberSaveable { mutableStateOf(false) }
     val defaultProfileChoices = listOf(
-        *apiViewModel.apiProfiles.map {
+        *apiProfiles.map {
             RadioButtonChoice(title = it.name)
         }.toTypedArray(),
         RadioButtonChoice(
@@ -34,7 +38,7 @@ fun APIPage(
             indexOverride = -1
         )
     )
-    val chosenDefaultProfileName = apiViewModel.prefs.defaultAPIProfileIndex.value.let {
+    val chosenDefaultProfileName = vm.prefs.defaultAPIProfileIndex.value.let {
         defaultProfileChoices.elementAtOrNull(it)?.title ?: stringResource(R.string.settings_api_defaultProfile_none)
     }
 
@@ -46,9 +50,9 @@ fun APIPage(
             {
                 ExpressiveSwitchRow(
                     title = stringResource(R.string.settings_api_rememberLast),
-                    checked = apiViewModel.prefs.rememberLastSelectedAPIProfile.value
+                    checked = vm.prefs.rememberLastSelectedAPIProfile.value
                 ) {
-                    apiViewModel.prefs.rememberLastSelectedAPIProfile.value = it
+                    vm.prefs.rememberLastSelectedAPIProfile.value = it
                 }
             },
             {
@@ -70,9 +74,9 @@ fun APIPage(
                             bottom = 12.dp
                         ),
                         choices = defaultProfileChoices,
-                        selectedIndex = apiViewModel.prefs.defaultAPIProfileIndex.value,
+                        selectedIndex = vm.prefs.defaultAPIProfileIndex.value,
                         onSelect = { index ->
-                            apiViewModel.prefs.defaultAPIProfileIndex.value = index
+                            vm.prefs.defaultAPIProfileIndex.value = index
                         }
                     )
                 }

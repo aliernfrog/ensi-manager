@@ -1,18 +1,31 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.aboutlibraries)
 }
 
+val localProperties = Properties()
+try {
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
+} catch (_: java.io.FileNotFoundException) {
+    // ignore
+} catch (t: Throwable) {
+    logger.warn("Failed to load local.properties: ", t)
+}
+
 android {
     namespace = "com.aliernfrog.ensimanager"
-    compileSdk = 35
+    compileSdk = 36
+    buildToolsVersion = "36.1.0"
 
     defaultConfig {
         applicationId = "com.aliernfrog.ensimanager"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 300200
         versionName = "3.0.2"
         vectorDrawables { useSupportLibrary = true }
@@ -35,11 +48,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
-    }
-
     buildFeatures {
         buildConfig = true
         compose = true
@@ -52,8 +60,18 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        optIn.add("kotlin.RequiresOptIn")
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
+    }
+}
+
+
 // Utilities to get git environment information
 // Source: https://github.com/vendetta-mod/VendettaManager/blob/main/app/build.gradle.kts
+var usingLocalLibraries = false
 fun getCurrentBranch() = exec("git", "symbolic-ref", "--short", "HEAD")
     ?: exec("git", "describe", "--tags", "--exact-match")
 fun getLatestCommit() = exec("git", "rev-parse", "--short", "HEAD")
@@ -61,13 +79,7 @@ fun hasLocalChanges(): Boolean {
     val branch = getCurrentBranch()
     val uncommittedChanges = exec("git", "status", "-s")?.isNotEmpty() ?: false
     val unpushedChanges = exec("git", "log", "origin/$branch..HEAD")?.isNotBlank() ?: false
-    return uncommittedChanges || unpushedChanges
-}
-
-android.defaultConfig.run {
-    buildConfigField("String", "GIT_BRANCH", "\"${getCurrentBranch()}\"")
-    buildConfigField("String", "GIT_COMMIT", "\"${getLatestCommit()}\"")
-    buildConfigField("boolean", "GIT_LOCAL_CHANGES", "${hasLocalChanges()}")
+    return uncommittedChanges || unpushedChanges || usingLocalLibraries
 }
 
 fun exec(vararg command: String) = try {
@@ -83,12 +95,19 @@ fun exec(vararg command: String) = try {
     null
 }
 
+android.defaultConfig.run {
+    buildConfigField("String", "GIT_BRANCH", "\"${getCurrentBranch()}\"")
+    buildConfigField("String", "GIT_COMMIT", "\"${getLatestCommit()}\"")
+    buildConfigField("boolean", "GIT_LOCAL_CHANGES", "${hasLocalChanges()}")
+}
+
 dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.biometrics)
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.ktx)
-    implementation(libs.androidx.navigation)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.splashscreen)
 
     implementation(libs.compose.ui)
@@ -106,6 +125,20 @@ dependencies {
     implementation(libs.markdown)
     implementation(libs.toptoast)
     implementation(libs.zoomable)
+
+    listOf(
+        "pftoolSharedBaseLibPath" to libs.pftool.shared.base
+    ).forEach { (name, defaultLib) ->
+        val localPath = localProperties.getProperty(name)
+        implementation(
+            if (localPath.isNullOrEmpty()) defaultLib
+            else {
+                usingLocalLibraries = true
+                println("Using local dependency: $name")
+                files(localPath)
+            }
+        )
+    }
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)

@@ -21,31 +21,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.api.cache
-import com.aliernfrog.ensimanager.data.api.id
-import com.aliernfrog.ensimanager.data.api.isAvailable
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.ensimanager.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
-import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.domain.APIState
+import com.aliernfrog.ensimanager.domain.AppState
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfileSwitchSheet(
-    apiViewModel: APIViewModel = koinViewModel(),
-    sheetState: SheetState = apiViewModel.profileSwitcherSheetState,
+    sheetState: SheetState,
     onNavigateSettingsRequest: () -> Unit,
     onNavigateApiProfilesRequest: () -> Unit
 ) {
+    val appState = koinInject<AppState>()
+    val apiState = koinInject<APIState>()
     val scope = rememberCoroutineScope()
+
+    val apiProfiles = apiState.apiProfiles.collectAsStateWithLifecycle().value
 
     AppModalBottomSheet(
         sheetState = sheetState
@@ -56,14 +57,14 @@ fun APIProfileSwitchSheet(
                     scope.launch {
                         onNavigateSettingsRequest()
                         sheetState.hide()
-                        Destination.SETTINGS.hasNotification.value = false
+                        appState.showUpdateNotification = false
                     }
                 }
                 ExpressiveButtonRow(
                     title = stringResource(R.string.settings),
                     icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Settings)) },
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    trailingComponent = if (Destination.SETTINGS.hasNotification.value) { {
+                    trailingComponent = if (appState.showUpdateNotification) { {
                        Button(
                            onClick = onSettingsClick,
                            shapes = ButtonDefaults.shapes()
@@ -78,13 +79,13 @@ fun APIProfileSwitchSheet(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
 
-        val profileButtons: List<@Composable () -> Unit> = apiViewModel.apiProfiles.map { profile -> {
+        val profileButtons: List<@Composable () -> Unit> = apiProfiles.map { profile -> {
             val isAvailable = profile.isAvailable
             ExpressiveButtonRow(
                 title = profile.name,
                 description = if (!isAvailable) stringResource(R.string.api_profiles_switcher_unavailable) else null,
                 enabled = isAvailable,
-                icon = profile.cache?.endpoints?.metadata?.iconURL?.let { iconURL -> {
+                icon = profile.endpoints?.metadata?.iconURL?.let { iconURL -> {
                     AsyncImage(
                         model = iconURL,
                         contentDescription = null,
@@ -98,13 +99,13 @@ fun APIProfileSwitchSheet(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 trailingComponent = if (isAvailable) { {
                     RadioButton(
-                        selected = apiViewModel.chosenProfile?.id == profile.id,
-                        onClick = { apiViewModel.chosenProfile = profile }
+                        selected = apiState.chosenProfile?.id == profile.id,
+                        onClick = { apiState.chosenProfile = profile }
                     )
                 } } else null
             ) {
                 if (isAvailable) scope.launch {
-                    apiViewModel.chosenProfile = profile
+                    apiState.chosenProfile = profile
                     sheetState.hide()
                 }
             }

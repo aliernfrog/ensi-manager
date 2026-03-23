@@ -1,19 +1,15 @@
 package com.aliernfrog.ensimanager.ui.activity
 
-import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,18 +17,41 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.aliernfrog.ensimanager.ui.component.InsetsObserver
-import com.aliernfrog.ensimanager.ui.screen.MainScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
+import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.SettingsConstant.supportLinks
+import com.aliernfrog.ensimanager.TAG
+import com.aliernfrog.ensimanager.crashReportURL
+import com.aliernfrog.ensimanager.ui.component.MainDestinationContent
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.DecryptionDialog
+import com.aliernfrog.ensimanager.ui.dialog.api.crypto.EncryptionDialog
+import com.aliernfrog.ensimanager.ui.screen.APIProfilesScreen
+import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
+import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
-import com.aliernfrog.ensimanager.ui.theme.Theme
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
+import com.aliernfrog.ensimanager.util.Destination
+import com.aliernfrog.ensimanager.util.MainDestinationGroup
+import com.aliernfrog.ensimanager.util.extension.showSuccessToast
+import com.aliernfrog.ensimanager.util.slideTransitionMetadata
+import com.aliernfrog.ensimanager.util.slideVerticalTransitionMetadata
 import com.aliernfrog.toptoast.component.TopToastHost
-import org.koin.androidx.compose.koinViewModel
+import io.github.aliernfrog.shared.ui.component.util.AppContainer
+import io.github.aliernfrog.shared.ui.component.util.InsetsObserver
+import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.sheet.CrashDetailsSheet
+import io.github.aliernfrog.shared.ui.theme.Theme
+import io.github.aliernfrog.shared.util.LocalSharedString
+import io.github.aliernfrog.shared.util.SharedString
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,72 +59,191 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
 
+        val vm = getViewModel<MainViewModel>()
+        val sharedString by inject<SharedString>()
+
         setContent {
-            AppContent()
-        }
-    }
+            val view = LocalView.current
+            val useDarkTheme = shouldUseDarkTheme(vm.prefs.theme.value)
+            var isAppInitialized by rememberSaveable { mutableStateOf(false) }
 
-    @Composable
-    private fun AppContent(
-        mainViewModel: MainViewModel = koinViewModel()
-    ) {
-        val view = LocalView.current
-        val scope = rememberCoroutineScope()
-        val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme.value)
-        var isAppInitialized by rememberSaveable { mutableStateOf(false) }
+            @Composable
+            fun AppTheme(content: @Composable () -> Unit) {
+                EnsiManagerTheme(
+                    darkTheme = useDarkTheme,
+                    dynamicColors = vm.prefs.materialYou.value,
+                    pitchBlack = vm.prefs.pitchBlack.value,
+                    content = content
+                )
+            }
 
-        @Composable
-        fun AppTheme(content: @Composable () -> Unit) {
-            EnsiManagerTheme(
-                darkTheme = useDarkTheme,
-                dynamicColors = mainViewModel.prefs.materialYou.value,
-                pitchBlack = mainViewModel.prefs.pitchBlack.value,
-                content = content
-            )
-        }
+            AppTheme {
+                CompositionLocalProvider(
+                    LocalSharedString provides sharedString
+                ) {
+                    App(vm)
+                }
+            }
 
-        AppTheme {
-            InsetsObserver()
-            AppContainer {
-                MainScreen()
-                TopToastHost(mainViewModel.topToastState)
+            LaunchedEffect(Unit) {
+                vm.topToastState.setComposeView(view)
+                if (isAppInitialized) return@LaunchedEffect
+
+                vm.topToastState.setAppTheme { AppTheme(it) }
+
+                if (vm.prefs.autoCheckUpdates.value) vm.checkUpdates()
+                isAppInitialized = true
             }
         }
-
-        LaunchedEffect(Unit) {
-            mainViewModel.scope = scope
-            mainViewModel.topToastState.setComposeView(view)
-            if (isAppInitialized) return@LaunchedEffect
-
-            mainViewModel.topToastState.setAppTheme { AppTheme(it) }
-
-            if (mainViewModel.prefs.autoCheckUpdates.value) mainViewModel.checkUpdates()
-            isAppInitialized = true
-        }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun AppContainer(
-        content: @Composable BoxScope.() -> Unit
-    ) {
-        val config = LocalConfiguration.current
-        val density = LocalDensity.current
-        val layoutDirection = LocalLayoutDirection.current
-        val navbarInsets = WindowInsets.navigationBars
-        val navbarOnLeft = navbarInsets.getLeft(density, layoutDirection) > 0
-        val navbarOnRight = navbarInsets.getRight(density, layoutDirection) > 0
+    fun App(vm: MainViewModel) {
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        val applyImePadding = !vm.appState.navController.isAtMainDestination
 
-        Box(
-            content = content,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .let {
-                    var modifier = it
-                    if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) modifier = modifier.displayCutoutPadding()
-                    if (navbarOnLeft || navbarOnRight) modifier = modifier.navigationBarsPadding()
-                    modifier
+        val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
+        val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
+        val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
+        val isCheckingForUpdates = vm.isCheckingForUpdates.collectAsStateWithLifecycle().value
+
+        val onNavigateBackRequest: () -> Unit = {
+            vm.appState.navController.removeLastIfMultiple()
+        }
+
+        val onNavigateSettingsRequest: () -> Unit = {
+            vm.appState.navController.add(SettingsDestination.root)
+        }
+
+        InsetsObserver()
+        AppContainer {
+            NavDisplay(
+                backStack = vm.appState.navController.backStack,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .let {
+                        // MainDestinationGroup handles imePadding, so skip it here if we are at MainDestinationGroup
+                        if (applyImePadding) it.imePadding() else it
+                    },
+                entryProvider = entryProvider {
+                    entry<MainDestinationGroup> { _ ->
+                        MainDestinationContent(vm)
+                    }
+
+                    entry<Destination.APIProfiles>(
+                        metadata = slideTransitionMetadata
+                    ) { destination ->
+                        val isFirst = vm.appState.navController.backStack.firstOrNull() == destination
+                        APIProfilesScreen(
+                            isInitialScreen = isFirst,
+                            onNavigateSettingsRequest = onNavigateSettingsRequest,
+                            onNavigateBackRequest = if (isFirst) null else onNavigateBackRequest
+                        )
+                    }
+
+                    entry<Destination.Updates>(
+                        metadata = slideVerticalTransitionMetadata
+                    ) {
+                        UpdatesScreen(
+                            availableUpdates = availableUpdates,
+                            currentVersionInfo = currentVersionInfo,
+                            isCheckingForUpdates = isCheckingForUpdates,
+                            isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
+                            onCheckUpdatesRequest = {
+                                vm.checkUpdates(manuallyTriggered = true)
+                            },
+                            onNavigateBackRequest = onNavigateBackRequest
+                        )
+                    }
+
+                    entry<SettingsDestination>(
+                        metadata = slideTransitionMetadata
+                    ) { destination ->
+                        SettingsScreen(
+                            destination = destination,
+                            onNavigateBackRequest = onNavigateBackRequest,
+                            onNavigateRequest = {
+                                vm.appState.navController.add(it)
+                            },
+                            onCheckUpdatesRequest = { skipVersionCheck ->
+                                vm.checkUpdates(skipVersionCheck = skipVersionCheck)
+                            },
+                            onNavigateUpdatesScreenRequest = {
+                                vm.appState.navController.add(Destination.Updates)
+                            }
+                        )
+                    }
                 }
-        )
+            )
+
+            if (vm.apiState.showEncryptionDialog) EncryptionDialog(
+                onDismissRequest = { vm.apiState.showEncryptionDialog = false },
+                onEncryptRequest = { password, onFinish ->
+                    scope.launch {
+                        vm.apiState.changeEncryptionPasswordAndSave(password)
+                        vm.apiState.showEncryptionDialog = false
+                        vm.topToastState.showSuccessToast(R.string.api_crypto_encrypt_encrypted)
+                        onFinish()
+                    }
+                }
+            )
+
+            if (vm.apiState.showDecryptionDialog) DecryptionDialog(
+                onDismissRequest = { vm.apiState.showDecryptionDialog = false },
+                onDecryptRequest = { password, setDecryptingState ->
+                    val profiles = vm.apiState.decryptDataWithPassword(password)
+                    if (profiles != null) {
+                        vm.apiState.showDecryptionDialog = false
+                        vm.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                        scope.launch {
+                            vm.apiState.refetchAllProfiles()
+                        }
+                    }
+                    setDecryptingState(false)
+                },
+                onBiometricUnlockRequest = if (vm.apiState.canDecryptWithBiometrics) { { setDecryptingState ->
+                    vm.apiState.showBiometricPrompt(
+                        context = context,
+                        forDecryption = true,
+                        onSuccess = { scope.launch {
+                            setDecryptingState(true)
+                            val profiles = vm.apiState.decryptDataWithBiometrics(it.cryptoObject?.cipher)
+                            if (profiles != null) {
+                                vm.apiState.showDecryptionDialog = false
+                                vm.topToastState.showSuccessToast(R.string.api_crypto_decrypt_decrypted)
+                                scope.launch {
+                                    vm.apiState.refetchAllProfiles()
+                                }
+                            }
+                            setDecryptingState(false)
+                        } },
+                        onFail = {
+                            setDecryptingState(false)
+                            Log.d(TAG, "MainScreen: biometric decryption prompt failed")
+                        }
+                    )
+                } } else null
+            )
+
+            APIProfileSwitchSheet(
+                sheetState = vm.apiState.profileSwitcherSheetState,
+                onNavigateSettingsRequest = onNavigateSettingsRequest,
+                onNavigateApiProfilesRequest = {
+                    vm.appState.navController.add(Destination.APIProfiles)
+                }
+            )
+
+            CrashDetailsSheet(
+                throwable = vm.lastCaughtException,
+                crashReportURL = crashReportURL,
+                debugInfo = vm.versionManager.getDebugInfo(),
+                supportLinks = supportLinks
+            )
+
+            TopToastHost(vm.topToastState)
+        }
     }
 
     @Composable

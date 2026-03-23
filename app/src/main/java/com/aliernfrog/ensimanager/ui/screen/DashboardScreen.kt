@@ -35,21 +35,20 @@ import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import coil3.svg.SvgDecoder
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.api.doRequest
-import com.aliernfrog.ensimanager.ui.component.AppScaffold
-import com.aliernfrog.ensimanager.ui.component.AppTopBar
-import com.aliernfrog.ensimanager.ui.component.HorizontalSegmentor
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.TextWithPlaceholder
-import com.aliernfrog.ensimanager.ui.component.VerticalSegmentor
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.ensimanager.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.ensimanager.ui.dialog.DestructiveActionDialog
 import com.aliernfrog.ensimanager.ui.dialog.ImageDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.DashboardViewModel
-import com.aliernfrog.ensimanager.util.Destination
 import com.aliernfrog.ensimanager.util.extension.toastSummary
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppTopBar
+import io.github.aliernfrog.shared.ui.component.HorizontalSegmentor
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -58,13 +57,13 @@ import java.nio.ByteBuffer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    dashboardViewModel: DashboardViewModel = koinViewModel(),
-    onNavigateRequest: (Destination) -> Unit
+    vm: DashboardViewModel = koinViewModel(),
+    onNavigateRequest: (Any) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(dashboardViewModel.dashboardData) {
-        if (dashboardViewModel.dashboardData == null) dashboardViewModel.fetchDashboardData()
+    LaunchedEffect(vm.dashboardData) {
+        if (vm.dashboardData == null) vm.fetchDashboardData()
     }
 
     AppScaffold(
@@ -74,26 +73,28 @@ fun DashboardScreen(
               scrollBehavior = it,
               actions = {
                   SettingsButton(
-                      onNavigateSettingsRequest = { onNavigateRequest(Destination.SETTINGS) }
+                      onNavigateSettingsRequest = {
+                          onNavigateRequest(SettingsDestination.root)
+                      }
                   )
               }
           )
         },
-        topAppBarState = dashboardViewModel.topAppBarState
+        topAppBarState = vm.topAppBarState
     ) {
         PullToRefreshBox(
-            isRefreshing = dashboardViewModel.isFetching,
+            isRefreshing = vm.isFetching,
             onRefresh = { scope.launch {
-                dashboardViewModel.fetchDashboardData()
+                vm.fetchDashboardData()
             } }
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(dashboardViewModel.scrollState)
+                    .verticalScroll(vm.scrollState)
                     .navigationBarsPadding()
             ) {
-                ScreenContent()
+                ScreenContent(vm)
             }
         }
     }
@@ -101,7 +102,7 @@ fun DashboardScreen(
 
 @Composable
 private fun ScreenContent(
-    dashboardViewModel: DashboardViewModel = koinViewModel()
+    vm: DashboardViewModel
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -116,14 +117,14 @@ private fun ScreenContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = dashboardViewModel.dashboardData?.avatar,
+                    model = vm.dashboardData?.avatar,
                     contentDescription = null,
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.onSurface)
                         .size(100.dp)
                         .clickable {
-                            dashboardViewModel.avatarDialogShown = true
+                            vm.avatarDialogShown = true
                         }
                 )
                 Column(
@@ -131,19 +132,19 @@ private fun ScreenContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     TextWithPlaceholder(
-                        text = dashboardViewModel.dashboardData?.name,
+                        text = vm.dashboardData?.name,
                         placeholderCharRange = Range(12, 18),
                         style = MaterialTheme.typography.titleLarge
                     )
                     TextWithPlaceholder(
-                        text = dashboardViewModel.dashboardData?.status,
+                        text = vm.dashboardData?.status,
                         placeholderCharRange = Range(22, 40),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
         }, {
-            dashboardViewModel.dashboardData?.info?.let { data ->
+            vm.dashboardData?.info?.let { data ->
                 val rows: List<@Composable () -> Unit> = data.map { info -> {
                     Column(
                         modifier = Modifier
@@ -174,7 +175,7 @@ private fun ScreenContent(
 
     Spacer(Modifier.height(16.dp))
 
-    dashboardViewModel.dashboardData?.actions?.let { actions ->
+    vm.dashboardData?.actions?.let { actions ->
         val buttons: List<@Composable () -> Unit> = actions.map { action -> {
             ExpressiveButtonRow(
                 title = action.label,
@@ -192,16 +193,16 @@ private fun ScreenContent(
                                 .coroutineContext(Dispatchers.IO)
                                 .build()
                         ),
-                        containerColor = action.iconContainerColor?.let {
-                            rememberColorFromHex(it, fallback = defaultIconContainerColor).toRowFriendlyColor
+                        containerColor = action.iconContainerColor?.let { hexString ->
+                            rememberColorFromHex(hexString, fallback = defaultIconContainerColor).toRowFriendlyColor
                         } ?: defaultIconContainerColor
                     )
                 } },
                 onClick = action.endpoint?.let { {
-                    if (action.destructive) dashboardViewModel.pendingDestructiveAction = action
+                    if (action.destructive) vm.pendingDestructiveAction = action
                     else scope.launch {
-                        val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
-                        dashboardViewModel.topToastState.toastSummary(response)
+                        val response = vm.chosenProfile!!.doRequest({ action.endpoint })
+                        vm.topToastState.toastSummary(response)
                     }
                 } }
             )
@@ -213,23 +214,23 @@ private fun ScreenContent(
         )
     }
 
-    if (dashboardViewModel.avatarDialogShown) ImageDialog(
+    if (vm.avatarDialogShown) ImageDialog(
         onDismissRequest = {
-            dashboardViewModel.avatarDialogShown = false
+            vm.avatarDialogShown = false
         },
-        imageModel = dashboardViewModel.dashboardData?.avatar
+        imageModel = vm.dashboardData?.avatar
     )
 
-    dashboardViewModel.pendingDestructiveAction?.let { action ->
+    vm.pendingDestructiveAction?.let { action ->
         DestructiveActionDialog(
             action = action,
             onDismissRequest = {
-                dashboardViewModel.pendingDestructiveAction = null
+                vm.pendingDestructiveAction = null
             },
             onConfirm = { scope.launch {
-                val response = dashboardViewModel.chosenProfile!!.doRequest({ action.endpoint })
-                dashboardViewModel.topToastState.toastSummary(response)
-                dashboardViewModel.pendingDestructiveAction = null
+                val response = vm.chosenProfile!!.doRequest({ action.endpoint })
+                vm.topToastState.toastSummary(response)
+                vm.pendingDestructiveAction = null
             } }
         )
     }
@@ -241,11 +242,11 @@ private fun rememberColorFromHex(
     fallback: Color = MaterialTheme.colorScheme.primaryContainer
 ): Color {
     var safeHex = if (hexColor.startsWith("#")) hexColor.substring(1) else hexColor
-    if (safeHex.length == 6) safeHex = "FF" + safeHex; // add alpha channel
+    if (safeHex.length == 6) safeHex = "FF$safeHex" // add alpha channel
     return remember(hexColor) {
         try {
             Color(safeHex.toLong(16))
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             fallback
         }
     }
