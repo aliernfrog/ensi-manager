@@ -2,6 +2,7 @@ package com.aliernfrog.ensimanager
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.ui.graphics.Color
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.impl.CreditData
 
@@ -30,11 +31,13 @@ object SettingsConstant {
         Social(
             label = "GitHub",
             icon = R.drawable.github,
+            iconContainerColor = Color(0xFF104C35),
             url = githubRepoURL
         ),
         Social(
             label = "Discord",
             icon = R.drawable.discord,
+            iconContainerColor = Color(0xFF5865F2),
             url = "https://discord.gg/SQXqBMs"
         ),
         Social(
