@@ -101,10 +101,10 @@ fun APIProfileSheet(
         var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
 
         val isNameUnique = !existingProfiles.any {
-            it.name == name
+            it.name == name && it.id != editingProfile?.id
         }
         val isURLUnique = !existingProfiles.any {
-            it.endpointsURL == endpointsURL
+            it.endpointsURL == endpointsURL && it.id != editingProfile?.id
         }
         val isEndpointUnsecure by remember { derivedStateOf {
             endpointsURL.let {
