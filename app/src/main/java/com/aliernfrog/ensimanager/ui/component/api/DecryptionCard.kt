@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.component.CardWithActions
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.CardWithActions
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

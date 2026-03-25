@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -65,27 +66,27 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APILog
 import com.aliernfrog.ensimanager.data.api.getTimeStr
 import com.aliernfrog.ensimanager.enum.APILogType
-import com.aliernfrog.ensimanager.ui.component.AppScaffold
-import com.aliernfrog.ensimanager.ui.component.AppTopBar
-import com.aliernfrog.ensimanager.ui.component.FloatingActionButton
 import com.aliernfrog.ensimanager.ui.component.SearchField
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
-import com.aliernfrog.ensimanager.ui.theme.AppFABPadding
 import com.aliernfrog.ensimanager.ui.viewmodel.LogsViewModel
-import com.aliernfrog.ensimanager.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppTopBar
+import io.github.aliernfrog.shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.shared.ui.theme.AppFABPadding
+import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsScreen(
-    logsViewModel: LogsViewModel = koinViewModel(),
+    vm: LogsViewModel = koinViewModel(),
     onNavigateSettingsRequest: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(logsViewModel.logs) {
-        if (logsViewModel.logs.isEmpty()) logsViewModel.fetchLogs()
+    LaunchedEffect(vm.logs) {
+        if (vm.logs.isEmpty()) vm.fetchLogs()
     }
 
     AppScaffold(
@@ -100,18 +101,19 @@ fun LogsScreen(
                 }
             )
         },
-        topAppBarState = logsViewModel.topAppBarState
+        topAppBarState = vm.topAppBarState
     ) {
         Box {
             PullToRefreshBox(
-                isRefreshing = logsViewModel.isFetching,
+                isRefreshing = vm.isFetching,
                 onRefresh = { scope.launch {
-                    logsViewModel.fetchLogs()
+                    vm.fetchLogs()
                 } }
             ) {
-                LogsList()
+                LogsList(vm)
             }
             FloatingButtons(
+                lazyListState = vm.lazyListState,
                 scrollTopButtonModifier = Modifier.align(Alignment.TopEnd),
                 scrollBottomButtonModifier = Modifier.align(Alignment.BottomEnd)
             )
@@ -121,17 +123,17 @@ fun LogsScreen(
 
 @Composable
 private fun LogsList(
-    logsViewModel: LogsViewModel = koinViewModel()
+    vm: LogsViewModel
 ) {
     val filtersScrollState = rememberScrollState()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = logsViewModel.lazyListState
+        state = vm.lazyListState
     ) {
         item {
             SearchField(
-                query = logsViewModel.filter,
-                onQueryChange = { logsViewModel.filter = it },
+                query = vm.filter,
+                onQueryChange = { vm.filter = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .offset(y = (-12).dp)
@@ -157,7 +159,7 @@ private fun LogsList(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 APILogType.entries.forEach {
-                    val selected = logsViewModel.shownLogTypes.contains(it)
+                    val selected = vm.shownLogTypes.contains(it)
                     FilterChip(
                         selected = selected,
                         label = { Text(stringResource(it.nameId)) },
@@ -169,8 +171,8 @@ private fun LogsList(
                             )
                         } } else { null },
                         onClick = {
-                            if (selected) logsViewModel.shownLogTypes.remove(it)
-                            else logsViewModel.shownLogTypes.add(it)
+                            if (selected) vm.shownLogTypes.remove(it)
+                            else vm.shownLogTypes.add(it)
                         }
                     )
                 }
@@ -184,10 +186,10 @@ private fun LogsList(
                     thickness = 1.dp
                 )
                 InputChip(
-                    selected = logsViewModel.logsReversed,
-                    onClick = { logsViewModel.logsReversed = !logsViewModel.logsReversed },
+                    selected = vm.logsReversed,
+                    onClick = { vm.logsReversed = !vm.logsReversed },
                     label = { Text(stringResource(R.string.logs_reversed)) },
-                    leadingIcon = if (logsViewModel.logsReversed) { {
+                    leadingIcon = if (vm.logsReversed) { {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = null,
@@ -197,10 +199,10 @@ private fun LogsList(
                 )
             }
         }
-        itemsIndexed(logsViewModel.shownLogs) { index, item ->
+        itemsIndexed(vm.shownLogs) { index, item ->
             LogItem(
                 log = item,
-                isLastItem = index == logsViewModel.shownLogs.size-1
+                isLastItem = index == vm.shownLogs.size-1
             )
         }
         item {
@@ -271,42 +273,42 @@ private fun LogItem(
 @SuppressLint("ModifierParameter")
 @Composable
 private fun FloatingButtons(
-    logsViewModel: LogsViewModel = koinViewModel(),
+    lazyListState: LazyListState,
     scrollTopButtonModifier: Modifier,
     scrollBottomButtonModifier: Modifier
 ) {
     val scope = rememberCoroutineScope()
     val firstVisibleItemIndex by remember {
-        derivedStateOf { logsViewModel.lazyListState.firstVisibleItemIndex }
+        derivedStateOf { lazyListState.firstVisibleItemIndex }
     }
     val layoutInfo by remember {
-        derivedStateOf { logsViewModel.lazyListState.layoutInfo }
+        derivedStateOf { lazyListState.layoutInfo }
     }
 
     AnimatedVisibility(
         visible = firstVisibleItemIndex > 0,
-        modifier = scrollTopButtonModifier,
+        modifier = scrollTopButtonModifier.padding(16.dp),
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
         FloatingActionButton(
             icon = Icons.Outlined.KeyboardArrowUp
         ) { scope.launch {
-            logsViewModel.lazyListState.animateScrollToItem(0)
+            lazyListState.animateScrollToItem(0)
         } }
     }
 
     AnimatedVisibility(
         visible = isAtBottom(layoutInfo),
-        modifier = scrollBottomButtonModifier.systemBarsPadding(),
+        modifier = scrollBottomButtonModifier.padding(16.dp).systemBarsPadding(),
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut()
     ) {
         FloatingActionButton(
             icon = Icons.Outlined.KeyboardArrowDown
         ) { scope.launch {
-            logsViewModel.lazyListState.animateScrollToItem(
-                logsViewModel.lazyListState.layoutInfo.totalItemsCount + 1
+            lazyListState.animateScrollToItem(
+                lazyListState.layoutInfo.totalItemsCount + 1
             )
         } }
     }

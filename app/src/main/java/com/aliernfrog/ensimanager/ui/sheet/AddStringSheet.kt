@@ -19,8 +19,11 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -30,21 +33,20 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import com.aliernfrog.ensimanager.data.api.APIStringsCategory
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddStringSheet(
-    stringsViewModel: StringsViewModel = koinViewModel(),
-    state: SheetState = stringsViewModel.addStringSheetState
+    state: SheetState,
+    currentCategory: APIStringsCategory?,
+    onAddStringRequest: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
+    var stringInput by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) try {
@@ -55,12 +57,12 @@ fun AddStringSheet(
 
     AppModalBottomSheet(
         title = stringResource(R.string.strings_add)
-            .replace("{CATEGORY}", stringsViewModel.currentCategory?.title?.lowercase() ?:  ""),
+            .replace("{CATEGORY}", currentCategory?.title?.lowercase() ?: ""),
         sheetState = state
     ) {
         OutlinedTextField(
-            value = stringsViewModel.addStringInput,
-            onValueChange = { stringsViewModel.addStringInput = it },
+            value = stringInput,
+            onValueChange = { stringInput = it },
             placeholder = { Text(stringResource(R.string.strings_add_placeholder)) },
             modifier = Modifier
                 .animateContentSize()
@@ -75,9 +77,9 @@ fun AddStringSheet(
                 horizontal = 8.dp
             )
         ) {
-            Crossfade(stringsViewModel.addStringInput.isNotBlank()) { enabled ->
+            Crossfade(stringInput.isNotBlank()) { enabled ->
                 OutlinedButton(
-                    onClick = { stringsViewModel.addStringInput = "" },
+                    onClick = { stringInput = "" },
                     shapes = ButtonDefaults.shapes(),
                     enabled = enabled
                 ) {
@@ -87,10 +89,9 @@ fun AddStringSheet(
             }
 
             Button(
-                onClick = { scope.launch {
-                    stringsViewModel.addStringFromInput()
-                    state.hide()
-                } },
+                onClick = {
+                    onAddStringRequest(stringInput)
+                },
                 shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Rounded.Done))

@@ -1,5 +1,6 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -49,65 +50,29 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.data.api.APIProfile
-import com.aliernfrog.ensimanager.data.api.cache
-import com.aliernfrog.ensimanager.data.api.id
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.ButtonIcon
-import com.aliernfrog.ensimanager.ui.component.FadeVisibility
+import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.togglePasswordVisibilityText
-import com.aliernfrog.ensimanager.ui.viewmodel.APIViewModel
 import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
+import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun APIProfileSheet(
-    apiViewModel: APIViewModel = koinViewModel(),
-    sheetState: SheetState = apiViewModel.profileSheetState
+    sheetState: SheetState,
+    topToastState: TopToastState,
+    editingProfile: APIProfile?,
+    existingProfiles: List<APIProfile>,
+    onUpdateProfileRequest: (new: APIProfile) -> Unit,
+    onAddProfileRequest: (new: APIProfile) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    var fetching by rememberSaveable { mutableStateOf(false) }
-    var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
-
-    val editingProfile = apiViewModel.profileSheetEditingProfile
-    val isNameUnique = !apiViewModel.apiProfiles.any {
-        it.name == apiViewModel.profileSheetName && it.id != editingProfile?.id
-    }
-    val isURLUnique = !apiViewModel.apiProfiles.any {
-        it.endpointsURL == apiViewModel.profileSheetEndpointsURL && it.id != editingProfile?.id
-    }
-    val isEndpointUnsecure by remember { derivedStateOf {
-        apiViewModel.profileSheetEndpointsURL.let {
-            it.contains("://") && !it.startsWith("https://", ignoreCase = true)
-        }
-    } }
-    val valid by remember { derivedStateOf {
-        apiViewModel.profileSheetName.isNotEmpty() && apiViewModel.profileSheetEndpointsURL.isNotEmpty() && isNameUnique && isURLUnique
-    } }
-
-    trustNewCertDialogProfile?.let { profile ->
-        val cache = profile.cache ?: return@let
-        TrustNewCertDialog(
-            publicKey = cache.endpoints?.sslPublicKey,
-            onTrust = { scope.launch {
-                val withKey = profile.copy(trustedSha256 = cache.endpoints?.sslPublicKey)
-                if (editingProfile != null) apiViewModel.updateProfile(editingProfile, withKey)
-                else apiViewModel.apiProfiles.add(withKey)
-                trustNewCertDialogProfile = null
-                apiViewModel.saveProfiles()
-                apiViewModel.topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
-                sheetState.hide()
-                apiViewModel.clearProfileSheetState()
-            } },
-            onDismissRequest = { trustNewCertDialogProfile = null }
-        )
-    }
 
     AppModalBottomSheet(
         title = editingProfile?.name.let {
@@ -116,13 +81,63 @@ fun APIProfileSheet(
         },
         sheetState = sheetState
     ) {
+        var name by rememberSaveable {
+            mutableStateOf(editingProfile?.name ?: "")
+        }
+        var endpointsURL by rememberSaveable {
+            mutableStateOf(editingProfile?.endpointsURL ?: "")
+        }
+        var authorization by rememberSaveable {
+            mutableStateOf(editingProfile?.authorization ?: "")
+        }
+        var showAuthorization by rememberSaveable {
+            mutableStateOf(false)
+        }
+        var sha256 by rememberSaveable {
+            mutableStateOf(editingProfile?.trustedSha256 ?: "")
+        }
+
+        var fetching by rememberSaveable { mutableStateOf(false) }
+        var trustNewCertDialogProfile by remember { mutableStateOf<APIProfile?>(null) }
+
+        val isNameUnique = !existingProfiles.any {
+            it.name == name && it.id != editingProfile?.id
+        }
+        val isURLUnique = !existingProfiles.any {
+            it.endpointsURL == endpointsURL && it.id != editingProfile?.id
+        }
+        val isEndpointUnsecure by remember { derivedStateOf {
+            endpointsURL.let {
+                it.contains("://") && !it.startsWith("https://", ignoreCase = true)
+            }
+        } }
+        val valid by remember { derivedStateOf {
+            name.isNotEmpty() && endpointsURL.isNotEmpty() && isNameUnique && isURLUnique
+        } }
+
+        trustNewCertDialogProfile?.let { profile ->
+            TrustNewCertDialog(
+                publicKey = profile.endpoints?.sslPublicKey,
+                onTrust = { scope.launch {
+                    val withKey = profile.copy(trustedSha256 = profile.endpoints?.sslPublicKey)
+                    if (editingProfile != null) onUpdateProfileRequest(withKey)
+                    else onAddProfileRequest(withKey)
+                    trustNewCertDialogProfile = null
+                    @SuppressLint("LocalContextGetResourceValueCall")
+                    topToastState.showSuccessToast(context.getString(R.string.api_profiles_add_saved), androidToast = true)
+                    sheetState.hide()
+                } },
+                onDismissRequest = { trustNewCertDialogProfile = null }
+            )
+        }
+
         Column(
             modifier = Modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
-                value = apiViewModel.profileSheetName,
-                onValueChange = { apiViewModel.profileSheetName = it },
+                value = name,
+                onValueChange = { name = it },
                 label = { Text(stringResource(R.string.api_profiles_add_name)) },
                 leadingIcon = {
                     Icon(Icons.AutoMirrored.Filled.Label, null)
@@ -135,8 +150,8 @@ fun APIProfileSheet(
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
             OutlinedTextField(
-                value = apiViewModel.profileSheetEndpointsURL,
-                onValueChange = { apiViewModel.profileSheetEndpointsURL = it },
+                value = endpointsURL,
+                onValueChange = { endpointsURL = it },
                 label = { Text(stringResource(R.string.api_profiles_add_endpointsURL)) },
                 leadingIcon = {
                     Icon(Icons.Default.Api, null)
@@ -153,8 +168,8 @@ fun APIProfileSheet(
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
             OutlinedTextField(
-                value = apiViewModel.profileSheetAuthorization,
-                onValueChange = { apiViewModel.profileSheetAuthorization = it },
+                value = authorization,
+                onValueChange = { authorization = it },
                 label = { Text(stringResource(R.string.api_profiles_add_authorization)) },
                 leadingIcon = {
                     Icon(Icons.Default.Key, null)
@@ -162,26 +177,26 @@ fun APIProfileSheet(
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            apiViewModel.profileSheetShowAuthorization = !apiViewModel.profileSheetShowAuthorization
+                            showAuthorization = !showAuthorization
                         },
                         shapes = IconButtonDefaults.shapes()
                     ) {
                         Icon(
-                            imageVector = if (apiViewModel.profileSheetShowAuthorization) Icons.Rounded.VisibilityOff
+                            imageVector = if (showAuthorization) Icons.Rounded.VisibilityOff
                             else Icons.Rounded.Visibility,
-                            contentDescription = togglePasswordVisibilityText(apiViewModel.profileSheetShowAuthorization)
+                            contentDescription = togglePasswordVisibilityText(showAuthorization)
                         )
                     }
                 },
                 supportingText = { Text(stringResource(R.string.api_profiles_add_authorization_info)) },
                 readOnly = fetching,
-                visualTransformation = if (apiViewModel.profileSheetShowAuthorization) VisualTransformation.None
+                visualTransformation = if (showAuthorization) VisualTransformation.None
                 else PasswordVisualTransformation(),
                 modifier = Modifier.animateContentSize().fillMaxWidth()
             )
             OutlinedTextField(
-                value = apiViewModel.profileSheetTrustedSha256,
-                onValueChange = { apiViewModel.profileSheetTrustedSha256 = it },
+                value = sha256,
+                onValueChange = { sha256 = it },
                 label = { Text(stringResource(R.string.api_profiles_add_sha256)) },
                 leadingIcon = {
                     Icon(Icons.Default.VerifiedUser, null)
@@ -229,16 +244,15 @@ fun APIProfileSheet(
                     onClick = {
                         if (!valid) return@Button
                         val profile = APIProfile(
-                            name = apiViewModel.profileSheetName,
-                            endpointsURL = apiViewModel.profileSheetEndpointsURL,
-                            authorization = apiViewModel.profileSheetAuthorization,
-                            trustedSha256 = apiViewModel.profileSheetTrustedSha256.ifBlank { null }
+                            name = name,
+                            endpointsURL = endpointsURL,
+                            authorization = authorization,
+                            trustedSha256 = sha256.ifBlank { null }
                         )
                         scope.launch {
                             fetching = true
-                            apiViewModel.fetchAPIEndpoints(profile)
-                            val error = apiViewModel.profileErrors[profile.id]
-                            if (error != null) apiViewModel.topToastState.showErrorToast(error, androidToast = true)
+                            profile.fetchAPIEndpoints()
+                            if (profile.error != null) topToastState.showErrorToast(profile.error.orEmpty(), androidToast = true)
                             else trustNewCertDialogProfile = profile
                             fetching = false
                         }

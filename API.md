@@ -69,7 +69,7 @@ This endpoint must return a JSON of [`APIDashboard`](./app/src/main/java/com/ali
 To display strings and make the strings tab visible, you must provide the `getStrings` field for [`APIEndpoints`](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIEndpoints.kt) as shown above.
 
 ## Displaying strings
-`getStrings` endpoint must return a JSON array of [`APIChatCategory`](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIChatCategory.kt):
+`getStrings` endpoint must return a JSON array of [`APIStringsCategory`](./app/src/main/java/com/aliernfrog/ensimanager/data/api/APIStringsCategory.kt):
 ```json
 [
   {

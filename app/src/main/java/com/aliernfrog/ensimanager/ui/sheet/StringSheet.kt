@@ -12,28 +12,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
-import com.aliernfrog.ensimanager.ui.component.AppModalBottomSheet
-import com.aliernfrog.ensimanager.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.ensimanager.ui.viewmodel.StringsViewModel
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun StringSheet(
-    stringsViewModel: StringsViewModel = koinViewModel(),
-    state: SheetState = stringsViewModel.wordSheetState
+    state: SheetState,
+    string: String,
+    stringCategory: String?,
+    onDeleteStringRequest: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     AppModalBottomSheet(sheetState = state) {
         ExpressiveSection(
-            title = stringsViewModel.chosenStringCategory?.replaceFirstChar { it.uppercase() } ?: ""
+            title = stringCategory?.replaceFirstChar { it.uppercase() } ?: ""
         ) {
             Card(
                 modifier = Modifier
@@ -44,15 +40,12 @@ fun StringSheet(
                     vertical = 8.dp,
                     horizontal = 12.dp
                 )) {
-                    Text(stringsViewModel.chosenString)
+                    Text(string)
                 }
             }
         }
         Button(
-            onClick = { scope.launch {
-                stringsViewModel.deleteChosenWord()
-                state.hide()
-            } },
+            onClick = onDeleteStringRequest,
             shapes = ButtonDefaults.shapes(),
             modifier = Modifier
                 .fillMaxWidth()
