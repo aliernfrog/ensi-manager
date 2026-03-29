@@ -1,7 +1,6 @@
-package com.aliernfrog.ensimanager.ui.screen
+package com.aliernfrog.ensimanager.ui.screen.profiles
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -69,8 +68,7 @@ import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
-import com.aliernfrog.ensimanager.ui.sheet.APIProfileSheet
-import com.aliernfrog.ensimanager.ui.viewmodel.APIProfilesViewModel
+import com.aliernfrog.ensimanager.ui.viewmodel.ProfilesViewModel
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
@@ -80,6 +78,7 @@ import io.github.aliernfrog.shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.shared.ui.component.TextWithIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.util.AnimatedVisibilityShadowWorkaround
 import io.github.aliernfrog.shared.ui.dialog.DeleteConfirmationDialog
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
@@ -89,8 +88,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun APIProfilesScreen(
-    vm: APIProfilesViewModel = koinViewModel(),
+fun ProfilesScreen(
+    vm: ProfilesViewModel = koinViewModel(),
     isInitialScreen: Boolean,
     onNavigateSettingsRequest: (() -> Unit)?,
     onNavigateBackRequest: (() -> Unit)? = null
@@ -110,7 +109,7 @@ fun APIProfilesScreen(
             AppSmallTopBar(
                 title = stringResource(
                     if (isInitialScreen) R.string.app_name
-                    else R.string.api_profiles
+                    else R.string.profiles
                 ),
                 scrollBehavior = it,
                 onNavigationClick = onNavigateBackRequest,
@@ -135,12 +134,13 @@ fun APIProfilesScreen(
             )
         },
         floatingActionButton = {
-            AnimatedVisibility(apiProfiles.isNotEmpty()) {
+            AnimatedVisibilityShadowWorkaround(apiProfiles.isNotEmpty()) {
                 FloatingActionButton(
-                    icon = Icons.Default.Add
-                ) { scope.launch {
-                    vm.openProfileSheetToAddNew()
-                } }
+                    icon = Icons.Default.Add,
+                    modifier = Modifier.navigationBarsPadding()
+                ) {
+                    vm.navigateToProfileScreen(null)
+                }
             }
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -162,17 +162,15 @@ fun APIProfilesScreen(
                         .padding(vertical = 32.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.api_profiles_empty),
+                        text = stringResource(R.string.profiles_empty),
                         textAlign = TextAlign.Center
                     )
                     Button(
-                        onClick = { scope.launch {
-                            vm.openProfileSheetToAddNew()
-                        } },
+                        onClick = { vm.navigateToProfileScreen(null) },
                         shapes = ButtonDefaults.shapes()
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.Add))
-                        Text(stringResource(R.string.api_profiles_add))
+                        Text(stringResource(R.string.profiles_add))
                     }
                 }
             } else if (!vm.apiState.dataEncryptionEnabled && !vm.prefs.encryptionSuggestionDismissed.value) item {
@@ -196,32 +194,18 @@ fun APIProfilesScreen(
             }
         }
     }
-
-    APIProfileSheet(
-        sheetState = vm.profileSheetState,
-        topToastState = vm.topToastState,
-        editingProfile = vm.profileSheetEditingProfile,
-        existingProfiles = apiProfiles,
-        onUpdateProfileRequest = {
-            vm.apiState.updateProfile(vm.profileSheetEditingProfile!!.id, it)
-        },
-        onAddProfileRequest = {
-            vm.apiState.addProfile(it)
-        }
-    )
 }
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ProfileCard(
-    vm: APIProfilesViewModel,
+    vm: ProfilesViewModel,
     profile: APIProfile,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val layoutDirection = LocalLayoutDirection.current
-    val scope = rememberCoroutineScope()
     val clickable = profile.isAvailable
 
     var showDeleteConfirmation by remember { mutableStateOf(false) }
@@ -233,7 +217,7 @@ private fun ProfileCard(
             vm.apiState.deleteProfile(profile.id)
             vm.topToastState.showSuccessToast(
                 @SuppressLint("LocalContextGetResourceValueCall")
-                context.getString(R.string.api_profiles_delete_deleted).replace("{NAME}", profile.name)
+                context.getString(R.string.profiles_delete_deleted).replace("{NAME}", profile.name)
             )
             showDeleteConfirmation = false
         }
@@ -299,7 +283,7 @@ private fun ProfileCard(
 
         profile.endpoints?.deprecatedEndpoints?.let {
             if (it.isNotEmpty()) TextWithIcon(
-                text = stringResource(R.string.api_profiles_deprecations)+"\n"+
+                text = stringResource(R.string.profiles_deprecations)+"\n"+
                         it.map { (old, new) -> "$old -> $new" }.joinToString("\n"),
                 icon = rememberVectorPainter(Icons.Default.Warning),
                 modifier = Modifier.padding(
@@ -314,7 +298,7 @@ private fun ProfileCard(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 TextWithIcon(
-                    text = stringResource(R.string.api_profiles_migrated).replace("{URL}", migratedURL),
+                    text = stringResource(R.string.profiles_migrated).replace("{URL}", migratedURL),
                     icon = rememberVectorPainter(Icons.Default.MoveUp),
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(
                         end = 8.dp
@@ -331,7 +315,7 @@ private fun ProfileCard(
                     },
                     shapes = ButtonDefaults.shapes()
                 ) {
-                    Text(stringResource(R.string.api_profiles_migrated_migrate))
+                    Text(stringResource(R.string.profiles_migrated_migrate))
                 }
             }
         }
@@ -371,16 +355,14 @@ private fun ProfileCard(
                 )
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Delete))
-                Text(stringResource(R.string.api_profiles_delete))
+                Text(stringResource(R.string.profiles_delete))
             }
             Button(
-                onClick = { scope.launch {
-                    vm.openProfileSheetToEdit(profile)
-                } },
+                onClick = { vm.navigateToProfileScreen(profile) },
                 shapes = ButtonDefaults.shapes()
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Edit))
-                Text(stringResource(R.string.api_profiles_edit))
+                Text(stringResource(R.string.profiles_edit))
             }
         }
     }

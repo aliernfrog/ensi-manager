@@ -108,8 +108,8 @@ class APIProfile(
                 } else {
                     error = if (response.error != WebUtil.SEND_REQUEST_SHA256_UNMATCH_ERROR) response.summary
                     else contextUtils.getString(
-                        if (isAlreadySaved) R.string.api_profiles_sha256fail
-                        else R.string.api_profiles_sha256fail_unsaved
+                        if (isAlreadySaved) R.string.profiles_sha256fail
+                        else R.string.profiles_sha256fail_unsaved
                     )
                 }
             } catch (e: Exception) {

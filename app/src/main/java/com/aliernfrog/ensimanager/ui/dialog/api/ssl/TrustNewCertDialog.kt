@@ -38,7 +38,7 @@ fun TrustNewCertDialog(
                 shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(
-                    if (publicKey != null) R.string.api_ssl_trust else R.string.api_profiles_add
+                    if (publicKey != null) R.string.api_ssl_trust else R.string.profiles_add
                 ))
             }
         },

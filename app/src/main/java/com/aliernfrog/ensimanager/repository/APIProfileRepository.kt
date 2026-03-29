@@ -57,7 +57,7 @@ class APIProfileRepository(
             } catch (e: Exception) {
                 // Broken data
                 Log.e(TAG, "APIProfileRepository/loadAPIProfiles: failed to load saved profiles", e)
-                topToastState.showReportableErrorToast(R.string.api_profiles_restoreError, e)
+                topToastState.showReportableErrorToast(R.string.profiles_restoreError, e)
                 APIProfilesLoadResult.Error
             }
         }
@@ -152,7 +152,7 @@ class APIProfileRepository(
     fun restoreLegacyProfile(context: Context) {
         if (prefs.legacyAPIURL.value.isNotBlank()) {
             _apiProfiles.value = _apiProfiles.value.plus(APIProfile(
-                name = context.getString(R.string.api_profiles_migratedFromV2),
+                name = context.getString(R.string.profiles_migratedFromV2),
                 endpointsURL = prefs.legacyAPIURL.value,
                 authorization = prefs.legacyAPIAuth.value
             ))

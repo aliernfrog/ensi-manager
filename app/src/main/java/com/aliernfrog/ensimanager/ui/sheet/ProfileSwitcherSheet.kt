@@ -37,7 +37,7 @@ import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun APIProfileSwitchSheet(
+fun ProfileSwitchSheet(
     sheetState: SheetState,
     onNavigateSettingsRequest: () -> Unit,
     onNavigateApiProfilesRequest: () -> Unit
@@ -69,7 +69,7 @@ fun APIProfileSwitchSheet(
                            onClick = onSettingsClick,
                            shapes = ButtonDefaults.shapes()
                        ) {
-                           Text(stringResource(R.string.api_profiles_switcher_update))
+                           Text(stringResource(R.string.profileSwitcher_update))
                        }
                     } } else null
                 ) {
@@ -83,7 +83,7 @@ fun APIProfileSwitchSheet(
             val isAvailable = profile.isAvailable
             ExpressiveButtonRow(
                 title = profile.name,
-                description = if (!isAvailable) stringResource(R.string.api_profiles_switcher_unavailable) else null,
+                description = if (!isAvailable) stringResource(R.string.profileSwitcher_unavailable) else null,
                 enabled = isAvailable,
                 icon = profile.endpoints?.metadata?.iconURL?.let { iconURL -> {
                     AsyncImage(
@@ -116,7 +116,7 @@ fun APIProfileSwitchSheet(
                 *profileButtons.toTypedArray(),
                 {
                     ExpressiveButtonRow(
-                        title = stringResource(R.string.api_profiles_switcher_manageProfiles),
+                        title = stringResource(R.string.profileSwitcher_manageProfiles),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api)) },
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {

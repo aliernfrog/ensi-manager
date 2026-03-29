@@ -67,7 +67,7 @@ fun SettingsButton(
                 if (iconURL != null) rememberAsyncImagePainter(iconURL)
                 else rememberVectorPainter(Icons.Default.Api)
             },
-            contentDescription = stringResource(R.string.api_profiles_switcher),
+            contentDescription = stringResource(R.string.profileSwitcher),
             modifier = Modifier.size(32.dp)
         )
     } else BadgedIconButton {

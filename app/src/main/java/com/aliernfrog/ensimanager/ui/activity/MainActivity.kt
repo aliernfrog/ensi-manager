@@ -30,9 +30,10 @@ import com.aliernfrog.ensimanager.crashReportURL
 import com.aliernfrog.ensimanager.ui.component.MainDestinationContent
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.DecryptionDialog
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.EncryptionDialog
-import com.aliernfrog.ensimanager.ui.screen.APIProfilesScreen
+import com.aliernfrog.ensimanager.ui.screen.profiles.ProfileScreen
+import com.aliernfrog.ensimanager.ui.screen.profiles.ProfilesScreen
 import com.aliernfrog.ensimanager.ui.screen.settings.SettingsScreen
-import com.aliernfrog.ensimanager.ui.sheet.APIProfileSwitchSheet
+import com.aliernfrog.ensimanager.ui.sheet.ProfileSwitchSheet
 import com.aliernfrog.ensimanager.ui.theme.EnsiManagerTheme
 import com.aliernfrog.ensimanager.ui.viewmodel.MainViewModel
 import com.aliernfrog.ensimanager.util.Destination
@@ -51,7 +52,9 @@ import io.github.aliernfrog.shared.util.LocalSharedString
 import io.github.aliernfrog.shared.util.SharedString
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity() {
 
@@ -102,6 +105,8 @@ class MainActivity : AppCompatActivity() {
     fun App(vm: MainViewModel) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
+
+        // MainDestinationGroup handles imePadding differently, so do not apply it here
         val applyImePadding = !vm.appState.navController.isAtMainDestination
 
         val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
@@ -117,6 +122,8 @@ class MainActivity : AppCompatActivity() {
             vm.appState.navController.add(SettingsDestination.root)
         }
 
+        fun getUniqueNavKey() = System.nanoTime().toString()
+
         InsetsObserver()
         AppContainer {
             NavDisplay(
@@ -124,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .let {
-                        // MainDestinationGroup handles imePadding, so skip it here if we are at MainDestinationGroup
                         if (applyImePadding) it.imePadding() else it
                     },
                 entryProvider = entryProvider {
@@ -132,14 +138,27 @@ class MainActivity : AppCompatActivity() {
                         MainDestinationContent(vm)
                     }
 
-                    entry<Destination.APIProfiles>(
+                    entry<Destination.Profiles>(
                         metadata = slideTransitionMetadata
                     ) { destination ->
                         val isFirst = vm.appState.navController.backStack.firstOrNull() == destination
-                        APIProfilesScreen(
+                        ProfilesScreen(
                             isInitialScreen = isFirst,
                             onNavigateSettingsRequest = onNavigateSettingsRequest,
                             onNavigateBackRequest = if (isFirst) null else onNavigateBackRequest
+                        )
+                    }
+
+                    entry<Destination.Profile>(
+                        metadata = slideTransitionMetadata
+                    ) { destination ->
+                        ProfileScreen(
+                            vm = koinViewModel(
+                                key = getUniqueNavKey()
+                            ) {
+                                parametersOf(destination.data)
+                            },
+                            onNavigateBackRequest = onNavigateBackRequest
                         )
                     }
 
@@ -227,11 +246,11 @@ class MainActivity : AppCompatActivity() {
                 } } else null
             )
 
-            APIProfileSwitchSheet(
+            ProfileSwitchSheet(
                 sheetState = vm.apiState.profileSwitcherSheetState,
                 onNavigateSettingsRequest = onNavigateSettingsRequest,
                 onNavigateApiProfilesRequest = {
-                    vm.appState.navController.add(Destination.APIProfiles)
+                    vm.appState.navController.add(Destination.Profiles)
                 }
             )
 

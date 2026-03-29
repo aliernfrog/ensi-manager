@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.data.api.APIEndpoints
+import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.util.extension.removeLastIfMultiple
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.screen.settings.category
@@ -32,7 +33,7 @@ import io.github.aliernfrog.shared.util.SharedStringResolvable
 
 class NavController {
     companion object {
-        val INITIAL_DESTINATION = Destination.APIProfiles
+        val INITIAL_DESTINATION = Destination.Profiles
         val INITIAL_MAIN_DESTINATION = MainDestination.DASHBOARD
     }
 
@@ -100,9 +101,14 @@ enum class MainDestination(
 }
 
 sealed class Destination {
-    object APIProfiles : Destination()
+    object Profiles : Destination()
+    class Profile(val data: ProfileScreenData) : Destination()
     object Updates : Destination()
 }
+
+data class ProfileScreenData(
+    val editingProfile: APIProfile?
+)
 
 class AppSettingsDestination {
     companion object {
