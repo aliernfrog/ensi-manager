@@ -2,9 +2,12 @@ package com.aliernfrog.ensimanager.repository
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.impl.api.APIProfile
+import com.aliernfrog.ensimanager.util.extension.randomWithoutTransparency
 import com.aliernfrog.ensimanager.util.extension.showReportableErrorToast
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.ensimanager.util.staticutil.BiometricUtil
@@ -153,8 +156,11 @@ class APIProfileRepository(
         if (prefs.legacyAPIURL.value.isNotBlank()) {
             _apiProfiles.value = _apiProfiles.value.plus(APIProfile(
                 name = context.getString(R.string.profiles_migratedFromV2),
+                color = Color.randomWithoutTransparency().toArgb(),
                 endpointsURL = prefs.legacyAPIURL.value,
-                authorization = prefs.legacyAPIAuth.value
+                authorization = prefs.legacyAPIAuth.value,
+                trustedSha256 = null,
+                manualFetch = false
             ))
             prefs.legacyAPIURL.resetValue()
             saveProfiles()

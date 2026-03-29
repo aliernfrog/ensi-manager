@@ -11,17 +11,19 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.domain.AppState
 import com.aliernfrog.ensimanager.ui.component.api.ProfileIcon
+import com.aliernfrog.ensimanager.util.extension.randomWithoutTransparency
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -38,6 +40,10 @@ fun SettingsButton(
 
     val scope = rememberCoroutineScope()
     val chosenProfile = apiState.chosenProfile
+    val chosenProfileColor = remember(chosenProfile) {
+        if (chosenProfile == null) Color.randomWithoutTransparency()
+        else Color(chosenProfile.color)
+    }
 
     @Composable
     fun BadgedIconButton(content: @Composable () -> Unit) {
@@ -67,7 +73,7 @@ fun SettingsButton(
         ProfileIcon(
             profileName = chosenProfile?.name ?: "-",
             model = chosenProfile?.endpoints?.metadata?.iconURL,
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = chosenProfileColor,
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)

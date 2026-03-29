@@ -10,15 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.filled.Api
-import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Api
+import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Card
@@ -38,8 +39,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.ensimanager.R
@@ -80,6 +85,10 @@ fun ProfileScreen(
     val valid by remember { derivedStateOf {
         vm.name.isNotEmpty() && vm.endpointsURL.isNotEmpty() && isNameUnique && isURLUnique
     } }
+
+    val color = remember(vm.color) {
+        Color(vm.color)
+    }
 
     vm.certDialogProfile?.let { profile ->
         CertConfirmationDialog(
@@ -131,7 +140,7 @@ fun ProfileScreen(
             ProfileIcon(
                 profileName = vm.name,
                 model = vm.editingProfile?.endpoints?.metadata?.iconURL,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                containerColor = color,
                 size = 150.dp,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -175,7 +184,10 @@ fun ProfileScreen(
                         onValueChange = { vm.name = it },
                         label = { Text(stringResource(R.string.profiles_add_name)) },
                         leadingIcon = {
-                            Icon(Icons.AutoMirrored.Filled.Label, null)
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.Label),
+                                modifier = Modifier.padding(start = 18.dp, end = 12.dp)
+                            )
                         },
                         supportingText = if (!isNameUnique) { {
                             Text(stringResource(R.string.profiles_add_name_alreadyExists))
@@ -191,7 +203,10 @@ fun ProfileScreen(
                         onValueChange = { vm.endpointsURL = it },
                         label = { Text(stringResource(R.string.profiles_add_endpointsURL)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Api, null)
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.Api),
+                                modifier = Modifier.padding(start = 18.dp, end = 12.dp)
+                            )
                         },
                         supportingText = {
                             Text(stringResource(
@@ -211,7 +226,10 @@ fun ProfileScreen(
                         onValueChange = { vm.authorization = it },
                         label = { Text(stringResource(R.string.profiles_add_authorization)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Key, null)
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.Key),
+                                modifier = Modifier.padding(start = 18.dp, end = 12.dp)
+                            )
                         },
                         supportingText = { Text(stringResource(R.string.profiles_add_authorization_info)) },
                         trailingIcon = {
@@ -226,6 +244,10 @@ fun ProfileScreen(
                                 }
                             )
                         },
+                        visualTransformation = if (vm.showAuthorization) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = if (vm.showAuthorization) KeyboardType.Text else KeyboardType.Password
+                        ),
                         modifier = Modifier.animateContentSize().fillMaxWidth()
                     )
                 },
@@ -235,7 +257,10 @@ fun ProfileScreen(
                         onValueChange = { vm.sha256 = it },
                         label = { Text(stringResource(R.string.profiles_add_sha256)) },
                         leadingIcon = {
-                            Icon(Icons.Default.VerifiedUser, null)
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.Rounded.VerifiedUser),
+                                modifier = Modifier.padding(start = 18.dp, end = 12.dp)
+                            )
                         },
                         supportingText = {
                             Text(stringResource(

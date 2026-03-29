@@ -29,10 +29,11 @@ import kotlin.collections.component2
 
 class APIProfile(
     val name: String,
+    val color: Int,
     val endpointsURL: String,
     val authorization: String,
-    val trustedSha256: String? = null,
-    val manualFetch: Boolean = false
+    val trustedSha256: String?,
+    val manualFetch: Boolean
 ): KoinComponent {
     val id = endpointsURL
 
@@ -134,13 +135,17 @@ class APIProfile(
 
     fun copy(
         name: String = this.name,
+        color: Int = this.color,
         endpointsURL: String = this.endpointsURL,
         authorization: String = this.authorization,
-        trustedSha256: String? = this.trustedSha256
+        trustedSha256: String? = this.trustedSha256,
+        manualFetch: Boolean = this.manualFetch
     ): APIProfile = APIProfile(
         name = name,
+        color = color,
         endpointsURL = endpointsURL,
         authorization = authorization,
-        trustedSha256
+        trustedSha256 = trustedSha256,
+        manualFetch = manualFetch
     )
 }

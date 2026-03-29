@@ -1,11 +1,14 @@
 package com.aliernfrog.ensimanager.di
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.aliernfrog.ensimanager.BuildConfig
 import com.aliernfrog.ensimanager.TAG
 import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.domain.AppState
 import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.repository.APIProfileRepository
+import com.aliernfrog.ensimanager.util.extension.randomWithoutTransparency
 import com.aliernfrog.ensimanager.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.gson.GsonBuilder
@@ -23,6 +26,7 @@ val appModule = module {
                 val obj = json.asJsonObject
                 APIProfile(
                     name = obj.get("name").asString,
+                    color = obj.get("color")?.asInt ?: Color.randomWithoutTransparency().toArgb(),
                     endpointsURL = obj.get("endpointsURL").asString,
                     authorization = obj.get("authorization").asString,
                     trustedSha256 = obj.get("trustedSha256")?.asString,

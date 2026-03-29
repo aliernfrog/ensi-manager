@@ -53,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -207,6 +208,10 @@ private fun ProfileCard(
     val layoutDirection = LocalLayoutDirection.current
     val clickable = profile.isAvailable
 
+    val profileColor = remember(profile) {
+        Color(profile.color)
+    }
+
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     if (showDeleteConfirmation) DeleteConfirmationDialog(
@@ -249,7 +254,7 @@ private fun ProfileCard(
                     ProfileIcon(
                         profileName = profile.name,
                         model = profile.endpoints?.metadata?.iconURL,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = profileColor,
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)

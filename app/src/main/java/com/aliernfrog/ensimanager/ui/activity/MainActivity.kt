@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                     ) { destination ->
                         ProfileScreen(
                             vm = koinViewModel(
-                                key = getUniqueNavKey()
+                                key = rememberSaveable { getUniqueNavKey() }
                             ) {
                                 parametersOf(destination.data)
                             },

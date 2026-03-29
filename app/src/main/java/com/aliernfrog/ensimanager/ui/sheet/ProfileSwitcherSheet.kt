@@ -17,9 +17,11 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -83,6 +85,10 @@ fun ProfileSwitchSheet(
 
         val profileButtons: List<@Composable () -> Unit> = apiProfiles.map { profile -> {
             val isAvailable = profile.isAvailable
+            val profileColor = remember(profile) {
+                Color(profile.color)
+            }
+
             ExpressiveButtonRow(
                 title = profile.name,
                 enabled = isAvailable,
@@ -90,7 +96,7 @@ fun ProfileSwitchSheet(
                     ProfileIcon(
                         profileName = profile.name,
                         model = profile.endpoints?.metadata?.iconURL,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = profileColor,
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
