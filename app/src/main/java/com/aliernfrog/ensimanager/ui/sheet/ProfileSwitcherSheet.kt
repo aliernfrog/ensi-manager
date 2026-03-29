@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +29,7 @@ import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.domain.AppState
 import com.aliernfrog.ensimanager.ui.component.api.ProfileIcon
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
@@ -82,7 +85,6 @@ fun ProfileSwitchSheet(
             val isAvailable = profile.isAvailable
             ExpressiveButtonRow(
                 title = profile.name,
-                description = if (!isAvailable) stringResource(R.string.profileSwitcher_unavailable) else null,
                 enabled = isAvailable,
                 icon = {
                     ProfileIcon(
@@ -95,12 +97,18 @@ fun ProfileSwitchSheet(
                     )
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                trailingComponent = if (isAvailable) { {
-                    RadioButton(
+                trailingComponent = {
+                    if (isAvailable) RadioButton(
                         selected = apiState.chosenProfile?.id == profile.id,
                         onClick = { apiState.chosenProfile = profile }
                     )
-                } } else null
+                    else if (profile.isFetching) CircularProgressIndicator()
+                    else IconButtonWithTooltip(
+                        icon = rememberVectorPainter(Icons.Default.Refresh),
+                        contentDescription = stringResource(R.string.profiles_fetch),
+                        onClick = { scope.launch { profile.fetchAPIEndpoints() } }
+                    )
+                }
             ) {
                 if (isAvailable) scope.launch {
                     apiState.chosenProfile = profile

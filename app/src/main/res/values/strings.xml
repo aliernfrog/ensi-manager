@@ -28,7 +28,6 @@
 
     <string name="profileSwitcher">Profiles and settings</string>
     <string name="profileSwitcher_update">Update available</string>
-    <string name="profileSwitcher_unavailable">API unavailable, check profile configuration for more info</string>
     <string name="profileSwitcher_manageProfiles">Manage API profiles</string>
 
     <string name="profiles">API Profiles</string>
