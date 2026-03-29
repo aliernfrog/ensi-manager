@@ -1,7 +1,7 @@
 package com.aliernfrog.ensimanager.ui.sheet
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
@@ -22,16 +22,15 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.domain.AppState
+import com.aliernfrog.ensimanager.ui.component.api.ProfileIcon
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.shared.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -85,16 +84,15 @@ fun ProfileSwitchSheet(
                 title = profile.name,
                 description = if (!isAvailable) stringResource(R.string.profileSwitcher_unavailable) else null,
                 enabled = isAvailable,
-                icon = profile.endpoints?.metadata?.iconURL?.let { iconURL -> {
-                    AsyncImage(
-                        model = iconURL,
-                        contentDescription = null,
+                icon = {
+                    ProfileIcon(
+                        profileName = profile.name,
+                        model = profile.endpoints?.metadata?.iconURL,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier
-                            .size(ROW_DEFAULT_ICON_SIZE)
+                            .fillMaxSize()
                             .clip(CircleShape)
                     )
-                } } ?: {
-                    ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Api))
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 trailingComponent = if (isAvailable) { {

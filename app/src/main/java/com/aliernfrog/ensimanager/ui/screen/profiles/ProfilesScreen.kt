@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EnhancedEncryption
@@ -63,11 +61,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
 import com.aliernfrog.ensimanager.ui.component.api.DecryptionCard
+import com.aliernfrog.ensimanager.ui.component.api.ProfileIcon
 import com.aliernfrog.ensimanager.ui.viewmodel.ProfilesViewModel
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import io.github.aliernfrog.shared.ui.component.AppScaffold
@@ -77,7 +75,6 @@ import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.shared.ui.component.TextWithIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.util.AnimatedVisibilityShadowWorkaround
 import io.github.aliernfrog.shared.ui.dialog.DeleteConfirmationDialog
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
@@ -246,18 +243,14 @@ private fun ProfileCard(
                 description = profile.endpoints?.metadata?.name?.let {
                     if (it != profile.name) it else null
                 },
-                icon = profile.endpoints?.metadata?.iconURL?.let { iconURL -> {
-                    AsyncImage(
-                        model = iconURL,
-                        contentDescription = null,
+                icon = {
+                    ProfileIcon(
+                        profileName = profile.name,
+                        model = profile.endpoints?.metadata?.iconURL,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier
-                            .size(56.dp)
+                            .fillMaxSize()
                             .clip(CircleShape)
-                    )
-                } } ?: {
-                    ExpressiveRowIcon(
-                        painter = rememberVectorPainter(Icons.Default.Api),
-                        iconSize = 56.dp
                     )
                 },
                 iconSize = 56.dp,
