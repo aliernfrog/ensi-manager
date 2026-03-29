@@ -25,7 +25,8 @@ val appModule = module {
                     name = obj.get("name").asString,
                     endpointsURL = obj.get("endpointsURL").asString,
                     authorization = obj.get("authorization").asString,
-                    trustedSha256 = obj.get("trustedSha256")?.asString
+                    trustedSha256 = obj.get("trustedSha256")?.asString,
+                    manualFetch = obj.get("manualFetch")?.asBoolean ?: false
                 )
             })
             .create()

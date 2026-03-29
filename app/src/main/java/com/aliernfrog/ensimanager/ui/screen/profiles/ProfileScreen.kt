@@ -14,9 +14,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Api
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Card
@@ -43,14 +45,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.ui.component.api.ProfileIcon
 import com.aliernfrog.ensimanager.ui.dialog.api.crypto.togglePasswordVisibilityText
-import com.aliernfrog.ensimanager.ui.dialog.api.ssl.TrustNewCertDialog
+import com.aliernfrog.ensimanager.ui.dialog.api.ssl.CertConfirmationDialog
 import com.aliernfrog.ensimanager.ui.viewmodel.profiles.ProfileViewModel
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
 import io.github.aliernfrog.shared.ui.component.util.AnimatedVisibilityShadowWorkaround
+import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -76,8 +82,8 @@ fun ProfileScreen(
     } }
 
     vm.certDialogProfile?.let { profile ->
-        TrustNewCertDialog(
-            publicKey = profile.endpoints?.sslPublicKey,
+        CertConfirmationDialog(
+            profile = profile,
             onTrust = {
                 vm.saveProfile(profile)
             },
@@ -90,14 +96,14 @@ fun ProfileScreen(
             AppSmallTopBar(
                 title = vm.editingProfile?.let {
                     stringResource(R.string.profiles_edit_title).format(it.name)
-                } ?: stringResource(R.string.profiles_add),
+                } ?: stringResource(R.string.profiles_add_save),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         floatingActionButton = {
             AnimatedVisibilityShadowWorkaround(
-                visible = valid,
+                visible = valid && !vm.insetsManager.isImeVisible,
                 modifier = Modifier.navigationBarsPadding()
             ) {
                 SmallExtendedFloatingActionButton(
@@ -105,10 +111,7 @@ fun ProfileScreen(
                         vm.saveProfile(null)
                     },
                     icon = {
-                        Icon(
-                            imageVector = Icons.Default.Save,
-                            contentDescription = null
-                        )
+                        Icon(Icons.Default.Save, null)
                     },
                     text = {
                         Text(stringResource(R.string.profiles_add_save))
@@ -122,6 +125,7 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(bottom = AppFABPadding)
                 .navigationBarsPadding()
         ) {
             ProfileIcon(
@@ -206,6 +210,9 @@ fun ProfileScreen(
                         value = vm.authorization,
                         onValueChange = { vm.authorization = it },
                         label = { Text(stringResource(R.string.profiles_add_authorization)) },
+                        leadingIcon = {
+                            Icon(Icons.Default.Key, null)
+                        },
                         supportingText = { Text(stringResource(R.string.profiles_add_authorization_info)) },
                         trailingIcon = {
                             IconButtonWithTooltip(
@@ -242,6 +249,27 @@ fun ProfileScreen(
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
+
+            ExpressiveSection(
+                title = stringResource(R.string.profiles_add_behavior)
+            ) {
+                VerticalSegmentor(
+                    {
+                        ExpressiveSwitchRow(
+                            title = stringResource(R.string.profiles_add_behavior_fetchManually),
+                            description = stringResource(R.string.profiles_add_behavior_fetchManually_description),
+                            icon = {
+                                ExpressiveRowIcon(
+                                    rememberVectorPainter(Icons.Rounded.Refresh)
+                                )
+                            },
+                            checked = vm.manualFetch,
+                            onCheckedChange = { vm.manualFetch = it }
+                        )
+                    },
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                )
+            }
         }
     }
 }

@@ -95,7 +95,7 @@ class APIState(
     }
 
     suspend fun refetchAllProfiles() = withContext(Dispatchers.IO) {
-        apiProfiles.value.map {
+        apiProfiles.value.filter { !it.manualFetch }.map {
             async {
                 it.fetchAPIEndpoints()
             }

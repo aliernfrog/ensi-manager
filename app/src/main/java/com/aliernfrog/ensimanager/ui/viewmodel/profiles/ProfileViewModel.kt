@@ -10,14 +10,15 @@ import com.aliernfrog.ensimanager.domain.APIState
 import com.aliernfrog.ensimanager.domain.AppState
 import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.util.ProfileScreenData
-import com.aliernfrog.ensimanager.util.extension.showErrorToast
 import com.aliernfrog.ensimanager.util.extension.showSuccessToast
 import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.shared.impl.InsetsManager
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     data: ProfileScreenData,
     val apiState: APIState,
+    val insetsManager: InsetsManager,
     private val appState: AppState,
     private val topToastState: TopToastState
 ) : ViewModel() {
@@ -27,6 +28,7 @@ class ProfileViewModel(
     var endpointsURL by mutableStateOf(editingProfile?.endpointsURL ?: "")
     var authorization by mutableStateOf(editingProfile?.authorization ?: "")
     var sha256 by mutableStateOf(editingProfile?.trustedSha256 ?: "")
+    var manualFetch by mutableStateOf(editingProfile?.manualFetch ?: false)
 
     var showAuthorization by mutableStateOf(false)
     var certDialogProfile by mutableStateOf<APIProfile?>(null)
@@ -39,11 +41,11 @@ class ProfileViewModel(
                 name = name,
                 endpointsURL = endpointsURL,
                 authorization = authorization,
-                trustedSha256 = sha256.ifBlank { null }
+                trustedSha256 = sha256.ifBlank { null },
+                manualFetch = manualFetch
             )
             newProfile.fetchAPIEndpoints()
-            if (newProfile.error != null) topToastState.showErrorToast(newProfile.error.orEmpty())
-            else certDialogProfile = newProfile
+            certDialogProfile = newProfile
         } else {
             if (editingProfile != null) apiState.updateProfile(editingProfile.id, profile)
             else apiState.addProfile(profile)

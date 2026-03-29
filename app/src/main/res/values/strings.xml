@@ -40,11 +40,11 @@
     <string name="profiles_migrated_migrate">Migrate</string>
     <string name="profiles_sha256fail">Previously trusted SHA-256 no longer matches, someone might be trying to impersonate the server!\nIf you are aware of a certificate change, edit and save the profile to trust the new certificate</string>
     <string name="profiles_sha256fail_unsaved">SHA-256 does not match! Leave empty to automatically pull from the server</string>
+    <string name="profiles_fetch">Fetch</string>
     <string name="profiles_edit">Edit</string>
     <string name="profiles_edit_title">Editing profile: %s</string>
     <string name="profiles_delete">Delete</string>
     <string name="profiles_delete_deleted">Deleted profile: {NAME}</string>
-    <string name="profiles_add">Add profile</string>
     <string name="profiles_add_save">Save profile</string>
     <string name="profiles_add_name">Name</string>
     <string name="profiles_add_name_alreadyExists">There is already a profile with this name</string>
@@ -56,6 +56,9 @@
     <string name="profiles_add_sha256">Trusted SHA-256</string>
     <string name="profiles_add_sha256_info">If this does not match with the one provided by server, requests will be aborted\nLeave empty to automatically pull from the server</string>
     <string name="profiles_add_sha256_notHttps">Only available for HTTPS profiles</string>
+    <string name="profiles_add_behavior">Behavior</string>
+    <string name="profiles_add_behavior_fetchManually">Fetch profile manually</string>
+    <string name="profiles_add_behavior_fetchManually_description">When enabled, this profile will be fetched only when the fetch button on its card is tapped</string>
     <string name="profiles_add_saved">Saved profile</string>
 
     <string name="api_crypto_encrypt">Encrypt Ensi Manager</string>
@@ -79,6 +82,7 @@
     <string name="api_ssl_trust">Trust</string>
     <string name="api_ssl_trustNew_text">This profile\'s certificate SHA-256 is</string>
     <string name="api_ssl_trustNew_q">Trust this certificate?</string>
+    <string name="api_ssl_trustNew_error">Received the following error when fetching endpoints of this profile:</string>
     <string name="api_ssl_trustNew_notSecure">This profile is not secured with HTTPS! This can lead to various issues, including getting your authorization details stolen.</string>
     <string name="api_ssl_trustNew_notSecure_q">Add the profile anyway?</string>
 

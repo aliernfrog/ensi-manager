@@ -61,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.ensimanager.R
 import com.aliernfrog.ensimanager.impl.api.APIProfile
 import com.aliernfrog.ensimanager.ui.component.SettingsButton
@@ -73,6 +74,7 @@ import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.TextWithIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
 import io.github.aliernfrog.shared.ui.component.util.AnimatedVisibilityShadowWorkaround
@@ -167,7 +169,7 @@ fun ProfilesScreen(
                         shapes = ButtonDefaults.shapes()
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.Add))
-                        Text(stringResource(R.string.profiles_add))
+                        Text(stringResource(R.string.profiles_add_save))
                     }
                 }
             } else if (!vm.apiState.dataEncryptionEnabled && !vm.prefs.encryptionSuggestionDismissed.value) item {
@@ -260,6 +262,12 @@ private fun ProfileCard(
             else if (profile.isAvailable) RadioButton(
                 selected = vm.apiState.chosenProfile == profile,
                 onClick = { vm.apiState.chosenProfile = profile }
+            ) else IconButtonWithTooltip(
+                icon = rememberVectorPainter(Icons.Default.Refresh),
+                contentDescription = stringResource(R.string.profiles_fetch),
+                onClick = { vm.viewModelScope.launch {
+                    profile.fetchAPIEndpoints()
+                } }
             )
         }
 

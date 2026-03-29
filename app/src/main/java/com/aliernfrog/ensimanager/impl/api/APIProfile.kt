@@ -31,7 +31,8 @@ class APIProfile(
     val name: String,
     val endpointsURL: String,
     val authorization: String,
-    val trustedSha256: String? = null
+    val trustedSha256: String? = null,
+    val manualFetch: Boolean = false
 ): KoinComponent {
     val id = endpointsURL
 
