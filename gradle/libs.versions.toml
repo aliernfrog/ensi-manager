@@ -15,6 +15,7 @@ compose-material3 = "1.5.0-alpha16"
 
 aboutlibraries = "14.0.0-b03"
 coil = "3.4.0"
+colorpicker = "1.1.3"
 gson = "2.13.2"
 koin = "4.2.0"
 markdown = "0.6.0"
@@ -45,6 +46,7 @@ aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries-core", version
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt.coil3", name = "coil-svg", version.ref = "coil" }
+colorpicker = { group = "com.github.skydoves", name = "colorpicker-compose", version.ref = "colorpicker" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 koin = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "markdown" }

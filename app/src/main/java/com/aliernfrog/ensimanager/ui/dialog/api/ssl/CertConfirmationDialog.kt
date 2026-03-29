@@ -22,14 +22,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.ensimanager.R
+import com.aliernfrog.ensimanager.impl.api.APIProfile
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TrustNewCertDialog(
-    publicKey: String?,
+fun CertConfirmationDialog(
+    profile: APIProfile,
     onTrust: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
+    val hasKeyAndNoError = profile.trustedSha256 != null && profile.error == null
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -38,7 +41,7 @@ fun TrustNewCertDialog(
                 shapes = ButtonDefaults.shapes()
             ) {
                 Text(stringResource(
-                    if (publicKey != null) R.string.api_ssl_trust else R.string.api_profiles_add
+                    if (hasKeyAndNoError) R.string.api_ssl_trust else R.string.profiles_add_save
                 ))
             }
         },
@@ -52,31 +55,44 @@ fun TrustNewCertDialog(
         },
         icon = {
             Icon(
-                imageVector = if (publicKey != null) Icons.Default.VerifiedUser else Icons.Default.Warning,
+                imageVector = if (hasKeyAndNoError) Icons.Default.VerifiedUser else Icons.Default.Warning,
                 contentDescription = null
             )
         },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                if (publicKey != null) {
+                if (hasKeyAndNoError) {
                     Text(stringResource(R.string.api_ssl_trustNew_text))
 
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = publicKey,
-                            fontFamily = FontFamily.Monospace,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
+                    Codeblock(profile.trustedSha256)
 
                     Text(stringResource(R.string.api_ssl_trustNew_q))
                 }
+                else if (profile.error != null) {
+                    Text(stringResource(R.string.api_ssl_trustNew_error))
+
+                    Codeblock(profile.error.orEmpty())
+
+                    Text(stringResource(R.string.api_ssl_trustNew_notSecure_q))
+                }
                 else Text(
-                    stringResource(R.string.api_ssl_trustNew_notSecure)+"\n"+stringResource(R.string.api_ssl_trustNew_notSecure_q)
+                    stringResource(R.string.api_ssl_trustNew_notSecure)
+                            +"\n"+ stringResource(R.string.api_ssl_trustNew_notSecure_q)
                 )
             }
         }
     )
+}
+
+@Composable
+private fun Codeblock(text: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+    ) {
+        Text(
+            text = text,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
 }

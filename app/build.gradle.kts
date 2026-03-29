@@ -120,6 +120,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
     implementation(libs.coil.svg)
+    implementation(libs.colorpicker)
     implementation(libs.gson)
     implementation(libs.koin)
     implementation(libs.markdown)
